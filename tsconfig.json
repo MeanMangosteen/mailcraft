@@ -12,14 +12,17 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react"
+    // "noEmit": true,
+    "jsx": "react",
+    "sourceMap": true,
+    "outDir": "./out",
+
   },
   "include": [
-    "src"
+    "src", "server/server.ts"
   ]
 }
