@@ -22,12 +22,29 @@ const grow = keyframes`
     transform: scale(1.1, 0.9);
   }
 
-  }
-
   100% {
     transform: translate(0, 0)
   }
 
+`;
+
+const slideFromLeft = keyframes`
+0%{
+
+  transform: translateX(-150%); 
+  opacity: 0;
+  
+}
+
+60% {
+  opacity: 0;
+}
+
+ 100% {
+  transform: translateX(100%);
+  opacity: 1;
+
+ }
 `;
 
 const Container = styled.div`
@@ -39,7 +56,6 @@ const Container = styled.div`
 const DeclutterIcon = styled(GiWheelbarrow)`
   width: 100%;
   height: auto;
-  margin: 1rem;
 
   animation: ${(props: { hovered: boolean }) =>
     props.hovered
@@ -53,14 +69,36 @@ const AnalyseIcon = styled(GiMicroscope)`
   width: 100%;
   height: auto;
 
-  margin: 1rem;
-
   animation: ${(props: { hovered: boolean }) =>
     props.hovered
       ? css`
           ${grow} 0.5s ease-in-out 1
         `
       : undefined};
+`;
+
+const NavLinkText = styled.h1`
+  position: absolute;
+  z-index: -1;
+  margin: 0;
+  animation: ${(props: { hovered: boolean }) =>
+    props.hovered
+      ? css`
+          ${slideFromLeft} 0.5s ease-in-out 1
+        `
+      : undefined};
+  transform: translateX(100%);
+  display: ${(props: { hovered: boolean }) =>
+    props.hovered ? undefined : `none`};
+  right: 0;
+`;
+
+const NavLinkWrapper = styled.div`
+  display: flex;
+  align-items: center;
+
+  position: relative;
+  padding: 1rem;
 `;
 
 const BaseNavLink = styled(NavLink)`
@@ -87,7 +125,10 @@ const NavBar = styled(({}: NavBarProps) => {
         onMouseEnter={handleMouseEnter("declutter")}
         onMouseLeave={handleMouseLeave("declutter")}
       >
-        <DeclutterIcon hovered={hovered["declutter"]} />
+        <NavLinkWrapper>
+          <DeclutterIcon hovered={hovered["declutter"]} />
+          <NavLinkText hovered={hovered["declutter"]}>Declutter</NavLinkText>
+        </NavLinkWrapper>
       </BaseNavLink>
       <BaseNavLink
         to="/analyse"
@@ -95,7 +136,11 @@ const NavBar = styled(({}: NavBarProps) => {
         onMouseEnter={handleMouseEnter("analyse")}
         onMouseLeave={handleMouseLeave("analyse")}
       >
-        <AnalyseIcon hovered={hovered["analyse"]} />
+        <NavLinkWrapper>
+          <AnalyseIcon hovered={hovered["analyse"]} />
+          <NavLinkText hovered={hovered["analyse"]}>Analyse</NavLinkText>
+        </NavLinkWrapper>
+        {/* <h3>Analyse</h3> */}
       </BaseNavLink>
     </Container>
   );
