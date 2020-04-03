@@ -11,3 +11,19 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+/* Make rem === 10px for easier calculations */
+:root {
+  font-size: 62.5%;
+}
+
+/* Increase the default font-size back to an equivalent value of 16px */
+body {
+  font-size: 1.6rem;
+}

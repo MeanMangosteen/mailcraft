@@ -1,26 +1,35 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import styled from 'styled-components';
+import { NavBar } from './NavBar/NavBar';
+import { BrowserRouter } from 'react-router-dom';
+import { AppRouter } from './AppRouter';
 
-function App() {
+
+const StyledNavBar = styled(NavBar)`
+    grid-area: nav-bar;
+`;
+
+const StyledAppRouter = styled(AppRouter)`
+    grid-area: content;
+`;
+
+const App = styled(({ className }) => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={className}>
+      <BrowserRouter>
+        <StyledNavBar />
+        <StyledAppRouter />
+      </BrowserRouter>
     </div>
   );
-}
+})`
+  width: 100%;
+  height: 100vh;
+
+  display: grid;
+  grid-template-columns: 5% auto;
+  grid-template-rows: auto;
+  grid-template-areas: "nav-bar content";
+`;
 
 export default App;
