@@ -1,24 +1,27 @@
-import React from 'react';
-import styled from 'styled-components';
-import { NavBar } from './NavBar/NavBar';
-import { BrowserRouter } from 'react-router-dom';
-import { AppRouter } from './AppRouter';
-
+import React from "react";
+import styled from "styled-components";
+import { NavBar } from "./NavBar/NavBar";
+import { BrowserRouter } from "react-router-dom";
+import { AppRouter } from "./AppRouter";
 
 const StyledNavBar = styled(NavBar)`
-    grid-area: nav-bar;
+  grid-area: nav-bar;
 `;
 
 const StyledAppRouter = styled(AppRouter)`
-    grid-area: content;
+  grid-area: content;
 `;
+
+export const UserContext = React.createContext(false);
 
 const App = styled(({ className }) => {
   return (
     <div className={className}>
       <BrowserRouter>
-        <StyledNavBar />
-        <StyledAppRouter />
+        <UserContext.Provider value={false}>
+          <StyledNavBar />
+          <StyledAppRouter />
+        </UserContext.Provider>
       </BrowserRouter>
     </div>
   );
