@@ -3,3 +3,7 @@ GET http://localhost:4000/
 ###
 
 GET http://localhost:4000/OAuthUrl
+
+###
+
+GET http://localhost:4000/mail

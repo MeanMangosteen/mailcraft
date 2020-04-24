@@ -51,7 +51,7 @@ class SampleClient {
       redirectUri.length === 0 ||
       parts.port !== "3000" ||
       parts.hostname !== "localhost" ||
-      parts.pathname !== "/"
+      parts.pathname !== "/OAuthSuccess"
     ) {
       throw new Error(invalidRedirectUri);
     }

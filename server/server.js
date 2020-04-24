@@ -14,28 +14,95 @@
 const { google } = require("googleapis");
 const auth = require("./auth");
 
-const gmail = google.gmail({
-  version: "v1",
-  auth: auth.oAuth2Client,
-});
-
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 const app = express();
+const ImapClient = require("emailjs-imap-client").default;
+//Here we are configuring express to use body-parser as middle-ware.
 const port = 4000;
-
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cors());
 
-app.get("/", (req, res) => res.send("Hello World!"));
+const scopes = ["https://www.googleapis.com/auth/gmail.readonly"];
+let gmail = null;
+let profile = null;
+
 
 app.get("/OAuthUrl", (req, res) => {
-  const scopes = ["https://www.googleapis.com/auth/gmail.readonly"];
+  const { pathname } = req.query;
   const loginUrl = auth.oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: scopes.join(" "),
   });
 
+  res.cookie("redirect", pathname);
   res.status(200).send(loginUrl);
+});
+
+app.post("/OAuthConfirm", async (req, res) => {
+  const { code } = req.body;
+
+  if (!code) {
+    res.status(400).send("Missing 'code' parameter");
+  }
+
+  const { tokens } = await auth.oAuth2Client.getToken(code);
+  auth.oAuth2Client.credentials = tokens;
+  console.log(tokens);
+
+  try {
+    gmail = google.gmail({
+      version: "v1",
+      auth: auth.oAuth2Client,
+    });
+
+    profile = await gmail.users.getProfile({
+      userId: "me",
+    });
+
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(400).send(err);
+    console.error(err);
+  }
+});
+
+app.get("/mail", async (req, res) => {
+  if (!gmail) {
+    res.sendStatus(401);
+    return;
+  }
+
+  try {
+    const mail = [];
+    let npt = null;
+    while (true) {
+      const res = await gmail.users.messages.list({
+        userId: "me",
+        maxResults: 1000,
+        pageToken: npt,
+      });
+      mail.push(...res.data.messages);
+      npt = res.data.nextPageToken;
+      // if (!res.data.nextPageToken) break;
+      break;
+    }
+    const messages = [];
+    const promises = mail.map(async (m) => {
+      const msg = await gmail.users.messages.get({
+        id: mail[0].id,
+        userId: "me",
+      });
+      messages.push(msg);
+      console.log(messages.length);
+    });
+    await Promise.all(promises);
+    res.status(200).send(mail);
+  } catch (err) {
+    res.status(400).send(err);
+  }
 });
 
 app.listen(port, () =>

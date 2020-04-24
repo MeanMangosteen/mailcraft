@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { NavBar } from "./NavBar/NavBar";
 import { BrowserRouter } from "react-router-dom";
 import { AppRouter } from "./AppRouter";
+import { CookiesProvider } from "react-cookie";
 
 const StyledNavBar = styled(NavBar)`
   grid-area: nav-bar;
@@ -18,10 +19,12 @@ const App = styled(({ className }) => {
   return (
     <div className={className}>
       <BrowserRouter>
-        <UserContext.Provider value={false}>
-          <StyledNavBar />
-          <StyledAppRouter />
-        </UserContext.Provider>
+        <CookiesProvider>
+          <UserContext.Provider value={false}>
+            <StyledNavBar />
+            <StyledAppRouter />
+          </UserContext.Provider>
+        </CookiesProvider>
       </BrowserRouter>
     </div>
   );
