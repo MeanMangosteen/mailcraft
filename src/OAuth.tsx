@@ -15,7 +15,7 @@ const OAuth = () => {
       code: queryParams.code,
     })
       .then(() => {
-        setShouldRedirect(false);
+        setShouldRedirect(true);
         setCookies("logged_in", true);
       })
       .catch((err) => {

@@ -25,10 +25,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 
-const scopes = ["https://www.googleapis.com/auth/gmail.readonly"];
+// const scopes = ["https://www.googleapis.com/auth/gmail.readonly"];
+const scopes = ["https://mail.google.com/"];
 let gmail = null;
 let profile = null;
-
 
 app.get("/OAuthUrl", (req, res) => {
   const { pathname } = req.query;
@@ -58,9 +58,11 @@ app.post("/OAuthConfirm", async (req, res) => {
       auth: auth.oAuth2Client,
     });
 
-    profile = await gmail.users.getProfile({
-      userId: "me",
-    });
+    profile = (
+      await gmail.users.getProfile({
+        userId: "me",
+      })
+    ).data;
 
     res.sendStatus(200);
   } catch (err) {
@@ -75,34 +77,62 @@ app.get("/mail", async (req, res) => {
     return;
   }
 
-  try {
-    const mail = [];
-    let npt = null;
-    while (true) {
-      const res = await gmail.users.messages.list({
-        userId: "me",
-        maxResults: 1000,
-        pageToken: npt,
-      });
-      mail.push(...res.data.messages);
-      npt = res.data.nextPageToken;
-      // if (!res.data.nextPageToken) break;
-      break;
-    }
-    const messages = [];
-    const promises = mail.map(async (m) => {
-      const msg = await gmail.users.messages.get({
-        id: mail[0].id,
-        userId: "me",
-      });
-      messages.push(msg);
-      console.log(messages.length);
-    });
-    await Promise.all(promises);
-    res.status(200).send(mail);
-  } catch (err) {
-    res.status(400).send(err);
-  }
+  const client = new ImapClient("imap.gmail.com", 993, {
+    auth: {
+      user: profile.emailAddress,
+      // xoauth2: Buffer.from(accessToken).toString("base64"),
+      xoauth2: auth.oAuth2Client.credentials.access_token,
+      requireTLS: true,
+    },
+  });
+
+  await client.connect();
+
+  console.log("connected!");
+
+  const mailboxes = await client.listMailboxes();
+  console.log(mailboxes);
+
+  const messages = await client.listMessages("INBOX", "1:100", [
+    "uid",
+    "flags",
+    "body[]",
+    "X-GM-MSGID",
+    "envelope",
+  ]);
+
+  console.log(messages);
+  await client.close();
+
+  res.status(200).send(messages);
+  // try {
+  //   const mail = [];
+  //   let npt = null;
+  //   while (true) {
+  //     const res = await gmail.users.messages.list({
+  //       userId: "me",
+  //       maxResults: 1000,
+  //       pageToken: npt,
+  //     });
+  //     mail.push(...res.data.messages);
+  //     npt = res.data.nextPageToken;
+  //     // if (!res.data.nextPageToken) break;
+  //     break;
+  //   }
+  //   const messages = [];
+  //   const promises = mail.map(async (m) => {
+  //     const msg = await gmail.users.messages.get({
+  //       id: mail[0].id,
+  //       userId: "me",
+  //     });
+  //     messages.push(msg);
+  //     console.log(messages.length);
+  //   });
+  //   await Promise.all(promises);
+  //   res.status(200).send(mail);
+  // } catch (err) {
+  //   res.status(400).send(err);
+  // }
 });
 
 app.listen(port, () =>
