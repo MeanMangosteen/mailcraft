@@ -7,6 +7,7 @@ import { UserContext } from "../App";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { useMail } from "../reducers/mail";
 
 interface DeclutterProps {
   className?: string;
@@ -32,6 +33,7 @@ const Declutter = styled(({ className = "declutter" }) => {
   const location = useLocation();
   const [cookies, setCookie] = useCookies();
   const [chartData, setChartData] = useState<any>(undefined);
+  const { mail } = useMail();
 
   useEffect(() => {
     if (!cookies.logged_in) {
@@ -49,33 +51,24 @@ const Declutter = styled(({ className = "declutter" }) => {
           setError(err);
         });
     } else {
-      axios
-        .get("http://localhost:4000/mail")
-        .then((res) => {
-          console.log(res);
-          const senders = res.data.map(
-            (m) => m.envelope.from[0].address.split("@")[1]
-          );
-          const count = {};
-          senders.map((m) => {
-            if (count[m]) {
-              count[m]++;
-            } else {
-              count[m] = 1;
-            }
-          });
-          const countSorted = Object.entries(count)
-            .sort((a: any, b: any) => b[1] - a[1])
-            .map(([sender, count]) => {
-              return { id: sender, field: count };
-            });
-          setChartData({ table: countSorted.slice(0, 5) });
-        })
-        .catch((err) => {
-          console.log(err);
+      if (!mail) return;
+      const senders = mail.map((m) => m.envelope.from[0].address.split("@")[1]);
+      const count = {};
+      senders.map((m) => {
+        if (count[m]) {
+          count[m]++;
+        } else {
+          count[m] = 1;
+        }
+      });
+      const countSorted = Object.entries(count)
+        .sort((a: any, b: any) => b[1] - a[1])
+        .map(([sender, count]) => {
+          return { id: sender, field: count };
         });
+      setChartData({ table: countSorted.slice(0, 5) });
     }
-  }, [cookies.logged_in]);
+  }, [cookies.logged_in, mail]);
 
   useEffect(() => {
     if (cookies.logged_in) {

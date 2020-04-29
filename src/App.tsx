@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { NavBar } from "./NavBar/NavBar";
 import { BrowserRouter } from "react-router-dom";
 import { AppRouter } from "./AppRouter";
 import { CookiesProvider } from "react-cookie";
+import { MailProvider } from "./reducers/mail";
 
 const StyledNavBar = styled(NavBar)`
   grid-area: nav-bar;
@@ -14,16 +15,23 @@ const StyledAppRouter = styled(AppRouter)`
 `;
 
 export const UserContext = React.createContext(false);
+export const MailContext: React.Context<{
+  mail: any;
+  setMail: (mail) => void;
+}> = React.createContext({ mail: null, setMail: (mail) => {} });
 
 const App = styled(({ className }) => {
+  const [mail, setMail] = useState(null);
+  const mailCtxInitial = { mail, setMail };
+
   return (
     <div className={className}>
       <BrowserRouter>
         <CookiesProvider>
-          <UserContext.Provider value={false}>
+          <MailProvider>
             <StyledNavBar />
             <StyledAppRouter />
-          </UserContext.Provider>
+          </MailProvider>
         </CookiesProvider>
       </BrowserRouter>
     </div>

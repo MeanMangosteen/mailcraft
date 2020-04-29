@@ -10,8 +10,8 @@ export default createClassFromSpec({
   spec: {
     $schema: "https://vega.github.io/schema/vega/v5.json",
     description: "A basic pie chart example.",
-    width: 800,
-    height: 800,
+    width: 700,
+    height: 700,
     autosize: "none",
 
     signals: [
@@ -32,7 +32,7 @@ export default createClassFromSpec({
       },
       {
         name: "innerRadius",
-        value: "45",
+        value: "120",
         // bind: { input: "range", min: 0, max: 90, step: 1 },
       },
       {
@@ -102,9 +102,18 @@ export default createClassFromSpec({
             startAngle: { field: "startAngle" },
             endAngle: { field: "endAngle" },
             padAngle: { signal: "padAngle" },
-            innerRadius: { value: 50 },
-            outerRadius: { signal: "width / 2" },
+            innerRadius: {
+              signal: "if(tooltip && tooltip.id == datum.id, 110, 120)",
+              // value: 100,
+            },
+            outerRadius: {
+              signal:
+                "if(tooltip && tooltip.id == datum.id,width/2, width/2 * 0.95 )",
+            },
             cornerRadius: { signal: "cornerRadius" },
+            opacity: {
+              signal: "if(tooltip.id && tooltip.id !== datum.id, 0.5, 1)",
+            },
           },
         },
       },
