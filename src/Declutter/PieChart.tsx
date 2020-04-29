@@ -53,6 +53,11 @@ export default createClassFromSpec({
           { events: "arc:mouseout", update: "{}" },
         ],
       },
+      {
+        name: "click",
+        value: {},
+        on: [{ events: "arc:click", update: "datum" }],
+      },
     ],
 
     data: [

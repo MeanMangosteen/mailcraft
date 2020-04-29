@@ -94,9 +94,19 @@ const Declutter = styled(({ className = "declutter" }) => {
     ],
   };
 
+  const handleClick = (name, somethingElse) => {
+    console.log(somethingElse);
+  };
   return (
     <PageContainer>
-      {!cookies.logged_in ? loginSubcomponent : <PieChart data={chartData} />}
+      {!cookies.logged_in ? (
+        loginSubcomponent
+      ) : (
+        <PieChart
+          data={chartData}
+          signalListeners={{ click: handleClick, hover: handleClick }}
+        />
+      )}
     </PageContainer>
   );
 })``;
