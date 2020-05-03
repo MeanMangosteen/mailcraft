@@ -10,6 +10,8 @@ export const MailContext: React.Context<[
   (action) => void
 ]> = React.createContext([null, (action) => {}]);
 
+// TODO: setMail may be redundant
+// TODO: rename folder to utils
 export const useMail = () => {
   const [state, dispatch] = useContext(MailContext);
   const [cookies] = useCookies();

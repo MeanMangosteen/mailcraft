@@ -5,7 +5,7 @@ import { extent } from "d3-array";
 import PieChart from "./PieChart";
 import { UserContext } from "../App";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, Redirect } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useMail } from "../reducers/mail";
 
@@ -33,6 +33,7 @@ const Declutter = styled(({ className = "declutter" }) => {
   const location = useLocation();
   const [cookies, setCookie] = useCookies();
   const [chartData, setChartData] = useState<any>(undefined);
+  const [victim, setVictim] = useState<string | null>(null);
   const { mail } = useMail();
 
   useEffect(() => {
@@ -63,8 +64,8 @@ const Declutter = styled(({ className = "declutter" }) => {
       });
       const countSorted = Object.entries(count)
         .sort((a: any, b: any) => b[1] - a[1])
-        .map(([sender, count]) => {
-          return { id: sender, field: count };
+        .map(([sender, count]: [any, any]) => {
+          return { id: sender, field: (count / mail.length) * 100 };
         });
       setChartData({ table: countSorted.slice(0, 5) });
     }
@@ -94,8 +95,9 @@ const Declutter = styled(({ className = "declutter" }) => {
     ],
   };
 
-  const handleClick = (name, somethingElse) => {
-    console.log(somethingElse);
+  const handleClick = (name, leMagic) => {
+    console.log(leMagic);
+    setVictim(leMagic.id);
   };
   return (
     <PageContainer>
@@ -107,6 +109,9 @@ const Declutter = styled(({ className = "declutter" }) => {
           signalListeners={{ click: handleClick, hover: handleClick }}
         />
       )}
+      {victim ? (
+        <Redirect to={`/declutter/mass_destruction?victim=${victim}`} />
+      ) : null}
     </PageContainer>
   );
 })``;

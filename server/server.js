@@ -19,6 +19,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
 const ImapClient = require("emailjs-imap-client").default;
+const simpleParser = require("mailparser").simpleParser;
 //Here we are configuring express to use body-parser as middle-ware.
 const port = 4000;
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -90,19 +91,37 @@ app.get("/mail", async (req, res) => {
 
   console.log("connected!");
 
-  const mailboxes = await client.listMailboxes();
-  console.log(mailboxes);
+  // const mailboxes = await client.listMailboxes();
+  // console.log(mailboxes);
 
+  // OMGTODO:
+  // const messageIds = await client.search("INBOX", { unseen: true });
+  // const messages = await client.listMessages("INBOX", messageIds.join(","), [
   const messages = await client.listMessages("INBOX", "1:100", [
     "uid",
     "flags",
-    "body[]",
+    "body.peek[]",
     "X-GM-MSGID",
+    "X-GM-THRID",
     "envelope",
   ]);
 
-  console.log(messages);
   await client.close();
+
+  const parsePromises = messages.map((m) => {
+    return new Promise((resolve, reject) => {
+      simpleParser(m["body[]"])
+        .then((goodStuff) => {
+          m["body[]"] = goodStuff;
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  });
+
+  await Promise.all(parsePromises);
 
   res.status(200).send(messages);
   // try {
