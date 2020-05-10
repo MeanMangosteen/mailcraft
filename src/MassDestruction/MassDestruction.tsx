@@ -8,6 +8,7 @@ import htmlToReactParser from "html-to-react";
 import htmlToImage from "html-to-image";
 import IframeResizer from "iframe-resizer-react";
 import Measure from "react-measure";
+import { SizeMe } from "react-sizeme";
 
 const MassDestruction = () => {
   const location = useLocation();
@@ -22,8 +23,6 @@ const MassDestruction = () => {
   console.log("parser", htmlParser);
   const TestC = htmlParser.parse("<h1>Hi!</h1>");
 
-  const [americanDimensions, setAmericanDimensions] = useState<any>(null);
-
   useEffect(() => {
     if (!qParams.victim) throw Error("Victim needed to destroy!");
     if (!mail) return;
@@ -36,79 +35,82 @@ const MassDestruction = () => {
     setVictimEmails(filteredMail);
   }, [mail]);
 
-  const handleResize = (rect) => {
-    console.log(rect);
-    setAmericanDimensions({
-      width: rect.scroll.width,
-      height: rect.scroll.height,
-    });
-  };
-
-  const handleLoad = (something) => {
-    console.log(something);
-    setAmericanDimensions({
-      width: something.target.contentWindow.document.body.scrollWidth,
-      height: something.target.contentWindow.document.body.scrollHeight,
-    });
-  };
   return (
     <PageContainer>
-      {/* <Measure
-        bounds
-        scroll
-        onResize={handleResize}
-        innerRef={(ref) => {
-          console.log(ref);
-        }}
-      >
-        {({ measureRef }) => (
-          <ThumbnailFrame
-            ref={measureRef}
-            id="test"
-            title="Dr. Nick"
-            srcDoc="<h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1>"
-          />
+      <MailCard></MailCard>
+      <SizeMe monitorHeight>
+        {({ size }) => (
+          <MailCard>
+            <MailThumbnail parentH={size.height} parentW={size.width} />
+          </MailCard>
         )}
-      </Measure> */}
-      <iframe
-        title="Hey, look an iframe!"
-        srcDoc="<h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1>"
-        width="100%"
-        height="100%"
-        style={americanDimensions && { ...americanDimensions }}
-        onLoad={handleLoad}
-      />
-      {/* <MailCard>
-        <Measure bounds scroll onResize={handleResize}>
-          {({ measureRef }) => (
-            <ThumbnailFrame
-              ref={measureRef}
-              id="test"
-              title="Dr. Nick"
-              srcDoc="<h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1>"
-              // style={{
-              //   width: americanDimensions && americanDimensions["width"],
-              //   height: americanDimensions && americanDimensions["height"],
-              // }}
-              // srcDoc={victimEmails ? victimEmails[0]["body[]"].html : ""}
-            />
-          )}
-        </Measure>
-      </MailCard>
-      <MailCard />
-      <MailCard />
-      <MailCard /> */}
+      </SizeMe>
+      <MailCard></MailCard>
+      <MailCard></MailCard>
+      <MailCard></MailCard>
+      <MailCard></MailCard>
+      <MailCard></MailCard>
+      <MailCard></MailCard>
+      <MailCard></MailCard>
     </PageContainer>
   );
 };
 
-const ThumbnailFrame = styled.iframe`
+const MailThumbnail = ({ parentH, parentW }) => {
+  const [iframeStyles, setIframeStyles] = useState<any>(null);
+  const [contentDim, setContentDim] = useState<any>(null);
+
+  useEffect(() => {
+    if (!contentDim) return; // iframe hasn't loaded yet
+
+    const contentW = contentDim.width;
+    const contentH = contentDim.height;
+    const scaleVal =
+      contentH > contentW ? parentH / contentH : parentW / contentW;
+    setIframeStyles({
+      width: contentW,
+      height: contentH,
+      transform: `scale(${scaleVal})`,
+    });
+  }, [contentDim, parentH, parentW]);
+
+  const handleLoad = (something) => {
+    // Here, to the react gods, I ask for forgiveness.
+    // I will plant many many trees.
+
+    // If it's too much of a tall boy, chop it's legs. Otherwise the thumbnail looks retarded.
+    const contentH = Math.min(
+      something.target.contentWindow.document.body.scrollHeight,
+      800
+    );
+    const contentW = something.target.contentWindow.document.body.scrollWidth;
+    setContentDim({
+      width: contentW,
+      height: contentH,
+    });
+    // Remove the scroll bar in iframe cause by content margins
+    something.target.contentWindow.document.body.style.overflow = "hidden";
+  };
+
+  return (
+    <ThumbnailIframe
+      title="Hey, look an iframe!"
+      srcDoc="<h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1>"
+      width="100%"
+      height="100%"
+      style={iframeStyles && { ...iframeStyles }}
+      onLoad={handleLoad}
+    />
+  );
+};
+const ThumbnailIframe = styled.iframe`
   /* flex: 0 0 32%; */
   display: block;
   position: absolute;
+  transform-origin: top;
 `;
 const PageContainer = styled.div`
-  /* display: flex; */
+  display: flex;
   flex-wrap: wrap;
 `;
 
