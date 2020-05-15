@@ -9,6 +9,7 @@ import htmlToImage from "html-to-image";
 import IframeResizer from "iframe-resizer-react";
 import Measure from "react-measure";
 import { SizeMe } from "react-sizeme";
+import html2canvas from "html2canvas";
 
 const MassDestruction = () => {
   const location = useLocation();
@@ -35,42 +36,81 @@ const MassDestruction = () => {
     setVictimEmails(filteredMail);
   }, [mail]);
 
+  const mailCards = victimEmails
+    ?.slice(0, 9)
+    .map((mail, idx) => (
+      <MailCard
+        key={idx}
+        subject={mail["envelope"].subject}
+        html={mail["body[]"].html}
+      />
+    ));
+  console.log(victimEmails);
+
+  return <PageContainer>{mailCards}</PageContainer>;
+};
+
+const MailCard = ({ html, subject }) => {
   return (
-    <PageContainer>
-      <MailCard></MailCard>
-      <SizeMe monitorHeight>
-        {({ size }) => (
-          <MailCard>
-            <MailThumbnail parentH={size.height} parentW={size.width} />
-          </MailCard>
-        )}
-      </SizeMe>
-      <MailCard></MailCard>
-      <MailCard></MailCard>
-      <MailCard></MailCard>
-      <MailCard></MailCard>
-      <MailCard></MailCard>
-      <MailCard></MailCard>
-      <MailCard></MailCard>
-    </PageContainer>
+    <SizeMe monitorHeight>
+      {({ size }) => (
+        <MailCardContainer>
+          <MailThumbnail
+            parentH={size?.height && size.height * 0.85}
+            parentW={size.width}
+            html={html}
+          />
+          <SubjectText
+            style={{
+              maxHeight: size?.height ? size.height * 0.15 : undefined,
+            }}
+          >
+            {subject}
+          </SubjectText>
+        </MailCardContainer>
+      )}
+    </SizeMe>
   );
 };
 
-const MailThumbnail = ({ parentH, parentW }) => {
+const SubjectText = styled.div`
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+
+  width: 90%;
+  box-sizing: border-box;
+
+  font-size: 1.8rem;
+  font-weight: bold;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  position: absolute;
+  margin: 0;
+  margin-left: 1rem;
+  bottom: 0;
+`;
+const MailThumbnail = ({ parentH, parentW, html }) => {
   const [iframeStyles, setIframeStyles] = useState<any>(null);
   const [contentDim, setContentDim] = useState<any>(null);
 
+  console.log("styles", iframeStyles);
   useEffect(() => {
     if (!contentDim) return; // iframe hasn't loaded yet
 
     const contentW = contentDim.width;
     const contentH = contentDim.height;
-    const scaleVal =
-      contentH > contentW ? parentH / contentH : parentW / contentW;
+    const scaleFactor = parentH / contentH;
+    // contentH > contentW ? parentH / contentH : parentW / contentW;
+    const lMargin = (parentW - contentW * scaleFactor) / 2;
     setIframeStyles({
       width: contentW,
       height: contentH,
-      transform: `scale(${scaleVal})`,
+      transform: `scale(${scaleFactor})`,
+      marginLeft: lMargin,
     });
   }, [contentDim, parentH, parentW]);
 
@@ -95,31 +135,41 @@ const MailThumbnail = ({ parentH, parentW }) => {
   return (
     <ThumbnailIframe
       title="Hey, look an iframe!"
-      srcDoc="<h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1><h1>hi</h1>"
+      srcDoc={html}
       width="100%"
       height="100%"
       style={iframeStyles && { ...iframeStyles }}
       onLoad={handleLoad}
     />
+    // </ThumbnailIframeWrapper>
   );
 };
+
+const ThumbnailIframeWrapper = styled.div`
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+`;
+
 const ThumbnailIframe = styled.iframe`
   /* flex: 0 0 32%; */
   display: block;
   position: absolute;
-  transform-origin: top;
+  transform-origin: top left;
 `;
 const PageContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
 `;
 
-const MailCard = styled.div`
+const MailCardContainer = styled.div`
   /* display: flex; */
-
+  flex-direction: column;
   flex: 0 0 32%;
   margin: 1px;
-  border: black 1px solid;
+  /* border: black 1px solid; */
+  box-shadow: 2px 4px 10px #848484;
+  border-radius: 10px;
 `;
 
 export { MassDestruction };
