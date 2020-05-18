@@ -6,7 +6,31 @@ import styled from "styled-components";
 import { MailCard } from "./MailCard";
 
 const MassDestructionContainer = styled.div`
+  display: grid;
+  grid-template-rows: auto 10%;
+`;
+
+const CardsContainer = styled.div`
   overflow-y: scroll;
+`;
+
+const ControlsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 10px 0 10px -2px #888;
+`;
+
+const Button = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  margin: 1rem;
+  padding: 1.5rem;
+  flex-basis: 15rem;
+  font-weight: bold;
+  border: 3px black solid;
 `;
 // TODO: come back to page based scrolling
 /*
@@ -105,13 +129,16 @@ const MassDestruction = () => {
 
   // SOTODO: remove slice
   return (
-    <MassDestructionContainer>{mailPages.slice(0, 2)}</MassDestructionContainer>
+    <MassDestructionContainer>
+      <CardsContainer>{mailPages.slice(0, 2)}</CardsContainer>
+      <ControlsContainer>
+        <Button>Read</Button>
+        <Button>Spam</Button>
+        <Button>Delete</Button>
+      </ControlsContainer>
+    </MassDestructionContainer>
   );
 };
-
-
-
-
 
 const PageContainer = styled.div`
   /* display: flex;
@@ -123,6 +150,5 @@ const PageContainer = styled.div`
   padding: 2rem;
   box-sizing: border-box;
 `;
-
 
 export { MassDestruction };
