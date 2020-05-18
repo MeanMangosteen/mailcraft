@@ -10,51 +10,112 @@ import IframeResizer from "iframe-resizer-react";
 import Measure from "react-measure";
 import { SizeMe } from "react-sizeme";
 import html2canvas from "html2canvas";
+import ReactPageScroller from "react-page-scroller";
 
+// TODO: come back to page based scrolling
+/*
+A note was the designed was.
+Basically detect whether we're scrolling up or down.#
+Which increments or decrements a page number
+Each page of mail cards has a ref
+When the page number changes, we scrollIntoView() that page ^^
+*/
 const MassDestruction = () => {
+  // const [refs, setRefs] = useState<any[]>([]);
+  // const [page, setPage] = useState<number>(0);
+  // const [scrollCurr, setScrollCurr] = useState<any>(0);
+  // const [scrollPrev, setScrollPrev] = useState<any>(0);
   const location = useLocation();
   const qParams = queryString.parse(location.search);
   const { mail } = useMail();
-  const htmlParser = new htmlToReactParser.Parser();
-  const [victimEmails, setVictimEmails] = useState<any[] | null>(null);
-  const [imgUri, setImgUri] = useState<any>(null);
-  const testRef = useRef(null);
-  const [trigger, setTrigger] = useState<any>(null);
-
-  console.log("parser", htmlParser);
-  const TestC = htmlParser.parse("<h1>Hi!</h1>");
+  const [victimEmails, setVictimEmails] = useState<any[]>([]);
+  const [mailPages, setMailPages] = useState<any[]>([]);
+  const [selected, setSelected] = useState<Object>({});
 
   useEffect(() => {
+    // Filter all mail down to the ones from the victim
     if (!qParams.victim) throw Error("Victim needed to destroy!");
     if (!mail) return;
-
     const filteredMail = mail.filter(
       (m) => m.envelope.from[0].address.split("@")[1] === qParams["victim"]
     );
-    console.log(mail);
-    console.log(filteredMail);
     setVictimEmails(filteredMail);
+    for (let i = 0; i < filteredMail.length; i++) {
+      selected[i] = true;
+    }
+    setSelected({ ...selected });
   }, [mail]);
 
-  const mailCards = victimEmails
-    ?.slice(0, 9)
-    .map((mail, idx) => (
-      <MailCard
-        key={idx}
-        subject={mail["envelope"].subject}
-        html={mail["body[]"].html}
-      />
-    ));
-  console.log(victimEmails);
+  useEffect(() => {
+    // Use the filtered mail and convert to pages
+    const newMailPages: any[] = [];
+    const numMailPerPage = 9;
+    for (let i = 0; i <= (victimEmails?.length || -1); i += numMailPerPage) {
+      const mailCards = victimEmails
+        ?.slice(i, i + numMailPerPage)
+        .map((mail, idx) => {
+          return (
+            <MailCard
+              selected={selected[i + idx]}
+              index={i + idx}
+              key={idx}
+              subject={mail["envelope"].subject}
+              html={mail["body[]"].html}
+              onClick={handleCardClick}
+            />
+          );
+        });
+      // const ref = React.createRef<any>();
+      // refs.push(ref);
+      const page = <PageContainer /* ref={ref} */>{mailCards}</PageContainer>;
+      newMailPages.push(page);
+    }
+    setMailPages([...newMailPages]);
+    // setRefs([...refs]);
+  }, [victimEmails, selected]);
 
-  return <PageContainer>{mailCards}</PageContainer>;
+  const handleCardClick = (index) => (event) => {
+    console.log(index, event, "hi!");
+    selected[index] = !selected[index];
+    setSelected({ ...selected });
+  };
+  // useEffect(() => {
+  //   window.addEventListener("scroll", handleScroll);
+  // }, []);
+
+  // useEffect(() => {
+  //   if (scrollCurr < scrollPrev) {
+  //     // scrolling up
+  //     setPage(page - 1);
+  //   } else if (scrollCurr > scrollPrev) {
+  //     // scrolling down
+  //     setPage(page + 1);
+  //   }
+  //   setScrollPrev(scrollCurr);
+  // }, [scrollCurr]);
+
+  // useEffect(() => {
+  //   // Scrolls the page into view. Has debouncing issues.
+  //   console.log("page", page);
+  //   refs[page]?.current.scrollIntoView({ behavior: "smooth" });
+  // }, [page, refs]);
+
+  // const handleScroll = (e) => {
+  //   // note we don't have access to state here, but we can setState
+  //   const window: any = e.currentTarget;
+
+  //   setScrollCurr(window?.scrollY);
+  // };
+
+  // SOTODO: remove slice
+  return <div>{mailPages.slice(0, 2)}</div>;
 };
 
-const MailCard = ({ html, subject }) => {
+const MailCard = ({ html, subject, selected, index, onClick }) => {
   return (
     <SizeMe monitorHeight>
       {({ size }) => (
-        <MailCardContainer>
+        <MailCardContainer selected={selected} onClick={onClick(index)}>
           <MailThumbnail
             parentH={size?.height && size.height * 0.85}
             parentW={size.width}
@@ -158,8 +219,14 @@ const ThumbnailIframe = styled.iframe`
   transform-origin: top left;
 `;
 const PageContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+  /* display: flex;
+  flex-wrap: wrap; */
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  height: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
 `;
 
 const MailCardContainer = styled.div`
@@ -170,6 +237,8 @@ const MailCardContainer = styled.div`
   /* border: black 1px solid; */
   box-shadow: 2px 4px 10px #848484;
   border-radius: 10px;
+  border: ${({ selected }: { selected: boolean }) =>
+    selected ? "2px red solid" : undefined};
 `;
 
 export { MassDestruction };
