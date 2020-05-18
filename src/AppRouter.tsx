@@ -6,7 +6,7 @@ import { Analyse } from "./Analyse/Analyse";
 import { OAuth } from "./OAuth";
 import { MassDestruction } from "./MassDestruction/MassDestruction";
 
-const AppRouter = styled(() => {
+const AppRouter = () => {
   return (
     <Switch>
       <Route exact path="/declutter" component={Declutter} />
@@ -15,6 +15,10 @@ const AppRouter = styled(() => {
       <Route path="/OAuthSuccess" component={OAuth} />
     </Switch>
   );
-})``;
+};
+const TheRealDealContainer = styled.div`
+  /* Allow content to scroll */
+  overflow-y: scroll;
+`;
 
 export { AppRouter };
