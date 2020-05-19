@@ -47,7 +47,7 @@ const MassDestruction = () => {
   // const [scrollPrev, setScrollPrev] = useState<any>(0);
   const location = useLocation();
   const qParams = queryString.parse(location.search);
-  const { mail, readMail } = useMail();
+  const { mail, readMail, spamMail, trashMail } = useMail();
   const [victimEmails, setVictimEmails] = useState<any[]>([]);
   const [mailPages, setMailPages] = useState<any[]>([]);
   const [selected, setSelected] = useState<Object>({});
@@ -134,14 +134,29 @@ const MassDestruction = () => {
 
     readMail(uids);
   };
+
+  const handleSpam = () => {
+    const uids = Object.keys(selected).map((idx) => {
+      return victimEmails[idx].uid;
+    });
+
+    spamMail(uids);
+  };
+  const handleTrash = () => {
+    const uids = Object.keys(selected).map((idx) => {
+      return victimEmails[idx].uid;
+    });
+
+    trashMail(uids);
+  };
   // SOTODO: remove slice
   return (
     <MassDestructionContainer>
       <CardsContainer>{mailPages.slice(0, 2)}</CardsContainer>
       <ControlsContainer>
         <Button onClick={handleRead}>Read</Button>
-        <Button>Spam</Button>
-        <Button>Delete</Button>
+        <Button onClick={handleSpam}>Spam</Button>
+        <Button onClick={handleTrash}>Trash</Button>
       </ControlsContainer>
     </MassDestructionContainer>
   );

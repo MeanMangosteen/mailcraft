@@ -73,6 +73,48 @@ app.post("/OAuthConfirm", async (req, res) => {
   }
 });
 
+app.post("/trash-mail", async (req, res) => {
+  const { uids } = req.body;
+  if (!uids) {
+    res.status(400).send("Missing 'uids' parameter");
+  }
+
+  try {
+    const response = await client.moveMessages(
+      "INBOX",
+      uids.join(","),
+      "[Gmail]/Trash",
+      { byUid: true }
+    );
+    console.log(response);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send(err);
+  }
+});
+
+app.post("/spam-mail", async (req, res) => {
+  const { uids } = req.body;
+  if (!uids) {
+    res.status(400).send("Missing 'uids' parameter");
+  }
+
+  try {
+    const response = await client.moveMessages(
+      "INBOX",
+      uids.join(","),
+      "[Gmail]/Spam",
+      { byUid: true }
+    );
+    console.log(response);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send(err);
+  }
+});
+
 app.post("/read-mail", async (req, res) => {
   const { uids } = req.body;
   if (!uids) {

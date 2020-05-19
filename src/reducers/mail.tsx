@@ -40,12 +40,27 @@ export const useMail = () => {
       });
   }, []);
 
-  const deleteMail = useCallback(() => {
+  const trashMail = useCallback((uids: string[]) => {
+    axios
+      .post("http://localhost:4000/trash-mail", { uids })
+      .then(() => {
+        console.log("trash success");
+      })
+      .catch((err) => {
+        console.log("trash fail");
+      });
 
   }, []);
 
-  const spamMail = useCallback(() => {
-
+  const spamMail = useCallback((uids: string[]) => {
+    axios
+      .post("http://localhost:4000/spam-mail", { uids })
+      .then(() => {
+        console.log("spam success");
+      })
+      .catch((err) => {
+        console.log("spam fail");
+      });
   }, []);
   useEffect(() => {
     if (!cookies.logged_in) return;
@@ -60,7 +75,7 @@ export const useMail = () => {
       });
   }, [cookies.logged_in, setMail]);
 
-  return { mail: state, setMail, readMail };
+  return { mail: state, setMail, readMail, spamMail, trashMail };
 };
 export const MailProvider = ({ children }) => {
   const reducer = (state, action) => {
