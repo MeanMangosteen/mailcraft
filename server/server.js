@@ -30,6 +30,7 @@ app.use(cors());
 const scopes = ["https://mail.google.com/"];
 let gmail = null;
 let profile = null;
+let client = null; // TODO: change name to imap
 
 app.get("/OAuthUrl", (req, res) => {
   const { pathname } = req.query;
@@ -72,13 +73,36 @@ app.post("/OAuthConfirm", async (req, res) => {
   }
 });
 
+app.post("/read-mail", async (req, res) => {
+  const { uids } = req.body;
+  if (!uids) {
+    res.status(400).send("Missing 'code' parameter");
+  }
+
+  try {
+    const response = await client.setFlags(
+      "INBOX",
+      uids.join(","),
+      // uids[2].toString(),
+      {
+        remove: ["\\Seen"], // OMGTODO: change to add.
+      },
+      { byUid: true }
+    );
+    console.log(response);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 app.get("/mail", async (req, res) => {
   if (!gmail) {
     res.sendStatus(401);
     return;
   }
 
-  const client = new ImapClient("imap.gmail.com", 993, {
+  client = new ImapClient("imap.gmail.com", 993, {
     auth: {
       user: profile.emailAddress,
       // xoauth2: Buffer.from(accessToken).toString("base64"),
@@ -91,20 +115,19 @@ app.get("/mail", async (req, res) => {
 
   console.log("connected!");
 
-  // const mailboxes = await client.listMailboxes();
-  // console.log(mailboxes);
+  const mailboxes = await client.listMailboxes();
+  console.log(mailboxes);
+
+  const inbox = await client.selectMailbox("INBOX");
 
   // OMGTODO:
   // const messageIds = await client.search("INBOX", { unseen: true });
   // const messages = await client.listMessages("INBOX", messageIds.join(","), [
-  const messages = await client.listMessages("INBOX", "1:100", [
-    "uid",
-    "flags",
-    "body.peek[]",
-    "X-GM-MSGID",
-    "X-GM-THRID",
-    "envelope",
-  ]);
+  const messages = await client.listMessages(
+    "INBOX",
+    `${inbox.exists - 100}:${inbox.exists}`,
+    ["uid", "flags", "body.peek[]", "X-GM-MSGID", "X-GM-THRID", "envelope"]
+  );
 
   await client.close();
 

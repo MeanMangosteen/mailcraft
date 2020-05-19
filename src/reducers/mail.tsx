@@ -1,4 +1,10 @@
-import React, { useContext, useReducer, useState, useEffect, useCallback } from "react";
+import React, {
+  useContext,
+  useReducer,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 // import { MailContext } from "../App";
@@ -23,6 +29,24 @@ export const useMail = () => {
     [dispatch]
   );
 
+  const readMail = useCallback((uids: string[]) => {
+    axios
+      .post("http://localhost:4000/read-mail", { uids })
+      .then(() => {
+        console.log("Read success");
+      })
+      .catch((err) => {
+        console.log("Read fail");
+      });
+  }, []);
+
+  const deleteMail = useCallback(() => {
+
+  }, []);
+
+  const spamMail = useCallback(() => {
+
+  }, []);
   useEffect(() => {
     if (!cookies.logged_in) return;
 
@@ -36,7 +60,7 @@ export const useMail = () => {
       });
   }, [cookies.logged_in, setMail]);
 
-  return { mail: state, setMail };
+  return { mail: state, setMail, readMail };
 };
 export const MailProvider = ({ children }) => {
   const reducer = (state, action) => {
