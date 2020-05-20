@@ -4,7 +4,6 @@ export const MailThumbnail = ({ parentH, parentW, html }) => {
   const [iframeStyles, setIframeStyles] = useState<any>(null);
   const [contentDim, setContentDim] = useState<any>(null);
 
-  console.log("styles", iframeStyles);
   useEffect(() => {
     if (!contentDim) return; // iframe hasn't loaded yet
 

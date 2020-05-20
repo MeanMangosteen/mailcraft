@@ -121,6 +121,16 @@ app.post("/read-mail", async (req, res) => {
     res.status(400).send("Missing 'code' parameter");
   }
 
+  client = new ImapClient("imap.gmail.com", 993, {
+    // auth: {
+    //   user: profile.emailAddress,
+    //   // xoauth2: Buffer.from(accessToken).toString("base64"),
+    //   xoauth2: auth.oAuth2Client.credentials.access_token,
+    //   requireTLS: true,
+    // },
+    auth: authDeets,
+  });
+  await client.connect();
   try {
     const response = await client.setFlags(
       "INBOX",
@@ -138,19 +148,29 @@ app.post("/read-mail", async (req, res) => {
   }
 });
 
+// OMGTODO: follow this variable. No more needs to be said.
+let authDeets = {};
 app.get("/mail", async (req, res) => {
   if (!gmail) {
     res.sendStatus(401);
     return;
   }
 
+  authDeets = {
+    user: profile.emailAddress,
+    // xoauth2: Buffer.from(accessToken).toString("base64"),
+    xoauth2: auth.oAuth2Client.credentials.access_token,
+    requireTLS: true,
+  };
+
   client = new ImapClient("imap.gmail.com", 993, {
-    auth: {
-      user: profile.emailAddress,
-      // xoauth2: Buffer.from(accessToken).toString("base64"),
-      xoauth2: auth.oAuth2Client.credentials.access_token,
-      requireTLS: true,
-    },
+    // auth: {
+    //   user: profile.emailAddress,
+    //   // xoauth2: Buffer.from(accessToken).toString("base64"),
+    //   xoauth2: auth.oAuth2Client.credentials.access_token,
+    //   requireTLS: true,
+    // },
+    auth: authDeets,
   });
 
   await client.connect();

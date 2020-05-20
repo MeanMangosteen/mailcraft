@@ -29,16 +29,21 @@ export const useMail = () => {
     [dispatch]
   );
 
-  const readMail = useCallback((uids: string[]) => {
-    axios
-      .post("http://localhost:4000/read-mail", { uids })
-      .then(() => {
-        console.log("Read success");
-      })
-      .catch((err) => {
-        console.log("Read fail");
-      });
-  }, []);
+  const readMail = useCallback(
+    (uids: string[], callback: (err: Error | null) => void) => {
+      axios
+        .post("http://localhost:4000/read-mail", { uids })
+        .then(() => {
+          callback(null);
+          // remove mail from state
+          dispatch({ type: "remove", uids });
+        })
+        .catch((err) => {
+          callback(err);
+        });
+    },
+    []
+  );
 
   const trashMail = useCallback((uids: string[]) => {
     axios
@@ -49,7 +54,6 @@ export const useMail = () => {
       .catch((err) => {
         console.log("trash fail");
       });
-
   }, []);
 
   const spamMail = useCallback((uids: string[]) => {
@@ -64,6 +68,7 @@ export const useMail = () => {
   }, []);
   useEffect(() => {
     if (!cookies.logged_in) return;
+    if (state) return; // We only need to run this if we're fetching for the first time
 
     axios
       .get("http://localhost:4000/mail")
@@ -73,7 +78,7 @@ export const useMail = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [cookies.logged_in, setMail]);
+  }, []);
 
   return { mail: state, setMail, readMail, spamMail, trashMail };
 };
@@ -82,6 +87,11 @@ export const MailProvider = ({ children }) => {
     switch (action.type) {
       case "store":
         return action.mail;
+      case "remove":
+        // Get all mail which isn't in the uid array
+        return state.filter((mail) => {
+          return !action.uids.includes(mail.uid);
+        });
       default:
         throw Error(
           "Something bad has happend, I have no idea why...Good luck!"

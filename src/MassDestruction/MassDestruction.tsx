@@ -132,7 +132,14 @@ const MassDestruction = () => {
       return victimEmails[idx].uid;
     });
 
-    readMail(uids);
+    readMail(uids, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+
+      // OMGTODO: delete the callback
+    });
   };
 
   const handleSpam = () => {
