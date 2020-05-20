@@ -30,16 +30,16 @@ export const useMail = () => {
   );
 
   const readMail = useCallback(
-    (uids: string[], callback: (err: Error | null) => void) => {
+    (uids: string[], callback?: (err: Error | null) => void) => {
       axios
         .post("http://localhost:4000/read-mail", { uids })
         .then(() => {
-          callback(null);
+          callback && callback(null);
           // remove mail from state
           dispatch({ type: "remove", uids });
         })
         .catch((err) => {
-          callback(err);
+          callback && callback(err);
         });
     },
     []

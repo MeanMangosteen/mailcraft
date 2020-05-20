@@ -131,7 +131,7 @@ const NavBar = styled(({}: NavBarProps) => {
         </NavLinkWrapper>
       </BaseNavLink>
       <BaseNavLink
-        to="/analyse"
+        to="/leftovers"
         activeStyle={{}}
         onMouseEnter={handleMouseEnter("analyse")}
         onMouseLeave={handleMouseLeave("analyse")}
