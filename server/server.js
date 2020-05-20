@@ -79,7 +79,9 @@ app.post("/trash-mail", async (req, res) => {
     res.status(400).send("Missing 'uids' parameter");
   }
 
+  client = new ImapClient("imap.gmail.com", 993, { auth: authDeets });
   try {
+    await client.connect();
     const response = await client.moveMessages(
       "INBOX",
       uids.join(","),
@@ -100,7 +102,9 @@ app.post("/spam-mail", async (req, res) => {
     res.status(400).send("Missing 'uids' parameter");
   }
 
+  client = new ImapClient("imap.gmail.com", 993, { auth: authDeets });
   try {
+    await client.connect();
     const response = await client.moveMessages(
       "INBOX",
       uids.join(","),
@@ -121,17 +125,9 @@ app.post("/read-mail", async (req, res) => {
     res.status(400).send("Missing 'code' parameter");
   }
 
-  client = new ImapClient("imap.gmail.com", 993, {
-    // auth: {
-    //   user: profile.emailAddress,
-    //   // xoauth2: Buffer.from(accessToken).toString("base64"),
-    //   xoauth2: auth.oAuth2Client.credentials.access_token,
-    //   requireTLS: true,
-    // },
-    auth: authDeets,
-  });
-  await client.connect();
+  client = new ImapClient("imap.gmail.com", 993, { auth: authDeets });
   try {
+    await client.connect();
     const response = await client.setFlags(
       "INBOX",
       uids.join(","),

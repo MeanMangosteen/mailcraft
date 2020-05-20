@@ -5,6 +5,7 @@ import { Declutter } from "./Declutter/Declutter";
 import { Analyse } from "./Analyse/Analyse";
 import { OAuth } from "./OAuth";
 import { MassDestruction } from "./MassDestruction/MassDestruction";
+import { Leftovers } from "./Leftovers";
 
 const AppRouter = () => {
   return (
@@ -13,6 +14,7 @@ const AppRouter = () => {
       <Route path="/declutter/mass_destruction" component={MassDestruction} />
       <Route path="/analyse" component={Analyse} />
       <Route path="/OAuthSuccess" component={OAuth} />
+      <Route path="/leftovers" component={Leftovers} />
     </Switch>
   );
 };

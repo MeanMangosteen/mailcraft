@@ -49,10 +49,10 @@ export const useMail = () => {
     axios
       .post("http://localhost:4000/trash-mail", { uids })
       .then(() => {
-        console.log("trash success");
+        dispatch({ type: "remove", uids });
       })
       .catch((err) => {
-        console.log("trash fail");
+        console.error(err);
       });
   }, []);
 
@@ -60,10 +60,10 @@ export const useMail = () => {
     axios
       .post("http://localhost:4000/spam-mail", { uids })
       .then(() => {
-        console.log("spam success");
+        dispatch({ type: "remove", uids });
       })
       .catch((err) => {
-        console.log("spam fail");
+        console.error(err);
       });
   }, []);
   useEffect(() => {
@@ -78,7 +78,7 @@ export const useMail = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [cookies]);
 
   return { mail: state, setMail, readMail, spamMail, trashMail };
 };

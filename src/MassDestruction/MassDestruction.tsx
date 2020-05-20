@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Redirect } from "react-router-dom";
 import queryString from "query-string";
 import { useMail } from "../reducers/mail";
 import styled from "styled-components";
@@ -51,6 +51,7 @@ const MassDestruction = () => {
   const [victimEmails, setVictimEmails] = useState<any[]>([]);
   const [mailPages, setMailPages] = useState<any[]>([]);
   const [selected, setSelected] = useState<Object>({});
+  const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
 
   useEffect(() => {
     // Filter all mail down to the ones from the victim
@@ -60,10 +61,6 @@ const MassDestruction = () => {
       (m) => m.envelope.from[0].address.split("@")[1] === qParams["victim"]
     );
     setVictimEmails(filteredMail);
-    for (let i = 0; i < filteredMail.length; i++) {
-      selected[i] = true;
-    }
-    setSelected({ ...selected });
   }, [mail]);
 
   useEffect(() => {
@@ -90,12 +87,23 @@ const MassDestruction = () => {
       const page = <PageContainer /* ref={ref} */>{mailCards}</PageContainer>;
       newMailPages.push(page);
     }
+    // We had something before and now we don't
+    if (mailPages.length && !newMailPages.length) setMissionSuccessful(true);
     setMailPages([...newMailPages]);
+
     // setRefs([...refs]);
   }, [victimEmails, selected]);
 
+  useEffect(() => {
+    // Set selected cards
+    const newSelected = {};
+    for (let i = 0; i < victimEmails.length; i++) {
+      newSelected[i] = true;
+    }
+    setSelected({ ...newSelected });
+  }, [victimEmails]);
+
   const handleCardClick = (index) => (event) => {
-    console.log(index, event, "hi!");
     selected[index] = !selected[index];
     setSelected({ ...selected });
   };
@@ -128,9 +136,11 @@ const MassDestruction = () => {
   // };
 
   const handleRead = () => {
-    const uids = Object.keys(selected).map((idx) => {
-      return victimEmails[idx].uid;
-    });
+    const uids = Object.keys(selected)
+      .filter((cardIdx) => selected[cardIdx])
+      .map((cardIdx) => {
+        return victimEmails[cardIdx].uid;
+      });
 
     readMail(uids, (err) => {
       if (err) {
@@ -143,16 +153,20 @@ const MassDestruction = () => {
   };
 
   const handleSpam = () => {
-    const uids = Object.keys(selected).map((idx) => {
-      return victimEmails[idx].uid;
-    });
+    const uids = Object.keys(selected)
+      .filter((cardIdx) => selected[cardIdx])
+      .map((cardIdx) => {
+        return victimEmails[cardIdx].uid;
+      });
 
     spamMail(uids);
   };
   const handleTrash = () => {
-    const uids = Object.keys(selected).map((idx) => {
-      return victimEmails[idx].uid;
-    });
+    const uids = Object.keys(selected)
+      .filter((cardIdx) => selected[cardIdx])
+      .map((cardIdx) => {
+        return victimEmails[cardIdx].uid;
+      });
 
     trashMail(uids);
   };
@@ -165,6 +179,8 @@ const MassDestruction = () => {
         <Button onClick={handleSpam}>Spam</Button>
         <Button onClick={handleTrash}>Trash</Button>
       </ControlsContainer>
+
+      {missionSuccessful && <Redirect to="/declutter" />}
     </MassDestructionContainer>
   );
 };

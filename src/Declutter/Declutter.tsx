@@ -34,9 +34,11 @@ const Declutter = styled(({ className = "declutter" }) => {
   const [cookies, setCookie] = useCookies();
   const [chartData, setChartData] = useState<any>(undefined);
   const [victim, setVictim] = useState<string | null>(null);
+  const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
   const { mail } = useMail();
 
   useEffect(() => {
+    // if not logged in get oauth login url
     if (!cookies.logged_in) {
       setCookie("redirect", "/declutter");
       axios
@@ -52,24 +54,45 @@ const Declutter = styled(({ className = "declutter" }) => {
           setError(err);
         });
     } else {
-      if (!mail) return;
-      const senders = mail.map((m) => m.envelope.from[0].address.split("@")[1]);
-      const count = {};
-      senders.map((m) => {
-        if (count[m]) {
-          count[m]++;
-        } else {
-          count[m] = 1;
-        }
-      });
-      const countSorted = Object.entries(count)
-        .sort((a: any, b: any) => b[1] - a[1])
-        .map(([sender, count]: [any, any]) => {
-          return { id: sender, field: (count / mail.length) * 100 };
-        });
-      setChartData({ table: countSorted.slice(0, 5) });
     }
-  }, [cookies.logged_in, mail]);
+  }, [cookies.logged_in]);
+
+  useEffect(() => {
+    if (!mail) return;
+    // get all the senders
+    const senders = mail.map((m) => m.envelope.from[0].address.split("@")[1]);
+    // {[sender]: [emails recieved by sender]}
+    const count = {};
+    senders.map((m) => {
+      if (count[m]) {
+        count[m]++;
+      } else {
+        count[m] = 1;
+      }
+    });
+    // Sort and format data for pie chart
+    const countSorted = Object.entries(count)
+      .sort((a: any, b: any) => b[1] - a[1])
+      .map(([sender, count]: [any, any]) => {
+        return { id: sender, field: (count / mail.length) * 100 };
+      });
+    setChartData({ table: countSorted.slice(0, 5) });
+
+    // if all senders have a count of 3 or less move to the next stage
+    let success = true;
+    Object.values(count).forEach((count: any) => {
+      if (count > 3) success = false;
+    });
+    // for (let i = 0; i < Objeccount.length; i++) {
+    //   if (count[i] > 3) {
+    //     success = false;
+    //     break;
+    //   }
+    // }
+    if (success) {
+      setMissionSuccessful(success);
+    }
+  }, [mail]);
 
   useEffect(() => {
     if (cookies.logged_in) {
@@ -112,6 +135,7 @@ const Declutter = styled(({ className = "declutter" }) => {
       {victim ? (
         <Redirect to={`/declutter/mass_destruction?victim=${victim}`} />
       ) : null}
+      {missionSuccessful && <Redirect to="/leftovers" />}
     </PageContainer>
   );
 })``;
