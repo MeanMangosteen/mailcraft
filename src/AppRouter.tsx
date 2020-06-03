@@ -6,10 +6,12 @@ import { Analyse } from "./Analyse/Analyse";
 import { OAuth } from "./OAuth";
 import { MassDestruction } from "./MassDestruction/MassDestruction";
 import { Leftovers } from "./Leftovers";
+import { Home } from "./Home";
 
 const AppRouter = () => {
   return (
     <Switch>
+      <Route exact path="/" component={Home} />
       <Route exact path="/declutter" component={Declutter} />
       <Route path="/declutter/mass_destruction" component={MassDestruction} />
       <Route path="/analyse" component={Analyse} />
