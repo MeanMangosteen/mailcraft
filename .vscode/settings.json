@@ -1,8 +1,14 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
+  "keyboard.dispatch": "keyCode",
+  // "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // Set the default
+  // Enable per-language
+  // "[javascript]": {
+  //   "editor.formatOnSave": true
+  // },
   "editor.formatOnSave": true,
   "eslint.format.enable": true
+  // "editor.codeActionsOnSave": {
+  //       "source.fixAll": true
+  //   }
 }

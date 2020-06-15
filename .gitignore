@@ -25,3 +25,5 @@ yarn-error.log*
 .env
 server/oauth2.keys.json
 out
+
+/images
