@@ -6,7 +6,7 @@ import { Analyse } from "./Analyse/Analyse";
 import { OAuth } from "./OAuth";
 import { MassDestruction } from "./MassDestruction/MassDestruction";
 import { Leftovers } from "./Leftovers";
-import { Home } from "./NewHome";
+import { Home } from "./Home/NewHome";
 
 const AppRouter = () => {
   return (

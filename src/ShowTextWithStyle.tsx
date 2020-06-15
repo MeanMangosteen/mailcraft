@@ -55,6 +55,7 @@ export const ShowTextWithStyle = ({
 
 type StylishItemProps = {
   onShow?: () => void;
+  state?: any;
   children: React.ReactNode;
 };
 
@@ -66,5 +67,5 @@ const WithStyleContainer = styled.div``;
 
 const Fade = styled.div`
   transition: 0.5s;
-  opacity: ${(props: { state: any }) => (props.state === "entered" ? 1 : 0)};
+  opacity: ${(props: { state?: any }) => (props.state === "entered" ? 1 : 0)};
 `;
