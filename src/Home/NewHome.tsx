@@ -5,7 +5,7 @@ import { SwitchTransition, Transition } from "react-transition-group";
 import { Episode1, Episode2, Episode3 } from "./Episodes";
 
 export const Home = () => {
-  const [currEpisode, setCurrEpisode] = useState("ep1");
+  const [currEpisode, setCurrEpisode] = useState("ep3");
   return (
     <HomeContainer>
       {/* <TextContainer> */}

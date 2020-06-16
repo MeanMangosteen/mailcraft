@@ -83,9 +83,33 @@ export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
         </StylishItem>
       </ShowTextWithStyle>
     </TextContainer>
-    <PictureContainer></PictureContainer>
+    <PictureContainer>
+      <ButtonContainer>
+        <Button style={{ background: "cadetblue" }}>
+          <ButtonText>Declutter</ButtonText>
+        </Button>
+        <Button style={{ background: "darkslamon" }}>
+          <ButtonText>Insights</ButtonText>
+        </Button>
+      </ButtonContainer>
+    </PictureContainer>
   </EpisodeContainer>
 );
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-evenly;
+`;
+const Button = styled.div`
+  margin: 1rem;
+  background: purple;
+  padding: 10rem;
+  border-radius: 2rem;
+  color: white;
+`;
+
+const ButtonText = styled.div``;
 
 const EpisodeContainer = styled.div`
   display: grid;
@@ -104,9 +128,14 @@ const TextContainer = styled.div`
 `;
 
 const PictureContainer = styled.div`
-  max-height: 80%;
-  max-width: 80%;
+  /* max-height: 80%;
+  max-width: 80%; */
   padding: 3rem;
+  align-self: stretch;
+  justify-self: stretch;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Text = styled.div`
