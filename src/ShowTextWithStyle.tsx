@@ -16,12 +16,7 @@ export const ShowTextWithStyle = ({
   const [visibleChildren, setVisibleChildren] = useState(
     Array(children.length).fill(false) // the indexes represent each child, the value: whether it's visible.
   );
-  useEffect(() => {
-    setChildCount(0);
-    setVisibleChildren(
-      Array(children.length).fill(false) // the indexes represent each child, the value: whether it's visible.
-    );
-  }, [children]);
+
   useEffect(() => {
     if (childCount > children.length) {
       onFinish && onFinish();

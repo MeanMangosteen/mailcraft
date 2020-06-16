@@ -13,10 +13,7 @@ export const Home = () => {
         <Transition key={currEpisode} timeout={200}>
           {(state) =>
             currEpisode === "ep1" ? (
-              <Episode1
-                state={state}
-                onFinish={() => {} /*setCurrEpisode("ep2")*/}
-              />
+              <Episode1 state={state} onFinish={() => setCurrEpisode("ep2")} />
             ) : currEpisode === "ep2" ? (
               <Episode2 state={state} onFinish={() => setCurrEpisode("ep3")} />
             ) : (

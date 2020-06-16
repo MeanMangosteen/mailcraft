@@ -28,7 +28,9 @@ export const Episode1 = ({ state, onFinish }: EpisodeProps) => {
           >
             <Text>Do you have sleepless nights?</Text>
           </StylishItem>
-          <Text>Don't have the perfect body?</Text>
+          <StylishItem>
+            <Text>Don't have the perfect body?</Text>
+          </StylishItem>
           <StylishItem
             //    onShow={() => console.log("we showin baby!")}
             onShow={() => {
@@ -41,7 +43,7 @@ export const Episode1 = ({ state, onFinish }: EpisodeProps) => {
       </TextContainer>
       <PictureContainer>
         <SwitchTransition mode={"out-in"}>
-          <Transition key={currImage} timeout={2}>
+          <Transition key={currImage} timeout={200}>
             {(state) => <Image src={currImage} state={state} />}
           </Transition>
         </SwitchTransition>
@@ -54,8 +56,12 @@ export const Episode2 = ({ state, onFinish }: EpisodeProps) => (
   <EpisodeContainer state={state}>
     <TextContainer>
       <ShowTextWithStyle key="ep2" onFinish={onFinish}>
-        <Text>Don't listen to what they say...</Text>
-        <Text>It's not time and effort that will get you there!</Text>
+        <StylishItem>
+          <Text>Don't listen to what they say...</Text>
+        </StylishItem>
+        <StylishItem>
+          <Text>It's not time and effort that will get you there!</Text>
+        </StylishItem>
       </ShowTextWithStyle>
     </TextContainer>
     <PictureContainer></PictureContainer>
@@ -66,11 +72,15 @@ export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
   <EpisodeContainer state={state}>
     <TextContainer>
       <ShowTextWithStyle key="ep3" onFinish={onFinish}>
-        <Text>But a hygenic mailbox will</Text>
-        <Text>
-          Start your journey today and let Mailcraft solve all your live's
-          problems!
-        </Text>
+        <StylishItem>
+          <Text>But a hygenic mailbox will</Text>
+        </StylishItem>
+        <StylishItem>
+          <Text>
+            Start your journey today and let Mailcraft solve all your live's
+            problems!
+          </Text>
+        </StylishItem>
       </ShowTextWithStyle>
     </TextContainer>
     <PictureContainer></PictureContainer>
