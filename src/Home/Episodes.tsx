@@ -87,23 +87,33 @@ export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
     </TextContainer>
     <PictureContainer>
       <ButtonContainer>
-        <Button style={{ backgroundImage: `url(${Images.CleanRoom})` }}>
-          <ButtonText>Declutter</ButtonText>
-          {/* <img src={Images.CleanRoom} /> */}
-        </Button>
-        <Button
-          style={{
-            backgroundImage: `url(${Images.Buddha})`,
-            backgroundSize: "cover",
-          }}
-        >
-          <ButtonText>Insights</ButtonText>
-        </Button>
+        <ButtonHalo>
+          <Button style={{ backgroundImage: `url(${Images.CleanRoom})` }}>
+            <ButtonText>Declutter</ButtonText>
+            {/* <img src={Images.CleanRoom} /> */}
+          </Button>
+        </ButtonHalo>
+        <ButtonHalo>
+          <Button
+            style={{
+              backgroundImage: `url(${Images.Buddha})`,
+              backgroundSize: "cover",
+            }}
+          >
+            <ButtonText>Insights</ButtonText>
+          </Button>
+        </ButtonHalo>
       </ButtonContainer>
     </PictureContainer>
   </EpisodeContainer>
 );
 
+const ButtonHalo = styled.div`
+  display: flex;
+  flex-grow: 1;
+
+  padding: 2rem;
+`;
 const ButtonContainer = styled.div`
   display: flex;
   flex-grow: 1;
@@ -111,13 +121,14 @@ const ButtonContainer = styled.div`
 `;
 
 const Button = styled.div`
+  flex-grow: 1;
   margin: 1rem;
   background: purple;
   border-radius: 2rem;
   color: white;
   background-position: center;
   background-size: contain;
-  height: 20rem;
+  height: 35rem;
   width: 30%;
   display: flex;
   justify-content: center;
