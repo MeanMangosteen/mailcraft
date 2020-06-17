@@ -12,6 +12,8 @@ enum Images {
   Empty = "data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
   Insomnia = "https://i.imgur.com/wQlhbfX.jpg",
   Shredded = "https://i.imgur.com/Y4Wfd4p.jpg",
+  CleanRoom = "https://i.imgur.com/G8jSfk0.jpg",
+  Buddha = "https://i.imgur.com/pkrBtZX.jpg",
 }
 
 export const Episode1 = ({ state, onFinish }: EpisodeProps) => {
@@ -85,10 +87,16 @@ export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
     </TextContainer>
     <PictureContainer>
       <ButtonContainer>
-        <Button style={{ background: "cadetblue" }}>
+        <Button style={{ backgroundImage: `url(${Images.CleanRoom})` }}>
           <ButtonText>Declutter</ButtonText>
+          {/* <img src={Images.CleanRoom} /> */}
         </Button>
-        <Button style={{ background: "darkslamon" }}>
+        <Button
+          style={{
+            backgroundImage: `url(${Images.Buddha})`,
+            backgroundSize: "cover",
+          }}
+        >
           <ButtonText>Insights</ButtonText>
         </Button>
       </ButtonContainer>
@@ -101,15 +109,25 @@ const ButtonContainer = styled.div`
   flex-grow: 1;
   justify-content: space-evenly;
 `;
+
 const Button = styled.div`
   margin: 1rem;
   background: purple;
-  padding: 10rem;
   border-radius: 2rem;
   color: white;
+  background-position: center;
+  background-size: contain;
+  height: 20rem;
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 `;
 
-const ButtonText = styled.div``;
+const ButtonText = styled.div`
+  margin: 1rem;
+  font-size: 2.5rem;
+`;
 
 const EpisodeContainer = styled.div`
   display: grid;
