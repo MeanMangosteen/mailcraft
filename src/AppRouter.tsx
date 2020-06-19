@@ -7,6 +7,7 @@ import { OAuth } from "./OAuth";
 import { MassDestruction } from "./MassDestruction/MassDestruction";
 import { Leftovers } from "./Leftovers";
 import { Home } from "./Home/NewHome";
+import { Playground } from "./Playground";
 
 const AppRouter = () => {
   return (
@@ -17,6 +18,7 @@ const AppRouter = () => {
       <Route path="/analyse" component={Analyse} />
       <Route path="/OAuthSuccess" component={OAuth} />
       <Route path="/leftovers" component={Leftovers} />
+      <Route path="/play" component={Playground} />
     </Switch>
   );
 };
