@@ -110,7 +110,7 @@ export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
 
 const ButtonHalo = styled.div`
   display: flex;
-  flex-grow: 1;
+  width: 50%;
 
   padding: 2rem;
 `;
@@ -118,6 +118,7 @@ const ButtonContainer = styled.div`
   display: flex;
   flex-grow: 1;
   justify-content: space-evenly;
+  flex-direction: column;
 `;
 
 const Button = styled.div`

@@ -1,10 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 export const Playground = () => {
+  const [mousePos, setMousePos] = useState<any>();
+  const handleMouse = (event) => {
+    const insideBox =
+      event.pageX > event.target.offsetLeft &&
+      event.pageY > event.target.offsetTop;
+
+    if (insideBox) {
+      console.log("inside box!");
+      const mouseX =
+        ((event.pageX - event.target.offsetLeft) / event.target.offsetWidth) *
+        100;
+      const mouseY =
+        ((event.pageY - event.target.offsetTop) / event.target.offsetHeight) *
+        100;
+      setMousePos({ x: mouseX, y: mouseY });
+    }
+  };
+
+  console.log("mouse pos: ", mousePos);
   return (
     <PlaygroundContianer>
-      <LuckyDuckyAura>
+      <LuckyDuckyAura
+        onMouseMove={handleMouse}
+        onMouseLeave={() => setMousePos(undefined)}
+      >
         <LuckyDucky />
       </LuckyDuckyAura>
     </PlaygroundContianer>
