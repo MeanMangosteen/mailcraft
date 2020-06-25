@@ -5,28 +5,27 @@ export const Playground = () => {
   const [mousePos, setMousePos] = useState<any>();
   const handleMouse = (event) => {
     const insideBox =
-      event.pageX > event.target.offsetLeft &&
-      event.pageY > event.target.offsetTop;
+      event.pageX > event.currentTarget.offsetLeft &&
+      event.pageY > event.currentTarget.offsetTop;
 
     if (insideBox) {
-      console.log("inside box!");
       const mouseX =
-        ((event.pageX - event.target.offsetLeft) / event.target.offsetWidth) *
+        ((event.pageX - event.currentTarget.offsetLeft) /
+          event.currentTarget.offsetWidth) *
         100;
       const mouseY =
-        ((event.pageY - event.target.offsetTop) / event.target.offsetHeight) *
+        ((event.pageY - event.currentTarget.offsetTop) /
+          event.currentTarget.offsetHeight) *
         100;
       setMousePos({ x: mouseX, y: mouseY });
     }
   };
 
-  console.log("mouse pos: ", mousePos);
   return (
     <PlaygroundContianer>
       <LuckyDuckyAura
         onMouseMove={handleMouse}
         onMouseLeave={() => setMousePos(undefined)}
-        mouse={mousePos}
       >
         <MegaWrapper mouse={mousePos}>
           <LuckyDucky>Some content</LuckyDucky>
@@ -52,10 +51,7 @@ const LuckyDucky = styled.div`
 `;
 
 const LuckyDuckyAura = styled.div`
-  /* padding: 8rem; */
-  background: ${({ mouse }: { mouse: any }) =>
-    mouse
-      ? `linear-gradient(
+  background: linear-gradient(
       90deg,
       rgba(255, 255, 255, 1) 0%,
       rgba(133, 255, 231, 1) 15%,
@@ -70,54 +66,14 @@ const LuckyDuckyAura = styled.div`
       rgba(106, 255, 226, 1) 50%,
       rgba(157, 255, 236, 1) 85%,
       rgba(255, 255, 255, 1) 100%
-    ), radial-gradient(at ${mouse && mouse.x}% ${
-          mouse && mouse.y
-        }%, rgba(255,133,133,1) 0%, rgba(255,255,255,0) 40%)`
-      : `linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(133, 255, 231, 1) 15%,
-      rgba(106, 255, 226, 1) 50%,
-      rgba(157, 255, 236, 1) 85%,
-      rgba(255, 255, 255, 1) 100%
-    ),
-    linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(133, 255, 231, 1) 15%,
-      rgba(106, 255, 226, 1) 50%,
-      rgba(157, 255, 236, 1) 85%,
-      rgba(255, 255, 255, 1) 100%)`};
-/* position: relative;
-    &::before{
-      content: ""; // ::before and ::after both require content
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  background: ${({ mouse }: { mouse: any }) =>
-    mouse
-      ? `radial-gradient(at ${mouse && mouse.x}% ${
-          mouse && mouse.y
-        }%, rgba(255,133,133,1) 0%, rgba(255,255,255,0) 40%)`
-      : undefined};
-    background-image: linear-gradient(120deg, #eaee44, #33d0ff);
-    opacity: .7;
-    background: rgb(255,255,255);
-background: radial-gradient(circle, rgba(255,255,255,0) 29%, rgba(255,255,255,1) 100%);
-    }
-
-  background-blend-mode: screen;
-
-  background: ${({ mouse }: { mouse: any }) =>
-    `radial-gradient(at ${mouse && mouse.x}% ${
-      mouse && mouse.y
-    }%, rgba(255,133,133,1) 0%, rgba(255,255,255,0) 40%)`}; */
-    box-shadow: inset 0px 0px 9px 10px #ffffff;
+    );
+  /* box-shadow: inset 0px 0px 9px 10px #ffffff; */
+  background-blend-mode: hard-light;
 `;
-
 const MegaWrapper = styled.div`
+  &::after {
+    content: "";
+  }
   padding: 8rem;
   /* background: rgb(255, 255, 255);
   background: radial-gradient(
@@ -127,8 +83,13 @@ const MegaWrapper = styled.div`
   ); */
   background: ${({ mouse }: { mouse: any }) =>
     mouse
-      ? `radial-gradient(at ${mouse && mouse.x}% ${
+      ? `radial-gradient(farthest-side at ${mouse && mouse.x}% ${
           mouse && mouse.y
-        }%, rgba(255,133,133,1) 0%, rgba(255,255,255,0) 40%)`
+        }%, rgba(255,0,0,1) 0%, rgba(255,185,33,1) 0%, rgba(246,233,227,1) 67%, rgba(255,255,255,0) 100%)`
       : undefined};
+  box-shadow: inset 0px 0px 9px 10px #ffffff;
 `;
+
+// background: radial-gradient(circle, rgba(255,0,0,1) 0%, rgba(255,80,80,1) 3%, rgba(255,255,255,0) 9%);
+
+// background: radial-gradient(circle, rgba(255,0,0,1) 0%, rgba(255,80,80,1) 12%, rgba(255,255,255,0) 23%);
