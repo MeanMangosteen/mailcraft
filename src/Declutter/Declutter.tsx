@@ -13,7 +13,36 @@ interface DeclutterProps {
   className?: string;
 }
 
-const LoginContainer = styled.div``;
+const LoginBackgroundCorona = styled.div`
+  background: rgb(255, 179, 0);
+  background: radial-gradient(
+    circle,
+    rgba(255, 179, 0, 0) 0%,
+    rgba(255, 255, 255, 1) 95%
+  );
+  height: 100%;
+  width: 100%;
+`;
+const LoginBackground = styled.div`
+  background: rgb(255, 255, 255);
+  background: radial-gradient(
+    circle closest-side,
+    rgba(255, 255, 255, 0) 9%,
+    rgba(182, 35, 255, 0.6306897759103641) 23%,
+    rgba(255, 0, 121, 1) 36%,
+    rgba(255, 179, 0, 1) 78%,
+    rgba(255, 255, 255, 1) 95%
+  );
+  height: 100%;
+  width: 100%;
+`;
+
+const LoginContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const LoginText = styled.h1``;
 const LoginLink = styled.a`
   /* Remove formatting for links (purple visited color, underline) */
@@ -100,11 +129,13 @@ const Declutter = styled(({ className = "declutter" }) => {
   }, [cookies.logged_in]);
 
   const loginSubcomponent = (
-    <LoginContainer>
-      <LoginText>
-        <LoginLink href={oAuthUrl}>Log me in!</LoginLink>
-      </LoginText>
-    </LoginContainer>
+    <LoginBackground>
+      <LoginContainer>
+        <LoginText>
+          <LoginLink href={oAuthUrl}>Log me in!</LoginLink>
+        </LoginText>
+      </LoginContainer>
+    </LoginBackground>
   );
 
   const pieData = {

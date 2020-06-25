@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-export const Playground = () => {
+export const Aura = ({ children }) => {
   const [mousePos, setMousePos] = useState<any>();
   const handleMouse = (event) => {
     const insideBox =
@@ -20,35 +20,19 @@ export const Playground = () => {
       setMousePos({ x: mouseX, y: mouseY });
     }
   };
-
   return (
-    <PlaygroundContianer>
+    <AuraContainer>
       <LuckyDuckyAura
         onMouseMove={handleMouse}
         onMouseLeave={() => setMousePos(undefined)}
       >
-        <MegaWrapper mouse={mousePos}>
-          <LuckyDucky>Some content</LuckyDucky>
-        </MegaWrapper>
+        <MegaWrapper mouse={mousePos}>{children}</MegaWrapper>
       </LuckyDuckyAura>
-    </PlaygroundContianer>
+    </AuraContainer>
   );
 };
 
-const PlaygroundContianer = styled.div`
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const LuckyDucky = styled.div`
-  height: 300px;
-  width: 400px;
-  background: cornflowerblue;
-  box-shadow: 0px 0px 20px 8px white;
-`;
+const AuraContainer = styled.div``;
 
 const LuckyDuckyAura = styled.div`
   background: linear-gradient(
