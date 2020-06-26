@@ -117,10 +117,16 @@ const GlobalStyle = createGlobalStyle`
       rgba(255, 206, 89, 0.8239670868347339) 94%,
       rgba(255, 255, 255, 1) 100%
     );
-    transform: scale(0);
-    opacity:  ${({ hovered }: { hovered: boolean }) => (hovered ? "1" : "0")};
-;
-    transform: ${({ hovered }: { hovered: boolean }) => hovered && `scale(1)`};
+    /* transform: scale(0); */
+    opacity:  ${({ hovered, clicked }: { hovered: boolean; clicked }) =>
+      clicked || hovered ? "1" : "0"};
+    transform: ${({
+      hovered,
+      clicked,
+    }: {
+      hovered: boolean;
+      clicked: boolean;
+    }) => (clicked ? "scale(3)" : hovered ? "scale(1)" : "scale(0)")};
     transition: transform 0.2s ease-in, opacity 0.3s ease-in;
   }
 `;
@@ -209,6 +215,8 @@ const Declutter = styled(({ className = "declutter" }) => {
 const Login = () => {
   const [oAuthUrl, setOAuthUrl] = useState(undefined);
   const [hovered, setHovered] = useState(false);
+  const [clicked, setClicked] = useState(false);
+
   const location = useLocation();
   const [cookies, setCookie] = useCookies();
   useEffect(() => {
@@ -229,12 +237,19 @@ const Login = () => {
     } else {
     }
   }, [cookies.logged_in]);
+
+  const handleClick = (event) => {
+    event.preventDefault();
+    setClicked(true);
+  };
+
   return (
     <LoginContainer>
-      <GlobalStyle hovered={hovered} />
+      <GlobalStyle hovered={hovered} clicked={clicked} />
       <LoginText
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
+        onClick={handleClick}
       >
         <LoginLink href={oAuthUrl}>Log me in!</LoginLink>
         {/* <LoginBackground /> */}
