@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { scaleLinear } from "d3-scale";
 import { extent } from "d3-array";
 import PieChart from "./PieChart";
@@ -8,6 +8,8 @@ import axios from "axios";
 import { useLocation, Redirect } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useMail } from "../reducers/mail";
+import { scale } from "vega";
+import { OPACITY } from "vega-lite/build/src/channel";
 
 interface DeclutterProps {
   className?: string;
@@ -24,26 +26,66 @@ const LoginBackgroundCorona = styled.div`
   width: 100%;
 `;
 const LoginBackground = styled.div`
-  background: rgb(255, 255, 255);
   background: radial-gradient(
     circle closest-side,
-    rgba(255, 255, 255, 0) 9%,
-    rgba(182, 35, 255, 0.6306897759103641) 23%,
-    rgba(255, 0, 121, 1) 36%,
-    rgba(255, 179, 0, 1) 78%,
-    rgba(255, 255, 255, 1) 95%
+    rgba(106, 98, 255, 1) 0%,
+    rgba(182, 36, 255, 1) 7%,
+    rgba(255, 0, 121, 1) 31%,
+    rgba(255, 179, 0, 1) 80%,
+    rgba(255, 206, 89, 0.8239670868347339) 94%,
+    rgba(255, 255, 255, 1) 100%
   );
-  height: 100%;
-  width: 100%;
+  position: absolute;
+  height: 100vw;
+  width: 100vh;
+  top: 0;
+  left: 0;
+  z-index: -1;
 `;
 
 const LoginContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  /* background: red; */
+  /* background: rgb(106, 98, 255); */
+  /* background: radial-gradient(
+    circle closest-side,
+    rgba(106, 98, 255, 1) 0%,
+    rgba(182, 36, 255, 1) 7%,
+    rgba(255, 0, 121, 1) 31%,
+    rgba(255, 179, 0, 1) 80%,
+    rgba(255, 206, 89, 0.8239670868347339) 94%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  z-index: -1; */
+  /* position: absolute; */
+  /* This piece of maddness ensures we line up with the background */
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* top: 0; left: 0; */
 `;
 
-const LoginText = styled.h1``;
+const LoginText = styled.h1`
+  transform: none;
+  color: #00ff97;
+  mix-blend-mode: screen;
+  text-shadow: 0 0 5px #9dbd1a;
+  /* &:hover {
+    color: black;
+    background: blue;
+  } */
+  /* z-index: 100; */
+
+  ${LoginContainer} {
+    background: red;
+  }
+`;
+
 const LoginLink = styled.a`
   /* Remove formatting for links (purple visited color, underline) */
   color: inherit;
@@ -56,35 +98,38 @@ const PageContainer = styled.div`
   justify-content: center;
 `;
 
+const GlobalStyle = createGlobalStyle`
+  body::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+
+    background: radial-gradient(
+      circle closest-side,
+      rgba(106, 98, 255, 1) 0%,
+      rgba(182, 36, 255, 1) 7%,
+      rgba(255, 0, 121, 1) 31%,
+      rgba(255, 179, 0, 1) 80%,
+      rgba(255, 206, 89, 0.8239670868347339) 94%,
+      rgba(255, 255, 255, 1) 100%
+    );
+    transform: scale(0);
+    opacity:  ${({ hovered }: { hovered: boolean }) => (hovered ? "1" : "0")};
+;
+    transform: ${({ hovered }: { hovered: boolean }) => hovered && `scale(1)`};
+    transition: transform 0.2s ease-in, opacity 0.3s ease-in;
+  }
+`;
 const Declutter = styled(({ className = "declutter" }) => {
-  const [oAuthUrl, setOAuthUrl] = useState(undefined);
-  const [error, setError] = useState(null);
-  const location = useLocation();
   const [cookies, setCookie] = useCookies();
   const [chartData, setChartData] = useState<any>(undefined);
   const [victim, setVictim] = useState<string | null>(null);
   const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
   const { mail } = useMail();
-
-  useEffect(() => {
-    // if not logged in get oauth login url
-    if (!cookies.logged_in) {
-      setCookie("redirect", "/declutter");
-      axios
-        .get("http://localhost:4000/OAuthUrl", {
-          params: { pathname: location.pathname },
-        })
-        .then((res) => {
-          setOAuthUrl(res.data);
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-          setError(err);
-        });
-    } else {
-    }
-  }, [cookies.logged_in]);
 
   useEffect(() => {
     if (!mail) return;
@@ -128,16 +173,6 @@ const Declutter = styled(({ className = "declutter" }) => {
     }
   }, [cookies.logged_in]);
 
-  const loginSubcomponent = (
-    <LoginBackground>
-      <LoginContainer>
-        <LoginText>
-          <LoginLink href={oAuthUrl}>Log me in!</LoginLink>
-        </LoginText>
-      </LoginContainer>
-    </LoginBackground>
-  );
-
   const pieData = {
     table: [
       { id: 1, field: 4 },
@@ -156,7 +191,7 @@ const Declutter = styled(({ className = "declutter" }) => {
   return (
     <PageContainer>
       {!cookies.logged_in ? (
-        loginSubcomponent
+        <Login />
       ) : (
         <PieChart
           data={chartData}
@@ -170,5 +205,42 @@ const Declutter = styled(({ className = "declutter" }) => {
     </PageContainer>
   );
 })``;
+
+const Login = () => {
+  const [oAuthUrl, setOAuthUrl] = useState(undefined);
+  const [hovered, setHovered] = useState(false);
+  const location = useLocation();
+  const [cookies, setCookie] = useCookies();
+  useEffect(() => {
+    // if not logged in get oauth login url
+    if (!cookies.logged_in) {
+      setCookie("redirect", "/declutter");
+      axios
+        .get("http://localhost:4000/OAuthUrl", {
+          params: { pathname: location.pathname },
+        })
+        .then((res) => {
+          setOAuthUrl(res.data);
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+    }
+  }, [cookies.logged_in]);
+  return (
+    <LoginContainer>
+      <GlobalStyle hovered={hovered} />
+      <LoginText
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <LoginLink href={oAuthUrl}>Log me in!</LoginLink>
+        {/* <LoginBackground /> */}
+      </LoginText>
+    </LoginContainer>
+  );
+};
 
 export { Declutter };
