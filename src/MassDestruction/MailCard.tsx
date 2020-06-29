@@ -87,11 +87,14 @@ export const MailCardContainer = styled.div`
       : "none"}; */
   box-shadow: ${({ selected }: { selected: boolean }) =>
     selected
-      ? "2px 2px 5px 0px rgba(0,0,0,0.75)"
-      : "8px 7px 14px 3px rgba(0,0,0,0.75)"};
+      ? "2px 2px 5px 1px rgba(138,0,0,0.75)"
+      : "2px 2px 5px 0px rgba(0,0,0,0.75)"};
   transition: all 0.3s;
   &:hover{
-    box-shadow: 8px 7px 14px 3px rgba(0,0,0,0.75);
+  box-shadow: ${({ selected }: { selected: boolean }) =>
+    selected
+      ? "10px 9px 14px 3px rgba(104,28,0,0.75)"
+      : "10px 9px 14px 3px rgba(0,0,0,0.75)"};
   }
 `;
 const SubjectText = styled.div`
