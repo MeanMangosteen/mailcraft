@@ -9,7 +9,8 @@ import { useLocation, Redirect } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useMail } from "../reducers/mail";
 import { scale } from "vega";
-import { OPACITY } from "vega-lite/build/src/channel";
+import OauthPopup from "react-oauth-popup";
+import Axios from "axios";
 
 interface DeclutterProps {
   className?: string;
@@ -110,13 +111,7 @@ const GlobalStyle = createGlobalStyle`
 
     background: radial-gradient(
       circle closest-side,
-      rgba(106, 98, 255, 1) 0%,
-      rgba(182, 36, 255, 1) 7%,
-      rgba(255, 0, 121, 1) 31%,
-      rgba(255, 179, 0, 1) 80%,
-      rgba(255, 206, 89, 0.8239670868347339) 94%,
-      rgba(255, 255, 255, 1) 100%
-    );
+      rgba(106,98,255,1) 0%, rgba(182,36,255,1) 7%, rgba(255,0,121,1) 31%, rgba(255,179,0,1) 70%, rgba(255,206,89,0.8239670868347339) 86%, rgba(255,255,255,1) 100%);
     /* transform: scale(0); */
     opacity:  ${({ hovered, clicked }: { hovered: boolean; clicked }) =>
       clicked || hovered ? "1" : "0"};
@@ -126,7 +121,7 @@ const GlobalStyle = createGlobalStyle`
     }: {
       hovered: boolean;
       clicked: boolean;
-    }) => (clicked ? "scale(3)" : hovered ? "scale(1)" : "scale(0)")};
+    }) => (clicked ? "scale(4)" : hovered ? "scale(1)" : "scale(0)")};
     transition: transform 0.2s ease-in, opacity 0.3s ease-in;
   }
 `;
@@ -243,6 +238,24 @@ const Login = () => {
     setClicked(true);
   };
 
+  const handleOAuthClose = () => {
+    console.log("oauth close");
+  };
+
+  const handleOAuthCode = (code, params) => {
+    console.log("oauth handle code");
+    console.log(code, params);
+
+    Axios.post("http://localhost:4000/OAuthConfirm", {
+      code,
+    })
+      .then(() => {
+        setCookie("logged_in", true);
+      })
+      .catch((err) => {
+        console.log("error", err);
+      });
+  };
   return (
     <LoginContainer>
       <GlobalStyle hovered={hovered} clicked={clicked} />
@@ -251,7 +264,13 @@ const Login = () => {
         onMouseLeave={() => setHovered(false)}
         onClick={handleClick}
       >
-        <LoginLink href={oAuthUrl}>Log me in!</LoginLink>
+        <OauthPopup
+          url={oAuthUrl}
+          onCode={handleOAuthCode}
+          onClose={handleOAuthClose}
+        >
+          <LoginLink href={oAuthUrl}>Log me in!</LoginLink>
+        </OauthPopup>
         {/* <LoginBackground /> */}
       </LoginText>
     </LoginContainer>
