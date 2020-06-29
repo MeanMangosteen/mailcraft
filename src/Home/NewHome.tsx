@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from "react";
 import styled from "styled-components";
-import { ShowTextWithStyle, StylishItem } from "../ShowTextWithStyle";
 import { SwitchTransition, Transition } from "react-transition-group";
 import { Episode1, Episode2, Episode3 } from "./Episodes";
 
@@ -22,26 +21,8 @@ export const Home = () => {
           }
         </Transition>
       </SwitchTransition>
-      {/* </TextContainer>
-      <PictureContainer>
-        <SwitchTransition mode={"out-in"}>
-          <Transition key={currEpisode} timeout={200}>
-            {(state) => {}}
-          </Transition>
-        </SwitchTransition>
-      </PictureContainer> */}
     </HomeContainer>
   );
 };
-
-const TextContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const PictureContainer = styled.div`
-  background: red;
-`;
 
 const HomeContainer = styled.div``;

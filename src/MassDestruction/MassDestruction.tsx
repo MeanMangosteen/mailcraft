@@ -3,7 +3,7 @@ import { useLocation, Redirect } from "react-router-dom";
 import queryString from "query-string";
 import { useMail } from "../reducers/mail";
 import styled from "styled-components";
-import { MailCard } from "./MailCard";
+import { MailCard, MailCardContainer } from "./MailCard";
 
 const MassDestructionContainer = styled.div`
   display: grid;
@@ -12,6 +12,9 @@ const MassDestructionContainer = styled.div`
 
 const CardsContainer = styled.div`
   overflow-y: scroll;
+  > * {
+    flex: 0 0 32%;
+  }
 `;
 
 const ControlsContainer = styled.div`
@@ -189,7 +192,7 @@ const PageContainer = styled.div`
   /* display: flex;
   flex-wrap: wrap; */
   display: grid;
-  grid-gap: 2rem;
+  grid-gap: 2rem 6rem;
   grid-template-columns: repeat(3, 1fr);
   height: 100%;
   padding: 2rem;

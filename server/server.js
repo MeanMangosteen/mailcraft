@@ -17,6 +17,7 @@ const auth = require("./auth");
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const fs = require("fs");
 const app = express();
 const ImapClient = require("emailjs-imap-client").default;
 const simpleParser = require("mailparser").simpleParser;
@@ -31,6 +32,8 @@ const scopes = ["https://mail.google.com/"];
 let gmail = null;
 let profile = null;
 let client = null; // TODO: change name to imap
+
+const demo = true;
 
 app.get("/OAuthUrl", (req, res) => {
   const { pathname } = req.query;
@@ -147,6 +150,10 @@ app.post("/read-mail", async (req, res) => {
 // OMGTODO: follow this variable. No more needs to be said.
 let authDeets = {};
 app.get("/mail", async (req, res) => {
+  if (demo) {
+    const messages = fs.readFileSync('demo.json');
+    return res.status(200).send(messages);
+  }
   if (!gmail) {
     res.sendStatus(401);
     return;
@@ -204,6 +211,8 @@ app.get("/mail", async (req, res) => {
 
   await Promise.all(parsePromises);
 
+  const data = JSON.stringify(messages);
+  fs.writeFileSync('demo.json', data);
   res.status(200).send(messages);
   // try {
   //   const mail = [];
