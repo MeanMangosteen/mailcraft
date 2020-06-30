@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 export const MailThumbnail = ({ parentH, parentW, html }) => {
   const [iframeStyles, setIframeStyles] = useState<any>(null);
+  const [containerStyles, setContainerStyles] = useState<any>(null);
   const [contentDim, setContentDim] = useState<any>(null);
 
   useEffect(() => {
@@ -13,10 +14,13 @@ export const MailThumbnail = ({ parentH, parentW, html }) => {
     // contentH > contentW ? parentH / contentH : parentW / contentW;
     const lMargin = (parentW - contentW * scaleFactor) / 2;
     setIframeStyles({
-      width: contentW,
+      width: parentW * (1 / scaleFactor),
       height: contentH,
-      transform: `scale(${scaleFactor}) translate(-50%, -50%)`,
+      // transform: `scale(${scaleFactor}) translate(-50%, -50%)`,
       // marginLeft: lMargin,
+    });
+    setContainerStyles({
+      transform: `scale(${scaleFactor}) translate(-50%, -50%)`,
     });
   }, [contentDim, parentH, parentW]);
 
@@ -39,24 +43,59 @@ export const MailThumbnail = ({ parentH, parentW, html }) => {
   };
 
   return (
-    <ThumbnailIframe
-      title="Hey, look an iframe!"
-      srcDoc={html}
-      width="100%"
-      height="100%"
-      style={iframeStyles && { ...iframeStyles }}
-      onLoad={handleLoad}
-    />
-    // </ThumbnailIframeWrapper>
+    <MailThumbnailContainer style={containerStyles && { ...containerStyles }}>
+      <ThumbnailIframe
+        title="Hey, look an iframe!"
+        srcDoc={html}
+        width="100%"
+        height="100%"
+        style={iframeStyles && { ...iframeStyles }}
+        onLoad={handleLoad}
+      />
+      <ThumbnailOverlay />
+    </MailThumbnailContainer>
   );
 };
 
-const ThumbnailIframe = styled.iframe`
-  /* flex: 0 0 32%; */
-  display: block;
+const MailThumbnailContainer = styled.div`
   position: absolute;
   transform-origin: top left;
   top: 50%;
   left: 25%;
+  /* transform: translate(-50%, -50%); */
+  /* &:hover::after {
+    content: "";
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background: red;
+  } */
 `;
 
+const ThumbnailIframe = styled.iframe`
+  /* flex: 0 0 32%; */
+  display: block;
+  border: none;
+
+  /* position: absolute;
+  transform-origin: top left;
+  top: 50%;
+  left: 25%;
+  transform: translate(-50%, -50%); */
+`;
+
+const ThumbnailOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  transition: background 0.4s ease-in-out;
+  border-radius: 5%;
+
+  &:hover {
+    background: #00000085;
+  }
+`;

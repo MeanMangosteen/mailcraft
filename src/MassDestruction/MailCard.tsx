@@ -5,19 +5,21 @@ import styled from "styled-components";
 
 export const MailCard = ({ html, subject, selected, index, onClick }) => {
   return (
-    <SizeMe monitorHeight>
-      {({ size }) => (
-        <MailCardContainer selected={selected} onClick={onClick(index)}>
-          <MailThumbnail
-            parentH={size?.height && size.height * 0.95}
-            parentW={size.width}
-            html={html}
-          />
-          <Divider />
-          <SubjectText>{subject}</SubjectText>
-        </MailCardContainer>
-      )}
-    </SizeMe>
+    <MailCardContainer selected={selected} onClick={onClick(index)}>
+      <SizeMe monitorHeight>
+        {({ size }) => (
+          <ContentWrapper>
+            <MailThumbnail
+              parentH={size?.height && size.height}
+              parentW={size.width && size.width / 2}
+              html={html}
+            />
+            <Divider />
+            <SubjectText>{subject}</SubjectText>
+          </ContentWrapper>
+        )}
+      </SizeMe>
+    </MailCardContainer>
   );
 };
 
@@ -35,6 +37,9 @@ export const MailCardContainer = styled.div`
         ? "10px 9px 14px 3px rgba(104,28,0,0.75)"
         : "10px 9px 14px 3px rgba(0,0,0,0.75)"};
   }
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
 `;
 
 const SubjectText = styled.div`
@@ -65,4 +70,11 @@ const Divider = styled.div`
   width: 0;
   border-right: 1px solid;
   border-radius: 50%;
+`;
+
+const ContentWrapper = styled.div`
+  position: relative;
+  box-sizing: content-box;
+  flex-grow: 1;
+  margin: 0.3rem;
 `;
