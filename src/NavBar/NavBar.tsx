@@ -117,10 +117,11 @@ const HomeIconWrapper = styled.div`
   position: relative;
   /* padding: 1rem; */
 
-  width: 90%;
+  width: 100%;
   height: auto;
   /* margin: 1rem; */
 
+  box-sizing: border-box;
   border: 5px solid;
   border-image: conic-gradient(red, yellow, lime, aqua, blue, magenta, red) 1;
 
