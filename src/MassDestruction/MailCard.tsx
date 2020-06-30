@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { SizeMe } from "react-sizeme";
 import { MailThumbnail } from "./MailThumbnail";
 import styled from "styled-components";
+import { Transition } from "react-transition-group";
 
 export const MailCard = ({ html, subject, selected, index, onClick }) => {
+  const [expandIframe, setExpandIframe] = useState<boolean>(false);
+
   return (
     <MailCardContainer selected={selected} onClick={onClick(index)}>
       <SizeMe monitorHeight>
@@ -13,15 +16,73 @@ export const MailCard = ({ html, subject, selected, index, onClick }) => {
               parentH={size?.height && size.height}
               parentW={size.width && size.width / 2}
               html={html}
+              onClick={() => setExpandIframe(true)}
             />
             <Divider />
             <SubjectText>{subject}</SubjectText>
           </ContentWrapper>
         )}
       </SizeMe>
+      <ExpandedIframe
+        show={expandIframe}
+        html={html}
+        onClose={() => setExpandIframe(false)}
+      />
     </MailCardContainer>
   );
 };
+
+const ExpandedIframe = ({ html, onClose, show }) => {
+  return (
+    <Transition appear mountOnEnter unmountOnExit in={show} timeout={300}>
+      {(state) => (
+        <ExpandedIframeContainer
+          className={state}
+          onClick={onClose}
+          state={state}
+        >
+          <Iframe srcDoc={html} />
+        </ExpandedIframeContainer>
+      )}
+    </Transition>
+  );
+};
+
+const Iframe = styled.iframe`
+  height: 90%;
+  width: 75%;
+`;
+const ExpandedIframeContainer = styled.div`
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  background: #00000085;
+  z-index: 100;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* display: ${({ state }: { state: any }) =>
+    state === "appear" ? "initial" : "none"}; */
+
+  /* transition: opacity 0.8 ease-in-out;
+  opacity: ${({ state }: { state: any }) => (state === "entered" ? 1 : 0)}; */
+  transition: 0.2s;
+  /* Hidden init state */
+  opacity: 0;
+  &.enter,
+  &.entered {
+    /* Animate in state */
+    opacity: 1;
+  }
+  &.exit,
+  &.exited {
+    /* Animate out state */
+    opacity: 0;
+  }
+`;
 
 export const MailCardContainer = styled.div`
   margin: 1px;

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled, { keyframes, css } from "styled-components";
 import { Link, NavLink } from "react-router-dom";
 import { GiWheelbarrow, GiMicroscope } from "react-icons/gi";
+import Emoji from "react-emoji-render";
 
 interface NavBarProps {}
 
@@ -50,12 +51,26 @@ const slideFromLeft = keyframes`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
 `;
 
-const DeclutterIcon = styled(GiWheelbarrow)`
+const DeclutterIcon = styled(Emoji)`
   width: 100%;
   height: auto;
+  font-size: 4rem;
+  animation: ${(props: { hovered: boolean }) =>
+    props.hovered
+      ? css`
+          ${grow} 0.5s ease-in-out 1
+        `
+      : undefined};
+  text-align: center;
+`;
+
+const AnalyseIcon = styled(Emoji)`
+  width: 100%;
+  height: auto;
+  font-size: 4rem;
 
   animation: ${(props: { hovered: boolean }) =>
     props.hovered
@@ -63,23 +78,12 @@ const DeclutterIcon = styled(GiWheelbarrow)`
           ${grow} 0.5s ease-in-out 1
         `
       : undefined};
-`;
-
-const AnalyseIcon = styled(GiMicroscope)`
-  width: 100%;
-  height: auto;
-
-  animation: ${(props: { hovered: boolean }) =>
-    props.hovered
-      ? css`
-          ${grow} 0.5s ease-in-out 1
-        `
-      : undefined};
+  text-align: center;
 `;
 
 const NavLinkText = styled.h1`
   position: absolute;
-  z-index: -1;
+  z-index: 5;
   margin: 0;
   animation: ${(props: { hovered: boolean }) =>
     props.hovered
@@ -106,6 +110,48 @@ const BaseNavLink = styled(NavLink)`
   text-decoration: inherit;
 `;
 
+const HomeIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+
+  position: relative;
+  /* padding: 1rem; */
+
+  width: 90%;
+  height: auto;
+  /* margin: 1rem; */
+
+  border: 5px solid;
+  border-image: conic-gradient(red, yellow, lime, aqua, blue, magenta, red) 1;
+
+  transform-origin: center;
+  transition: 0.2s;
+  &:hover {
+    transform: scale(0.8);
+    font-size: 8rem;
+    /* border: 1px solid; */
+    /* background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red) 1; */
+  }
+`;
+const HomeIcon = styled(Emoji)`
+  width: 100%;
+  height: auto;
+  font-size: 4rem;
+  text-align: center;
+
+  /* &::after {
+    content: "";
+    border-bottom: 1px solid #888;
+    border-radius: 100%;
+    width: 90%;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 1px;
+  } */
+`;
+
 const NavBar = styled(({}: NavBarProps) => {
   const [hovered, setHovered] = useState({ declutter: false, analyse: false });
   const handleMouseEnter = (option: "declutter" | "analyse") => () => {
@@ -119,6 +165,9 @@ const NavBar = styled(({}: NavBarProps) => {
   };
   return (
     <Container>
+      <HomeIconWrapper>
+        <HomeIcon text=":postbox:" />
+      </HomeIconWrapper>
       <BaseNavLink
         to="/declutter"
         activeStyle={{ color: "red" }}
@@ -126,7 +175,7 @@ const NavBar = styled(({}: NavBarProps) => {
         onMouseLeave={handleMouseLeave("declutter")}
       >
         <NavLinkWrapper>
-          <DeclutterIcon hovered={hovered["declutter"]} />
+          <DeclutterIcon hovered={hovered["declutter"]} text=":bowling:" />
           <NavLinkText hovered={hovered["declutter"]}>Declutter</NavLinkText>
         </NavLinkWrapper>
       </BaseNavLink>
@@ -137,7 +186,7 @@ const NavBar = styled(({}: NavBarProps) => {
         onMouseLeave={handleMouseLeave("analyse")}
       >
         <NavLinkWrapper>
-          <AnalyseIcon hovered={hovered["analyse"]} />
+          <AnalyseIcon hovered={hovered["analyse"]} text=":microscope:" />
           <NavLinkText hovered={hovered["analyse"]}>Analyse</NavLinkText>
         </NavLinkWrapper>
         {/* <h3>Analyse</h3> */}

@@ -41,7 +41,7 @@ const App = styled(({ className }) => {
   height: 100vh;
 
   display: grid;
-  grid-template-columns: 6% auto;
+  grid-template-columns: 4% auto;
   grid-template-rows: auto;
   grid-template-areas: "nav-bar content";
 `;

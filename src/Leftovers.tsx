@@ -38,6 +38,7 @@ export const Leftovers = () => {
                 parentH={size?.height && size.height * 0.85}
                 parentW={size.width}
                 html={mail[0]["body[]"].html}
+                onClick={() => {}}
               />
               <SubjectText
                 style={{

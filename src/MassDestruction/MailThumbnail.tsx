@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-export const MailThumbnail = ({ parentH, parentW, html }) => {
+import { RiZoomInLine } from "react-icons/ri";
+export const MailThumbnail = ({ parentH, parentW, html, onClick }) => {
   const [iframeStyles, setIframeStyles] = useState<any>(null);
   const [containerStyles, setContainerStyles] = useState<any>(null);
   const [contentDim, setContentDim] = useState<any>(null);
+  // const [expandIframe, setExpandIframe] = useState<boolean>(false);
 
   useEffect(() => {
     if (!contentDim) return; // iframe hasn't loaded yet
@@ -42,8 +44,17 @@ export const MailThumbnail = ({ parentH, parentW, html }) => {
     something.target.contentWindow.document.body.style.overflow = "hidden";
   };
 
+  const handleClick = (event) => {
+    event.preventDefault();
+    event.stopPropagation(); // don't uncheck the card
+    onClick();
+  };
+
   return (
-    <MailThumbnailContainer style={containerStyles && { ...containerStyles }}>
+    <MailThumbnailContainer
+      style={containerStyles && { ...containerStyles }}
+      onClick={handleClick}
+    >
       <ThumbnailIframe
         title="Hey, look an iframe!"
         srcDoc={html}
@@ -62,16 +73,7 @@ const MailThumbnailContainer = styled.div`
   transform-origin: top left;
   top: 50%;
   left: 25%;
-  /* transform: translate(-50%, -50%); */
-  /* &:hover::after {
-    content: "";
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    background: red;
-  } */
+
 `;
 
 const ThumbnailIframe = styled.iframe`
@@ -86,7 +88,14 @@ const ThumbnailIframe = styled.iframe`
   transform: translate(-50%, -50%); */
 `;
 
-const ThumbnailOverlay = styled.div`
+const ThumbnailOverlay = () => {
+  return (
+    <ThumbnailOverlayContainer>
+      <ZoomIcon />
+    </ThumbnailOverlayContainer>
+  );
+};
+const ThumbnailOverlayContainer = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -95,7 +104,22 @@ const ThumbnailOverlay = styled.div`
   transition: background 0.4s ease-in-out;
   border-radius: 5%;
 
+  display: flex;
+  justify-content: center;
+  align-items: center;
   &:hover {
     background: #00000085;
+  }
+`;
+
+const ZoomIcon = styled(RiZoomInLine)`
+  height: 50%;
+  width: 50%;
+  color: #e4e0e0;
+
+  transition: opacity 0.45s;
+  opacity: 0;
+  ${ThumbnailOverlayContainer}:hover & {
+    opacity: 1;
   }
 `;
