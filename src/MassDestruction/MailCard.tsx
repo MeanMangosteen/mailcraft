@@ -9,96 +9,36 @@ export const MailCard = ({ html, subject, selected, index, onClick }) => {
       {({ size }) => (
         <MailCardContainer selected={selected} onClick={onClick(index)}>
           <MailThumbnail
-            parentH={size?.height && size.height * 0.85}
+            parentH={size?.height && size.height * 0.95}
             parentW={size.width}
             html={html}
           />
-          <SubjectText
-            style={{
-              maxHeight: size?.height ? size.height * 0.15 : undefined,
-            }}
-          >
-            {subject}
-          </SubjectText>
+          <Divider />
+          <SubjectText>{subject}</SubjectText>
         </MailCardContainer>
       )}
     </SizeMe>
   );
 };
 
-const LuckyDuckyAura = styled.div`
-  background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(133, 255, 231, 1) 15%,
-      rgba(106, 255, 226, 1) 50%,
-      rgba(157, 255, 236, 1) 85%,
-      rgba(255, 255, 255, 1) 100%
-    ),
-    linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(133, 255, 231, 1) 15%,
-      rgba(106, 255, 226, 1) 50%,
-      rgba(157, 255, 236, 1) 85%,
-      rgba(255, 255, 255, 1) 100%
-    );
-  background-blend-mode: hard-light;
-`;
-
-const MegaWrapper = styled.div`
-  display: flex;
-  > * {
-    flex-grow: 1;
-  }
-  padding: 6rem;
-  box-shadow: inset 0px 0px 9px 10px #ffffff;
-`;
-
-const Background = styled.div`
-  background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(133, 255, 231, 1) 15%,
-      rgba(106, 255, 226, 1) 50%,
-      rgba(157, 255, 236, 1) 85%,
-      rgba(255, 255, 255, 1) 100%
-    ),
-    linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(133, 255, 231, 1) 15%,
-      rgba(106, 255, 226, 1) 50%,
-      rgba(157, 255, 236, 1) 85%,
-      rgba(255, 255, 255, 1) 100%
-    );
-  background-blend-mode: hard-light;
-`;
-
 export const MailCardContainer = styled.div`
   margin: 1px;
-  /* box-shadow: 2px 4px 10px #848484; */
-  /* box-shadow: inset -1px 3px 8px 5px #1f87ff, 2px 5px 16px 0px #0b325e,
-    5px 5px 15px 5px rgba(0, 0, 0, 0); */
   border-radius: 10px;
-  /* box-shadow: ${({ selected }: { selected: boolean }) =>
-    selected
-      ? "2px 5px 16px 0px #0b325e, 5px 5px 15px 5px rgba(0, 0, 0, 0)"
-      : "none"}; */
   box-shadow: ${({ selected }: { selected: boolean }) =>
     selected
       ? "2px 2px 5px 1px rgba(138,0,0,0.75)"
       : "2px 2px 5px 0px rgba(0,0,0,0.75)"};
   transition: all 0.3s;
-  &:hover{
-  box-shadow: ${({ selected }: { selected: boolean }) =>
-    selected
-      ? "10px 9px 14px 3px rgba(104,28,0,0.75)"
-      : "10px 9px 14px 3px rgba(0,0,0,0.75)"};
+  &:hover {
+    box-shadow: ${({ selected }: { selected: boolean }) =>
+      selected
+        ? "10px 9px 14px 3px rgba(104,28,0,0.75)"
+        : "10px 9px 14px 3px rgba(0,0,0,0.75)"};
   }
 `;
+
 const SubjectText = styled.div`
-  width: 90%;
+  width: 40%;
   box-sizing: border-box;
 
   font-size: 1.8rem;
@@ -106,10 +46,23 @@ const SubjectText = styled.div`
 
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  word-break: break-word;
 
   position: absolute;
   margin: 0;
-  margin-left: 1rem;
-  bottom: 0;
+  top: 50%;
+  left: 75%;
+
+  transform: translate(-50%, -50%);
+`;
+
+const Divider = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 90%;
+  width: 0;
+  border-right: 1px solid;
+  border-radius: 50%;
 `;

@@ -15,8 +15,8 @@ export const MailThumbnail = ({ parentH, parentW, html }) => {
     setIframeStyles({
       width: contentW,
       height: contentH,
-      transform: `scale(${scaleFactor})`,
-      marginLeft: lMargin,
+      transform: `scale(${scaleFactor}) translate(-50%, -50%)`,
+      // marginLeft: lMargin,
     });
   }, [contentDim, parentH, parentW]);
 
@@ -56,4 +56,7 @@ const ThumbnailIframe = styled.iframe`
   display: block;
   position: absolute;
   transform-origin: top left;
+  top: 50%;
+  left: 25%;
 `;
+
