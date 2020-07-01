@@ -9,11 +9,13 @@ import { MailCard } from "./MailCard";
 const MassDestruction = () => {
   const location = useLocation();
   const qParams = queryString.parse(location.search);
-  const { mail, readMail, spamMail, trashMail } = useMail();
+  const { mail, readMail, spamMail, trashMail, info } = useMail();
   const [victimEmails, setVictimEmails] = useState<any[]>([]);
   const [mailPages, setMailPages] = useState<any[]>([]);
   const [selected, setSelected] = useState<Object>({});
   const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
+
+  console.log("mail info", info);
 
   useEffect(() => {
     /**

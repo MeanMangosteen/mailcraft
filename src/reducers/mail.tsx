@@ -14,7 +14,7 @@ type MailAction = "store";
 export const MailContext: React.Context<[
   any,
   (action) => void
-]> = React.createContext([null, (action) => {}]);
+]> = React.createContext([null, (action) => {}]); // initial value of [state, dispatchFn]
 
 // TODO: setMail may be redundant
 // TODO: rename folder to utils
@@ -80,18 +80,40 @@ export const useMail = () => {
       });
   }, [cookies]);
 
-  return { mail: state, setMail, readMail, spamMail, trashMail };
+  return {
+    mail: state?.mail,
+    info: state?.info,
+    setMail,
+    readMail,
+    spamMail,
+    trashMail,
+  };
 };
+
 export const MailProvider = ({ children }) => {
   const reducer = (state, action) => {
     switch (action.type) {
       case "store":
-        return action.mail;
+        return {
+          mail: action.mail,
+          info: {
+            total: action.mail.length,
+            read: 0,
+          },
+        };
       case "remove":
-        // Get all mail which isn't in the uid array
-        return state.filter((mail) => {
+        const filtered = state.mail.filter((mail) => {
           return !action.uids.includes(mail.uid);
         });
+
+        // Get all mail which isn't in the uid array
+        return {
+          mail: filtered,
+          info: {
+            ...state.info,
+            read: state.info.read + (state.mail.length - filtered.length),
+          },
+        };
       default:
         throw Error(
           "Something bad has happend, I have no idea why...Good luck!"
@@ -99,7 +121,7 @@ export const MailProvider = ({ children }) => {
     }
   };
 
-  const [mailState, dispatch] = useReducer(reducer, null);
+  const [mailState, dispatch] = useReducer<any>(reducer, null);
 
   return (
     <MailContext.Provider value={[mailState, dispatch]}>

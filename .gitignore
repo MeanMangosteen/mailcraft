@@ -27,3 +27,5 @@ server/oauth2.keys.json
 out
 
 /images
+
+demo.json
