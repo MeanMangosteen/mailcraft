@@ -15,14 +15,16 @@ const StyledAppRouter = styled(AppRouter)`
 `;
 
 export const UserContext = React.createContext(false);
-export const MailContext: React.Context<{
-  mail: any;
-  setMail: (mail) => void;
-}> = React.createContext({ mail: null, setMail: (mail) => {} });
+// OMGTODO: delete if not needed;
+// export const MailContext: React.Context<{
+//   mail: any;
+//   setMail: (mail) => void;
+// }> = React.createContext({ mail: null, setMail: (mail) => {} });
 
 const App = styled(({ className }) => {
-  const [mail, setMail] = useState(null);
-  const mailCtxInitial = { mail, setMail };
+  // OMGTODO: delete if not needed;
+  // const [mail, setMail] = useState(null);
+  // const mailCtxInitial = { mail, setMail };
 
   return (
     <div className={className}>
