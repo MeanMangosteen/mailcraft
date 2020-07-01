@@ -18,7 +18,6 @@ export const MailCard = ({ html, subject, selected, index, onClick }) => {
               html={html}
               onClick={() => setExpandIframe(true)}
             />
-            <Divider />
             <SubjectText>{subject}</SubjectText>
           </ContentWrapper>
         )}
@@ -39,11 +38,7 @@ const ExpandedIframe = ({ html, onClose, show }) => {
   return (
     <Transition appear mountOnEnter unmountOnExit in={show} timeout={300}>
       {(state) => (
-        <ExpandedIframeContainer
-          className={state}
-          onClick={onClose}
-          state={state}
-        >
+        <ExpandedIframeContainer className={state} onClick={onClose}>
           <Iframe srcDoc={html} />
         </ExpandedIframeContainer>
       )}
@@ -67,12 +62,7 @@ const ExpandedIframeContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  /* display: ${({ state }: { state: any }) =>
-    state === "appear" ? "initial" : "none"}; */
-
-  /* transition: opacity 0.8 ease-in-out;
-  opacity: ${({ state }: { state: any }) => (state === "entered" ? 1 : 0)}; */
-  transition: 0.2s;
+  transition: opacity 0.3s ease-in-out;
   /* Hidden init state */
   opacity: 0;
   &.enter,
@@ -123,17 +113,6 @@ const SubjectText = styled.div`
   left: 75%;
 
   transform: translate(-50%, -50%);
-`;
-
-const Divider = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  height: 90%;
-  width: 0;
-  border-right: 1px solid;
-  border-radius: 50%;
 `;
 
 const ContentWrapper = styled.div`
