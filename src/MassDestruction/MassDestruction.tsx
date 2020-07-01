@@ -194,6 +194,7 @@ const PageContainer = styled.div`
   display: grid;
   grid-gap: 2rem 6rem;
   grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   height: 100%;
   padding: 2rem;
   box-sizing: border-box;

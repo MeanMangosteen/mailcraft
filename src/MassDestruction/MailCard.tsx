@@ -26,7 +26,10 @@ export const MailCard = ({ html, subject, selected, index, onClick }) => {
       <ExpandedIframe
         show={expandIframe}
         html={html}
-        onClose={() => setExpandIframe(false)}
+        onClose={(e) => {
+          e.stopPropagation();
+          setExpandIframe(false);
+        }}
       />
     </MailCardContainer>
   );
