@@ -100,35 +100,56 @@ const ProgressLife = keyframes`
 
 const ProgressPowa = styled.div`
   height: 100%;
-  width: 150%;
-  /* background: blue; */
+  width: 125%;
   position: absolute;
-  z-index: -1;
+  z-index: -2;
+
   animation: ${ProgressLife} 0.5s linear infinite running;
-  background: repeating-linear-gradient(120deg, rgb(0, 255, 68) 0%, rgb(255, 193, 95) 9%);
+  background: repeating-linear-gradient(
+    120deg,
+    rgb(0, 255, 68) 0%,
+    rgb(255, 193, 95) 9%
+  );
+  filter: blur(10px); /* Blend the colours */
 `;
 
 const ProgressBar = styled.div`
   flex-basis: 8%;
   width: 50%;
-  /* background: red; */
   border-radius: 15px;
   position: relative;
-  box-shadow: -500px 0px 3px 10px #FFFFFF, 500px 0px 3px 10px #FFFFFF;
 
-  /* &::after {
+  /** 
+  This serves to create a mask around the progress bar.
+  It masks the sliding PROGRESS POWA on the x-axis.
+  It masks the colour bleed of the blur on PROGRESS POWA on the y-axis.
+  */
+  box-shadow: -400px 0px 3px 35px #ffffff, 400px 0px 3px 35px #ffffff;
+
+  &::before {
+    /** This creates the final progress bar shadow */
     content: "";
     position: absolute;
-    min-height: 100%;
-    min-width: 100%;
-    top: 0;
-    left: 0;
-    border-right: 100vw solid white;
-    border-left: 100px solid white;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  } */
+    height: 100%;
+    width: 100%;
+    border-radius: 15px;
+
+    box-shadow: 0px 10px 13px -7px #000000,
+      inset 1px 0px 23px 10px rgba(58, 58, 58, 0);
+  }
+
+  &::after {
+    /** This is the progress 'remaining' bar. It's grey  */
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+
+    background: grey;
+    transform: translateX(100px);
+    z-index: -2;
+    box-shadow: inset 1px 0px 23px 10px #3a3a3a;
+  }
 `;
 
 const PageContainer = styled.div`
