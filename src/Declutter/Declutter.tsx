@@ -92,25 +92,40 @@ const StyledPieChart = styled(PieChart)`
 
 const ProgressLife = keyframes`
   0% { 
-    transform: translateX(-25%);
+    transform: translate3d(-30%, 0, 0);
   }
 
   100% { 
-    transform: translateX(0%);
+    transform: translate3d(0%);
   }
 `;
 
 const ProgressPowa = styled.div`
   height: 100%;
-  width: 125%;
+  width: 200%;
   position: absolute;
   z-index: -2;
 
-  animation: ${ProgressLife} 0.5s linear infinite running;
-  background: repeating-linear-gradient(
+  animation: ${ProgressLife} 1s linear infinite running;
+  will-change: transform;
+  /* background: repeating-linear-gradient(
     120deg,
     rgb(0, 255, 68) 0%,
     rgb(255, 193, 95) 9%
+  ); */
+  /* background: repeating-linear-gradient(
+    120deg,
+    rgb(221, 0, 0) 0%,
+    rgb(206, 215, 0) 50%,
+    rgb(76, 255, 0) 100%
+  ); */
+  /* background:repeating-linear-gradient(120deg, rgb(221, 0, 0) 0%, rgb(206, 215, 0) 25%, rgb(76, 255, 0) 50%, rgb(221, 0, 0) 100%); */
+  background: repeating-linear-gradient(
+    120deg,
+    rgb(221, 0, 0) 0%,
+    rgb(206, 215, 0) 10%,
+    rgb(76, 255, 0) 20%,
+    rgb(221, 0, 0) 30%
   );
   filter: blur(10px); /* Blend the colours */
 `;
@@ -123,7 +138,7 @@ const ProgressRemaining = styled.div`
   width: 100%;
 
   background: grey;
-  transform: translateX(50%);
+  transform: translate3d(95%, 0, 0);
   z-index: -2;
   box-shadow: inset 1px 0px 23px 10px #3a3a3a;
 `;
@@ -137,7 +152,7 @@ const ProgressBarMask = styled.div`
   position: absolute;
   height: 100%;
   width: 100%;
-  box-shadow: -400px 0px 3px 100px #ffffff, 400px 0px 3px 100px #ffffff;
+  box-shadow: -400px 0px 3px 100vw #ffffff, 400px 0px 3px 100vw #ffffff;
   z-index: -1;
   border-radius: 15px;
 `;
