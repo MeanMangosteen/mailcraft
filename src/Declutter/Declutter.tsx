@@ -71,6 +71,8 @@ const Declutter = ({ className = "declutter" }) => {
           />
           <ProgressBar>
             <ProgressPowa />
+            <ProgressRemaining />
+            <ProgressBarMask />
           </ProgressBar>
         </Fragment>
       )}
@@ -113,43 +115,40 @@ const ProgressPowa = styled.div`
   filter: blur(10px); /* Blend the colours */
 `;
 
+const ProgressRemaining = styled.div`
+  /** This is the progress 'remaining' bar. It's grey  */
+  /* content: ""; */
+  position: absolute;
+  height: 100%;
+  width: 100%;
+
+  background: grey;
+  transform: translateX(50%);
+  z-index: -2;
+  box-shadow: inset 1px 0px 23px 10px #3a3a3a;
+`;
+
+const ProgressBarMask = styled.div`
+  /** 
+  This serves to create a mask around the progress bar.
+  It masks the sliding PROGRESS POWA on the x-axis.
+  It masks the colour bleed of the blur on PROGRESS POWA on the y-axis.
+  */
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  box-shadow: -400px 0px 3px 100px #ffffff, 400px 0px 3px 100px #ffffff;
+  z-index: -1;
+  border-radius: 15px;
+`;
 const ProgressBar = styled.div`
   flex-basis: 8%;
   width: 50%;
   border-radius: 15px;
   position: relative;
 
-  /** 
-  This serves to create a mask around the progress bar.
-  It masks the sliding PROGRESS POWA on the x-axis.
-  It masks the colour bleed of the blur on PROGRESS POWA on the y-axis.
-  */
-  box-shadow: -400px 0px 3px 35px #ffffff, 400px 0px 3px 35px #ffffff;
-
-  &::before {
-    /** This creates the final progress bar shadow */
-    content: "";
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    border-radius: 15px;
-
-    box-shadow: 0px 10px 13px -7px #000000,
-      inset 1px 0px 23px 10px rgba(58, 58, 58, 0);
-  }
-
-  &::after {
-    /** This is the progress 'remaining' bar. It's grey  */
-    content: "";
-    position: absolute;
-    height: 100%;
-    width: 100%;
-
-    background: grey;
-    transform: translateX(100px);
-    z-index: -2;
-    box-shadow: inset 1px 0px 23px 10px #3a3a3a;
-  }
+  box-shadow: 0px 10px 13px -7px #000000,
+    inset 1px 0px 23px 10px rgba(58, 58, 58, 0);
 `;
 
 const PageContainer = styled.div`
