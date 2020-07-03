@@ -4,21 +4,20 @@ import styled from "styled-components";
 export const Playground = () => {
   const [mousePos, setMousePos] = useState<any>();
   const handleMouse = (event) => {
-    const insideBox =
-      event.pageX > event.currentTarget.offsetLeft &&
-      event.pageY > event.currentTarget.offsetTop;
-
-    if (insideBox) {
-      const mouseX =
-        ((event.pageX - event.currentTarget.offsetLeft) /
-          event.currentTarget.offsetWidth) *
-        100;
-      const mouseY =
-        ((event.pageY - event.currentTarget.offsetTop) /
-          event.currentTarget.offsetHeight) *
-        100;
-      setMousePos({ x: mouseX, y: mouseY });
-    }
+    // const insideBox =
+    //   event.pageX > event.currentTarget.offsetLeft &&
+    //   event.pageY > event.currentTarget.offsetTop;
+    // if (insideBox) {
+    //   const mouseX =
+    //     ((event.pageX - event.currentTarget.offsetLeft) /
+    //       event.currentTarget.offsetWidth) *
+    //     100;
+    //   const mouseY =
+    //     ((event.pageY - event.currentTarget.offsetTop) /
+    //       event.currentTarget.offsetHeight) *
+    //     100;
+    //   setMousePos({ x: mouseX, y: mouseY });
+    // }
   };
 
   return (
@@ -48,6 +47,11 @@ const LuckyDucky = styled.div`
   width: 400px;
   background: cornflowerblue;
   box-shadow: 0px 0px 20px 8px white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 4rem;
+  color: green;
 `;
 
 const LuckyDuckyAura = styled.div`

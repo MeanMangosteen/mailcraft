@@ -123,6 +123,10 @@ app.post("/spam-mail", async (req, res) => {
 });
 
 app.post("/read-mail", async (req, res) => {
+  if (demo) {
+    return res.sendStatus(200);
+  }
+
   const { uids } = req.body;
   if (!uids) {
     res.status(400).send("Missing 'code' parameter");

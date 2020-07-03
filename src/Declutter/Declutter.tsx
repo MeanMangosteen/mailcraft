@@ -15,7 +15,7 @@ const Declutter = ({ className = "declutter" }) => {
   const [chartData, setChartData] = useState<any>(undefined);
   const [victim, setVictim] = useState<string | null>(null);
   const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
-  const { mail } = useMail();
+  const { mail, info } = useMail();
 
   useEffect(() => {
     if (!mail) return; // wait for mail fetch
@@ -67,13 +67,10 @@ const Declutter = ({ className = "declutter" }) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              boxShadow: "0px 10px 13px -7px #000000",
             }}
           />
-          <ProgressBar>
-            <ProgressPowa />
-            <ProgressRemaining />
-            <ProgressBarMask />
-          </ProgressBar>
+          <ProgressBar progress={info?.progress} total={info?.total} />
         </Fragment>
       )}
       {victim ? (
@@ -100,6 +97,17 @@ const ProgressLife = keyframes`
   }
 `;
 
+const ProgressBar = ({ progress, total }) => {
+  console.log("Progress Bar: ", progress, total);
+  return (
+    <ProgressBarContainer>
+      <ProgressPowa />
+      <ProgressRemaining progress={progress} total={total} />
+      <ProgressBarMask />
+    </ProgressBarContainer>
+  );
+};
+
 const ProgressPowa = styled.div`
   height: 100%;
   width: 200%;
@@ -108,18 +116,6 @@ const ProgressPowa = styled.div`
 
   animation: ${ProgressLife} 1s linear infinite running;
   will-change: transform;
-  /* background: repeating-linear-gradient(
-    120deg,
-    rgb(0, 255, 68) 0%,
-    rgb(255, 193, 95) 9%
-  ); */
-  /* background: repeating-linear-gradient(
-    120deg,
-    rgb(221, 0, 0) 0%,
-    rgb(206, 215, 0) 50%,
-    rgb(76, 255, 0) 100%
-  ); */
-  /* background:repeating-linear-gradient(120deg, rgb(221, 0, 0) 0%, rgb(206, 215, 0) 25%, rgb(76, 255, 0) 50%, rgb(221, 0, 0) 100%); */
   background: repeating-linear-gradient(
     120deg,
     rgb(221, 0, 0) 0%,
@@ -132,13 +128,13 @@ const ProgressPowa = styled.div`
 
 const ProgressRemaining = styled.div`
   /** This is the progress 'remaining' bar. It's grey  */
-  /* content: ""; */
   position: absolute;
   height: 100%;
   width: 100%;
 
   background: grey;
-  transform: translate3d(95%, 0, 0);
+  transform: ${({ progress, total }: { progress: any; total: any }) =>
+    `translate3d(${(progress / total) * 100}%, 0, 0)`};
   z-index: -2;
   box-shadow: inset 1px 0px 23px 10px #3a3a3a;
 `;
@@ -156,7 +152,8 @@ const ProgressBarMask = styled.div`
   z-index: -1;
   border-radius: 15px;
 `;
-const ProgressBar = styled.div`
+
+const ProgressBarContainer = styled.div`
   flex-basis: 8%;
   width: 50%;
   border-radius: 15px;

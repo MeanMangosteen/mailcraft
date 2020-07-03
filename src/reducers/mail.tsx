@@ -98,7 +98,7 @@ export const MailProvider = ({ children }) => {
           mail: action.mail,
           info: {
             total: action.mail.length,
-            read: 0,
+            progress: 0,
           },
         };
       case "remove":
@@ -111,7 +111,8 @@ export const MailProvider = ({ children }) => {
           mail: filtered,
           info: {
             ...state.info,
-            read: state.info.read + (state.mail.length - filtered.length),
+            progress:
+              state.info.progress + (state.mail.length - filtered.length),
           },
         };
       default:
