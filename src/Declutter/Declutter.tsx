@@ -63,16 +63,23 @@ const Declutter = ({ className = "declutter" }) => {
         <Login />
       ) : (
         <Fragment>
-          <StyledPieChart
-            data={chartData}
-            signalListeners={{ click: handlePieClick, hover: handlePieClick }}
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              filter: "drop-shadow(2px 4px 6px black)",
-            }}
-          />
+          <PieChartWrapper>
+            <ChartTitle>{`Top\nOffenders`}</ChartTitle>
+            <VictimText>
+              {`Choose your\n`}
+              <VictimTextHighlight>Victim</VictimTextHighlight>
+            </VictimText>
+            <PieChart
+              data={chartData}
+              signalListeners={{ click: handlePieClick, hover: handlePieClick }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                filter: "drop-shadow(2px 4px 6px black)",
+              }}
+            />
+          </PieChartWrapper>
           <ProgressBar progress={info?.progress} total={info?.total} />
         </Fragment>
       )}
@@ -84,10 +91,71 @@ const Declutter = ({ className = "declutter" }) => {
   );
 };
 
-const StyledPieChart = styled(PieChart)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const ChartTitle = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 6rem;
+  font-weight: bold;
+  transform: translate3d(-100%, 0, 0);
+  white-space: break-spaces;
+  text-align: center;
+`;
+
+const VictimText = styled.div`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-weight: bold;
+  transform: translate3d(100%, 0, 0);
+  white-space: break-spaces;
+
+  font-style: italic;
+  color: #8ae2c4;
+  font-size: 4rem;
+  text-align: inherit;
+`;
+
+const VictimTextHighlight = styled.h1`
+  position: relative;
+  margin: 0;
+  font-size: 4rem;
+  /* background: -webkit-linear-gradient(#eee, #333); */
+  background: #8ae2c4;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: blue;
+    height: 100%;
+    width: 100%;
+  }
+  /* &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: linear-gradient(
+      322deg,
+      rgba(255, 255, 255, 0) 26%,
+      rgba(255, 255, 255, 0) 43%,
+      rgba(143, 0, 0, 1) 47%,
+      rgba(143, 0, 0, 1) 53%,
+      rgba(255, 255, 255, 0) 57%,
+      rgba(255, 255, 255, 0) 71%
+    );
+    height: 100%;
+    width: 100%;
+    transform: translate3d(-50%, 0, 0);
+  } */
+`;
+
+const PieChartWrapper = styled.div`
+  position: relative;
 `;
 
 const ProgressLife = keyframes`
@@ -107,9 +175,64 @@ const ProgressBar = ({ progress, total }) => {
       <ProgressPowa />
       <ProgressRemaining progress={progress} total={total} />
       <ProgressBarMask />
+      <ProgressText progress={progress} total={total}>
+        {`${total - progress} to go!`}
+      </ProgressText>
+      <TotalText>{total}</TotalText>
     </ProgressBarContainer>
   );
 };
+
+const TotalText = styled.div`
+  position: absolute;
+
+  font-size: 3rem;
+
+  /* Align text past the edge and in the middle */
+  right: 0;
+  top: 50%;
+  transform: translate3d(100%, -50%, 0);
+
+  /* Give the man some space here */
+  padding-left: 2rem;
+  box-sizing: border-box;
+`;
+
+const ProgressText = styled.div`
+  position: absolute;
+  font-size: 2rem;
+  top: 0;
+  left: ${({ progress, total }: { progress: number; total: number }) =>
+    `${(progress / total) * 100}%`};
+  transform: translate3d(-50%, -100%, 0);
+  padding-bottom: 2rem;
+  box-sizing: border-box;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    display: block;
+    bottom: 0;
+    right: 50%;
+
+    width: 1px;
+    height: 30%;
+    /* transform: translateY(100%); */
+  }
+
+  &::before {
+    bottom: 0;
+    background: linear-gradient(to top, #333 0%, transparent 100%);
+  }
+
+  &::after {
+    /* top: 50%; */
+    bottom: 0;
+    transform: translateY(100%);
+    background: linear-gradient(to bottom, #333 0%, transparent 100%);
+  }
+`;
 
 const ProgressPowa = styled.div`
   height: 100%;
