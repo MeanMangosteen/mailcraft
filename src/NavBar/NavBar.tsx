@@ -8,15 +8,15 @@ interface NavBarProps {}
 
 const grow = keyframes`
   0% {
-    transform: translate(0, 0)
+    transform: translate3d(0, 0, 0)
   }
 
   60% {
-    transform: translate(1.2rem, 0);
+    transform: translate3d(1.2rem, 0,0);
   }
 
   70% {
-    transform: translate(1.5rem, 0) scale(0.8, 1.2);
+    transform: translate3d(1.5rem, 0, 0) scale(0.8, 1.2);
   }
 
   80% {
@@ -24,7 +24,7 @@ const grow = keyframes`
   }
 
   100% {
-    transform: translate(0, 0)
+    transform: translate3d(0, 0, 0)
   }
 
 `;
@@ -32,7 +32,7 @@ const grow = keyframes`
 const slideFromLeft = keyframes`
 0%{
 
-  transform: translateX(-150%); 
+  transform: translate3d(-150%, 0, 0); 
   opacity: 0;
   
 }
@@ -42,7 +42,7 @@ const slideFromLeft = keyframes`
 }
 
  100% {
-  transform: translateX(100%);
+  transform: translate3d(100%, 0, 0);
   opacity: 1;
 
  }
@@ -58,6 +58,8 @@ const DeclutterIcon = styled(Emoji)`
   width: 100%;
   height: auto;
   font-size: 4rem;
+
+  will-change: transform;
   animation: ${(props: { hovered: boolean }) =>
     props.hovered
       ? css`
@@ -72,6 +74,7 @@ const AnalyseIcon = styled(Emoji)`
   height: auto;
   font-size: 4rem;
 
+  will-change: transform;
   animation: ${(props: { hovered: boolean }) =>
     props.hovered
       ? css`
@@ -85,13 +88,15 @@ const NavLinkText = styled.h1`
   position: absolute;
   z-index: 5;
   margin: 0;
+
+  will-change: transform;
   animation: ${(props: { hovered: boolean }) =>
     props.hovered
       ? css`
           ${slideFromLeft} 0.5s ease-in-out 1
         `
       : undefined};
-  transform: translateX(100%);
+  transform: translate3d(100%, 0, 0);
   display: ${(props: { hovered: boolean }) =>
     props.hovered ? undefined : `none`};
   right: 0;

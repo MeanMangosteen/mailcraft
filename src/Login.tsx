@@ -124,5 +124,6 @@ const GlobalStyle = createGlobalStyle`
       clicked: boolean;
     }) => (clicked ? "scale(4)" : hovered ? "scale(1)" : "scale(0)")};
     transition: transform 0.2s ease-in, opacity 0.3s ease-in;
+    will-change: transform;
   }
 `;

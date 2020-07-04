@@ -39,7 +39,7 @@ const ExpandedIframe = ({ html, onClose, show }) => {
     <Transition appear mountOnEnter unmountOnExit in={show} timeout={300}>
       {(state) => (
         <ExpandedIframeContainer className={state} onClick={onClose}>
-          <Iframe srcDoc={html} />
+          <Iframe srcDoc={html} sandbox="" />
         </ExpandedIframeContainer>
       )}
     </Transition>
@@ -62,6 +62,8 @@ const ExpandedIframeContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  will-change: opacity;
   transition: opacity 0.3s ease-in-out;
   /* Hidden init state */
   opacity: 0;

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { RiZoomInLine } from "react-icons/ri";
+import { GiFalloutShelter } from "react-icons/gi";
 
 export const MailThumbnail = ({ parentH, parentW, html, onClick }) => {
   const [iframeStyles, setIframeStyles] = useState<any>(null);
   const [containerStyles, setContainerStyles] = useState<any>(null);
   const [contentDim, setContentDim] = useState<any>(null);
+  const [shouldDisplay, setShouldDisplay] = useState<any>(false);
 
   useEffect(() => {
     if (!contentDim) return; // iframe hasn't loaded yet
@@ -16,20 +18,20 @@ export const MailThumbnail = ({ parentH, parentW, html, onClick }) => {
     setIframeStyles({
       /**
        * Height ->
-        * Height of the email content, or trimmed amount. 
-        * We want this to be scaled down
-        * 
-       * Width -> 
-        * Grow to take as much room the parent gives it. 
-        * We want the email content to be scaled down,
-        * since this value is not of the content,
-        * but of the parent we have to counteract the scaling down.
+       * Height of the email content, or trimmed amount.
+       * We want this to be scaled down
+       *
+       * Width ->
+       * Grow to take as much room the parent gives it.
+       * We want the email content to be scaled down,
+       * since this value is not of the content,
+       * but of the parent we have to counteract the scaling down.
        */
-      height: contentH, 
+      height: contentH,
       width: parentW * (1 / scaleFactor),
     });
 
-    /** 
+    /**
      * Allow the iframe to grow like a mad giant.
      * Then cast the scale spell to shrink.
      * Cast the translate spell to move it to it's allocated space.
@@ -43,28 +45,28 @@ export const MailThumbnail = ({ parentH, parentW, html, onClick }) => {
   }, [contentDim, parentH, parentW]);
 
   const handleLoad = (something) => {
+    setShouldDisplay(true);
     // Here, to the react gods, I ask for forgiveness.
     // I will plant many many trees.
 
-    
     /**
      * Okay so what we're doing here:
      * We want to squeeze a big iframe into a small space.
      * To do that we need to scale it down.
-     * To scale it down the right amount we need to know 
+     * To scale it down the right amount we need to know
      * the email content's dimensions.
-     * 
-     * If it's a tall boy, 
+     *
+     * If it's a tall boy,
      * and we try to fit it all within the space,
      * it doesn't look all that great, it's scaled
      * down way too much.
-     * 
-     * So we set an upper limit for the height, in 
-     * this case we will see a window/segment of the 
+     *
+     * So we set an upper limit for the height, in
+     * this case we will see a window/segment of the
      * email in the thumbnail. Sad, but we will get
      * through these tough times.
-     * */ 
-    
+     * */
+
     const contentH = Math.min(
       something.target.contentWindow.document.body.scrollHeight,
       800
@@ -95,6 +97,7 @@ export const MailThumbnail = ({ parentH, parentW, html, onClick }) => {
     <MailThumbnailContainer
       style={containerStyles && { ...containerStyles }}
       onClick={handleExpandClick}
+      display={shouldDisplay}
     >
       <ThumbnailIframe
         title="Hey, look an iframe!"
@@ -114,6 +117,8 @@ const MailThumbnailContainer = styled.div`
   transform-origin: top left;
   top: 50%;
   left: 25%;
+  opacity: ${({ display }: { display: boolean }) => (display ? 1 : 0)};
+  transition: opacity 1s;
 
   /* Below makes one hell of a vertical divider */
   /* Credit: https://stackoverflow.com/questions/19069943/css-vertical-border-with-horizontal-gradients */
@@ -142,7 +147,6 @@ const ThumbnailIframe = styled.iframe`
   display: block;
   border: none;
 `;
-
 
 const ThumbnailZoomOverlay = () => {
   return (

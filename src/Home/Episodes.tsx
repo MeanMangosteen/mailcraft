@@ -103,6 +103,7 @@ const EpisodeContainer = styled.div`
 
   transition: 0.5s;
   opacity: ${(props: { state: any }) => (props.state === "entered" ? 1 : 0)};
+  will-change: opacity;
 `;
 
 const ButtonContainer = styled.div`
@@ -138,6 +139,7 @@ const Text = styled.div`
 const Image = styled.img`
   transition: 0.5s;
   opacity: ${(props: { state: any }) => (props.state === "entered" ? 1 : 0)};
+  will-change: opacity;
 
   object-fit: contain;
   height: 100%;

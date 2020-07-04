@@ -104,6 +104,7 @@ const HomeContainer = styled.div`
 `;
 
 const Fade = styled.div`
+  will-change: opacity;
   transition: 0.5s;
   opacity: ${(props: { state: any }) => (props.state === "entered" ? 1 : 0)};
 `;
