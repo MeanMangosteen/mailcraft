@@ -116,42 +116,44 @@ const VictimText = styled.div`
   text-align: inherit;
 `;
 
-const VictimTextHighlight = styled.h1`
-  position: relative;
+const TextShine = keyframes`
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  80% {
+    filter: hue-rotate(0deg);
+  }
+  90% {
+    filter: hue-rotate(295deg);
+  }
+  /* 100% {
+    filter: hue-rotate(-295deg);
+  } */
+`;
+const VictimTextHighlight = styled.div`
+  /* position: relative; */
   margin: 0;
   font-size: 4rem;
-  /* background: -webkit-linear-gradient(#eee, #333); */
-  background: #8ae2c4;
+  background: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(253, 29, 29, 1) 50%,
+    rgba(252, 176, 69, 1) 100%
+  );
+  /* background: linear-gradient(
+    90deg,
+    rgba(139, 78, 180, 1) 0%,
+    rgba(138, 226, 196, 1) 50%,
+    rgba(226, 138, 138, 1) 100%
+  ); */
+
+  /* filter: hue-rotate(295deg); */
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-
-  &::before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: blue;
-    height: 100%;
-    width: 100%;
-  }
-  /* &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: linear-gradient(
-      322deg,
-      rgba(255, 255, 255, 0) 26%,
-      rgba(255, 255, 255, 0) 43%,
-      rgba(143, 0, 0, 1) 47%,
-      rgba(143, 0, 0, 1) 53%,
-      rgba(255, 255, 255, 0) 57%,
-      rgba(255, 255, 255, 0) 71%
-    );
-    height: 100%;
-    width: 100%;
-    transform: translate3d(-50%, 0, 0);
-  } */
+  animation: ${TextShine} 3s infinite;
+  animation-fill-mode: forwards;
+  /* animation-delay: 2s; */
 `;
 
 const PieChartWrapper = styled.div`
