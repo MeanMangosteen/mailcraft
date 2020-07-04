@@ -79,6 +79,8 @@ export default createClassFromSpec({
             startAngle: { signal: "startAngle" },
             endAngle: { signal: "endAngle" },
             sort: { signal: "sort" },
+            // expr: "format(datum.value/100,'0.0p')",
+            // as: "percentvalue",
           },
         ],
       },
@@ -135,6 +137,7 @@ export default createClassFromSpec({
             align: { value: "center" },
             baseline: { value: "middle" },
             text: { field: "id" },
+            fontSize: { value: 16 },
           },
           update: {
             fillOpacity: { signal: "if(tooltip.field, 0, 1)" },
@@ -156,7 +159,8 @@ export default createClassFromSpec({
           update: {
             theta: { signal: "(tooltip.startAngle + tooltip.endAngle)/2" },
             fillOpacity: { signal: "if(tooltip.field, 1, 0)" },
-            text: { signal: "tooltip.field" },
+            text: { signal: "tooltip.field + '%'" },
+            fontSize: { value: 30 },
           },
         },
       },

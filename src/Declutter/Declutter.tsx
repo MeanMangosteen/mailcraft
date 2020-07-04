@@ -34,7 +34,10 @@ const Declutter = ({ className = "declutter" }) => {
     const countSorted = Object.entries(count)
       .sort((a: any, b: any) => b[1] - a[1])
       .map(([sender, count]: [any, any]) => {
-        return { id: sender, field: (count / mail.length) * 100 };
+        return {
+          id: sender,
+          field: Math.round((count / mail.length) * 100),
+        };
       });
     setChartData({ table: countSorted.slice(0, 5) });
 
@@ -67,7 +70,7 @@ const Declutter = ({ className = "declutter" }) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              boxShadow: "0px 10px 13px -7px #000000",
+              filter: "drop-shadow(2px 4px 6px black)",
             }}
           />
           <ProgressBar progress={info?.progress} total={info?.total} />
