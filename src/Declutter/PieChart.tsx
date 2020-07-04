@@ -138,6 +138,7 @@ export default createClassFromSpec({
             baseline: { value: "middle" },
             text: { field: "id" },
             fontSize: { value: 16 },
+            fontWeight: { value: "bold" },
           },
           update: {
             fillOpacity: { signal: "if(tooltip.field, 0, 1)" },
