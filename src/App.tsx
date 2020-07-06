@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AppRouter } from "./AppRouter";
 import { CookiesProvider } from "react-cookie";
 import { MailProvider } from "./reducers/mail";
+import * as types from "styled-components/cssprop";
 
 const StyledNavBar = styled(NavBar)`
   grid-area: nav-bar;

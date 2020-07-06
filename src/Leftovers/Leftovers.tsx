@@ -10,6 +10,7 @@ import {
   FaArrowDown,
 } from "react-icons/fa";
 import { CSSDividerTop, centerContent } from "../utils";
+import { SwitchTransition, Transition } from "react-transition-group";
 
 export const Leftovers = () => {
   const { mail, readMail, spamMail, trashMail } = useMail();
@@ -57,36 +58,20 @@ export const Leftovers = () => {
       <SizeMe monitorHeight>
         {({ size }) => (
           <EmailContainer tabIndex={-1}>
-            {!mail || !mail.length ? null : (
-              <Email
-                parentH={size?.height && size.height * 0.85}
-                parentW={size.width}
-                html={mail[0]["body[]"].html}
-                onClick={() => {}}
-              />
-            )}
-            {/* <SubjectText
-                style={{
-                  maxHeight: size?.height ? size.height * 0.15 : undefined,
-                }}
-              >
-                {mail[0].envelope.subject}
-              </SubjectText> */}
-            {/* {
-(!mail || !mail.length) ? null :
-          (<MailThumbnail
-            parentH={size?.height && size.height * 0.85}
-            parentW={size.width}
-            html={mail[0]["body[]"].html}
-          />
-          <SubjectText
-            style={{
-              maxHeight: size?.height ? size.height * 0.15 : undefined,
-            }}
-          >
-            {mail[0].envelope.subject}
-        </SubjectText> )
-        } */}
+            <SwitchTransition mode={"out-in"}>
+              <Transition key={mail.length} timeout={200}>
+                {(state) => (
+                  <StyledEmail
+                    parentH={size?.height && size.height * 0.85}
+                    parentW={size.width}
+                    html={mail[0]["body[]"].html}
+                    onClick={() => {}}
+                    className="email"
+                    state={state}
+                  />
+                )}
+              </Transition>
+            </SwitchTransition>
           </EmailContainer>
         )}
       </SizeMe>
@@ -114,6 +99,11 @@ export const Leftovers = () => {
   );
 };
 
+const StyledEmail = styled(Email)<{ state: string }>`
+  transition: 0.3s;
+  opacity: ${({ state }) => (state === "entered" ? 1 : 0)};
+  will-change: opacity;
+`;
 const Control = styled.div<{ id: string; activeButton: string }>`
   ${centerContent}
   margin-right: 2rem;

@@ -9,9 +9,9 @@ export const Email = ({
   html,
   onClick,
   expandable = false,
+  className = "",
 }) => {
   const [contentDim, setContentDim] = useState<any>(null);
-  const [shouldDisplay, setShouldDisplay] = useState<any>(false);
   const [scaleFactor, setScaleFactor] = useState<any>(0);
 
   useEffect(() => {
@@ -24,10 +24,6 @@ export const Email = ({
   }, [contentDim, parentH, parentW]);
 
   const handleLoad = (something) => {
-    setShouldDisplay(true);
-    // Here, to the react gods, I ask for forgiveness.
-    // I will plant many many trees.
-
     /**
      * Okay so what we're doing here:
      * We want to squeeze a big iframe into a small space.
@@ -70,11 +66,11 @@ export const Email = ({
   };
 
   return (
-    <MailThumbnailContainer
-      display={shouldDisplay}
+    <EmailContainer
       scaleFactor={scaleFactor}
       contentDim={contentDim}
       parentDim={{ height: parentH, width: parentW }}
+      className={className}
     >
       <ThumbnailIframe
         title="Hey, look an iframe!"
@@ -84,12 +80,11 @@ export const Email = ({
         onLoad={handleLoad}
       />
       {expandable && <ThumbnailZoomOverlay onClick={handleExpandClick} />}
-    </MailThumbnailContainer>
+    </EmailContainer>
   );
 };
 
-export const MailThumbnailContainer = styled.div<{
-  display: boolean;
+const EmailContainer = styled.div<{
   scaleFactor: number;
   parentDim: { height: number; width: number };
   contentDim: { height: number; width: number };
@@ -116,9 +111,6 @@ export const MailThumbnailContainer = styled.div<{
   height: ${({ contentDim }) => contentDim?.height}px;
   width: ${({ parentDim, scaleFactor }) =>
     parentDim?.width * (1 / scaleFactor)}px;
-
-  opacity: ${({ display }) => (display ? 1 : 0)};
-  transition: opacity 1s;
 `;
 
 const ThumbnailIframe = styled.iframe`
