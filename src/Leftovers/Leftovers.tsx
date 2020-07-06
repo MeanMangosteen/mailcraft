@@ -14,37 +14,48 @@ import { CSSDividerTop, centerContent } from "../utils";
 export const Leftovers = () => {
   const { mail, readMail, spamMail, trashMail } = useMail();
   const containerRef = useRef<any>();
+  const [activeButton, setActiveButton] = useState<any>(null);
   //   const [curr, setCurr] = useState<any>(mail[0]);
+  console.log("active button: ", activeButton);
 
   const handleKeyPress = (event) => {
-    if (event.key === "a") {
-      readMail([mail[0].uid]);
-    }
-    if (event.key === "s") {
-      spamMail([mail[0].uid]);
-    }
-    if (event.key === "d") {
-      trashMail([mail[0].uid]);
+    const [left, down, right] = [37, 40, 39]; // Keycodes
+    console.log(event.keyCode);
+    if (event.keyCode === down) {
+      // readMail([mail[0].uid]);
+      setActiveButton("read");
+    } else if (event.keyCode === left) {
+      // spamMail([mail[0].uid]);
+      setActiveButton("spam");
+    } else if (event.keyCode === right) {
+      // trashMail([mail[0].uid]);
+      setActiveButton("trash");
     }
   };
 
+  const handleKeyLift = (event) => {
+    const keysToButton = { 37: "spam", 40: "read", 39: "trash" };
+    if (keysToButton[event.keyCode] === activeButton) setActiveButton(null);
+  };
+
   useEffect(() => {
-    setTimeout(() => {
+    const interval = setInterval(() => {
       containerRef.current?.focus();
-      console.log("gimer");
-    }, 3000);
+    }, 1000);
+    return () => clearInterval(interval);
   }, [mail]);
   if (!mail || !mail.length) return null;
   return (
-    <LeftoversContainer>
+    <LeftoversContainer
+      onKeyDown={handleKeyPress}
+      onKeyUp={handleKeyLift}
+      ref={containerRef}
+      tabIndex={-1}
+    >
       <SubjectContainer>{mail[0].envelope.subject}</SubjectContainer>
       <SizeMe monitorHeight>
         {({ size }) => (
-          <EmailContainer
-            onKeyDown={handleKeyPress}
-            tabIndex={-1}
-            ref={containerRef}
-          >
+          <EmailContainer tabIndex={-1}>
             {!mail || !mail.length ? null : (
               <Email
                 parentH={size?.height && size.height * 0.85}
@@ -79,19 +90,19 @@ export const Leftovers = () => {
         )}
       </SizeMe>
       <ControlsContainer>
-        <Control>
+        <Control id="spam" activeButton={activeButton}>
           <KBD>
             <LeftArrow />
           </KBD>
           <ControlText>Spam</ControlText>
         </Control>
-        <Control>
+        <Control id="read" activeButton={activeButton}>
           <KBD>
             <DownArrow />
           </KBD>
           <ControlText>Read</ControlText>
         </Control>
-        <Control>
+        <Control id="trash" activeButton={activeButton}>
           <KBD>
             <RightArrow />
           </KBD>
@@ -102,13 +113,17 @@ export const Leftovers = () => {
   );
 };
 
-const Control = styled.div`
+const Control = styled.div<{ id: string; activeButton: string }>`
   ${centerContent}
   margin-right: 2rem;
   border: 1px solid #ccc;
   padding: 1rem 2rem;
   border-radius: 20px;
-  box-shadow: 6px 3px 13px -7px #000000;
+  /* box-shadow: 6px 3px 13px -7px #000000; */
+  box-shadow: ${({ id, activeButton }) =>
+    activeButton === id ? "none" : "6px 3px 13px -7px #000000"};
+  transform: ${({ id, activeButton }) => activeButton === id && "scale(0.9)"};
+  transition: transform 0.05s;
 `;
 const ControlText = styled.div`
   font-size: 2rem;
@@ -169,6 +184,7 @@ const ControlsContainer = styled.div`
 `;
 
 const LeftoversContainer = styled.div`
+  outline: none;
   display: flex;
   flex-direction: column;
 
