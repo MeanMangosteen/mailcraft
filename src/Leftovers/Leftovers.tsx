@@ -11,9 +11,10 @@ import {
 } from "react-icons/fa";
 import { CSSDividerTop, centerContent } from "../utils";
 import { SwitchTransition, Transition } from "react-transition-group";
+import { ProgressBar } from "../Declutter/Declutter";
 
 export const Leftovers = () => {
-  const { mail, readMail, spamMail, trashMail } = useMail();
+  const { mail, readMail, spamMail, trashMail, info } = useMail();
   const containerRef = useRef<any>();
   const [activeButton, setActiveButton] = useState<any>(null);
   //   const [curr, setCurr] = useState<any>(mail[0]);
@@ -48,56 +49,81 @@ export const Leftovers = () => {
   }, [mail]);
   if (!mail || !mail.length) return null;
   return (
-    <LeftoversContainer
-      onKeyDown={handleKeyPress}
-      onKeyUp={handleKeyLift}
-      ref={containerRef}
-      tabIndex={-1}
-    >
-      <SubjectContainer>{mail[0].envelope.subject}</SubjectContainer>
-      <SizeMe monitorHeight>
-        {({ size }) => (
-          <EmailContainer tabIndex={-1}>
-            <SwitchTransition mode={"out-in"}>
-              <Transition key={mail.length} timeout={200}>
-                {(state) => (
-                  <StyledEmail
-                    parentH={size?.height && size.height * 0.85}
-                    parentW={size.width}
-                    html={mail[0]["body[]"].html}
-                    onClick={() => {}}
-                    className="email"
-                    state={state}
-                  />
-                )}
-              </Transition>
-            </SwitchTransition>
-          </EmailContainer>
-        )}
-      </SizeMe>
-      <ControlsContainer>
-        <Control id="spam" activeButton={activeButton}>
-          <KBD>
-            <LeftArrow />
-          </KBD>
-          <ControlText>Spam</ControlText>
-        </Control>
-        <Control id="read" activeButton={activeButton}>
-          <KBD>
-            <DownArrow />
-          </KBD>
-          <ControlText>Read</ControlText>
-        </Control>
-        <Control id="trash" activeButton={activeButton}>
-          <KBD>
-            <RightArrow />
-          </KBD>
-          <ControlText>Trash</ControlText>
-        </Control>
-      </ControlsContainer>
+    <LeftoversContainer>
+      <ActuallyUsefulThings
+        onKeyDown={handleKeyPress}
+        onKeyUp={handleKeyLift}
+        ref={containerRef}
+        tabIndex={-1}
+      >
+        <SubjectContainer>{mail[0].envelope.subject}</SubjectContainer>
+        <SizeMe monitorHeight>
+          {({ size }) => (
+            <EmailContainer tabIndex={-1}>
+              <SwitchTransition mode={"out-in"}>
+                <Transition key={mail.length} timeout={200}>
+                  {(state) => (
+                    <StyledEmail
+                      parentH={size?.height && size.height * 0.85}
+                      parentW={size.width}
+                      html={mail[0]["body[]"].html}
+                      onClick={() => {}}
+                      className="email"
+                      state={state}
+                    />
+                  )}
+                </Transition>
+              </SwitchTransition>
+            </EmailContainer>
+          )}
+        </SizeMe>
+        <ControlsContainer>
+          <Control id="spam" activeButton={activeButton}>
+            <KBD>
+              <LeftArrow />
+            </KBD>
+            <ControlText>Spam</ControlText>
+          </Control>
+          <Control id="read" activeButton={activeButton}>
+            <KBD>
+              <DownArrow />
+            </KBD>
+            <ControlText>Read</ControlText>
+          </Control>
+          <Control id="trash" activeButton={activeButton}>
+            <KBD>
+              <RightArrow />
+            </KBD>
+            <ControlText>Trash</ControlText>
+          </Control>
+        </ControlsContainer>
+      </ActuallyUsefulThings>
+      <ProgressContainer>
+        <StyledProgressBar
+          progress={info?.progress}
+          total={info?.total}
+          className="progress-bar"
+        />
+      </ProgressContainer>
     </LeftoversContainer>
   );
 };
+
+const StyledProgressBar = styled(ProgressBar)`
+  position: absolute;
+
+  top: 50%;
+  right: 50%;
+  transform: rotate(-90deg) translate(55%, 50%);
+
+  width: 80vh;
+  height: 5%;
+  transform-origin: right bottom;
+  /* transform: rotate(-90deg); */
+  z-index: -1;
+
+  
+`;
 
 const StyledEmail = styled(Email)<{ state: string }>`
   transition: 0.3s;
@@ -177,7 +203,7 @@ const ControlsContainer = styled.div`
   font-size: 4rem;
 `;
 
-const LeftoversContainer = styled.div`
+const ActuallyUsefulThings = styled.div`
   outline: none;
   display: flex;
   flex-direction: column;
@@ -192,5 +218,20 @@ const LeftoversContainer = styled.div`
 
   ${ControlsContainer} {
     flex-basis: 10%;
+  }
+`;
+
+const ProgressContainer = styled.div`
+  position: relative;
+`;
+const LeftoversContainer = styled.div`
+  display: flex;
+
+  ${ActuallyUsefulThings} {
+    flex-grow: 1;
+  }
+
+  ${ProgressContainer} {
+    flex-basis: 8%;
   }
 `;

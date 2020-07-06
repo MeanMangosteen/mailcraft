@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { RiZoomInLine } from "react-icons/ri";
-import { GiFalloutShelter } from "react-icons/gi";
 
 export const Email = ({
   parentH,

@@ -126,12 +126,8 @@ const TextShine = keyframes`
   90% {
     filter: hue-rotate(295deg);
   }
-  /* 100% {
-    filter: hue-rotate(-295deg);
-  } */
 `;
 const VictimTextHighlight = styled.div`
-  /* position: relative; */
   margin: 0;
   font-size: 4rem;
   background: linear-gradient(
@@ -140,20 +136,12 @@ const VictimTextHighlight = styled.div`
     rgba(253, 29, 29, 1) 50%,
     rgba(252, 176, 69, 1) 100%
   );
-  /* background: linear-gradient(
-    90deg,
-    rgba(139, 78, 180, 1) 0%,
-    rgba(138, 226, 196, 1) 50%,
-    rgba(226, 138, 138, 1) 100%
-  ); */
 
-  /* filter: hue-rotate(295deg); */
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   animation: ${TextShine} 3s infinite;
   animation-fill-mode: forwards;
-  /* animation-delay: 2s; */
 `;
 
 const PieChartWrapper = styled.div`
@@ -170,20 +158,28 @@ const ProgressLife = keyframes`
   }
 `;
 
-const ProgressBar = ({ progress, total }) => {
-  console.log("Progress Bar: ", progress, total);
+// OMGTODO: separate file
+export const ProgressBar = ({ progress, total, className = "" }) => {
   return (
-    <ProgressBarContainer>
+    <ProgressBarContainer className={className}>
       <ProgressPowa />
       <ProgressRemaining progress={progress} total={total} />
       <ProgressBarMask />
-      <ProgressText progress={progress} total={total}>
-        {`${total - progress} to go!`}
-      </ProgressText>
+      <ProgressTextWrapper progress={progress} total={total}>
+        <ProgressText>{`${total - progress} to go!`}</ProgressText>
+      </ProgressTextWrapper>
       <TotalText>{total}</TotalText>
     </ProgressBarContainer>
   );
 };
+
+const ProgressTextWrapper = styled.div`
+  position: absolute;
+  width: 100%;
+  transform: ${({ progress, total }: { progress: number; total: number }) =>
+    `translate3d(${(progress / total) * 100}%, 0, 0)`};
+  transition: transform 0.3s ease-out;
+`;
 
 const TotalText = styled.div`
   position: absolute;
@@ -203,9 +199,8 @@ const TotalText = styled.div`
 const ProgressText = styled.div`
   position: absolute;
   font-size: 2rem;
-  top: 0;
-  left: ${({ progress, total }: { progress: number; total: number }) =>
-    `${(progress / total) * 100}%`};
+  top: -2px;
+  left: 0;
   transform: translate3d(-50%, -100%, 0);
   padding-bottom: 2rem;
   box-sizing: border-box;
@@ -225,14 +220,7 @@ const ProgressText = styled.div`
 
   &::before {
     bottom: 0;
-    background: linear-gradient(to top, #333 0%, transparent 100%);
-  }
-
-  &::after {
-    /* top: 50%; */
-    bottom: 0;
-    transform: translateY(100%);
-    background: linear-gradient(to bottom, #333 0%, transparent 100%);
+    background: linear-gradient(to top, #a7a6a6 0%, transparent 100%);
   }
 `;
 
@@ -259,12 +247,14 @@ const ProgressRemaining = styled.div`
   position: absolute;
   height: 100%;
   width: 100%;
+  z-index: -2;
 
   background: grey;
+  box-shadow: inset 1px 0px 23px 10px #3a3a3a;
+
   transform: ${({ progress, total }: { progress: any; total: any }) =>
     `translate3d(${(progress / total) * 100}%, 0, 0)`};
-  z-index: -2;
-  box-shadow: inset 1px 0px 23px 10px #3a3a3a;
+  transition: transform 0.3s ease-out;
 `;
 
 const ProgressBarMask = styled.div`
