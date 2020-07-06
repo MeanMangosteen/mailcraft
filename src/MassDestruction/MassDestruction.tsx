@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Redirect } from "react-router-dom";
 import queryString from "query-string";
 import { useMail } from "../reducers/mail";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { MailCard } from "./MailCard";
+import { RiSpam2Line } from "react-icons/ri";
+import { AiOutlineRead } from "react-icons/ai";
+import { FiTrash2 } from "react-icons/fi";
+import { centerContent } from "../utils";
 
 // TODO: come back to page based scrolling
 const MassDestruction = () => {
@@ -126,15 +130,58 @@ const MassDestruction = () => {
     <MassDestructionContainer>
       <CardsContainer>{mailPages.slice(0, 2)}</CardsContainer>
       <ControlsContainer>
-        <Button onClick={handleRead}>Read</Button>
-        <Button onClick={handleSpam}>Spam</Button>
-        <Button onClick={handleTrash}>Trash</Button>
+        <Button
+          onClick={handleSpam}
+          className="something"
+          style={{
+            background: "hsla(35, 100%, 95%, 1)",
+          }}
+        >
+          <SpamIcon />
+          Spam
+        </Button>
+        <Button
+          onClick={handleRead}
+          style={{
+            background: "hsla(178, 60%, 91%, 1)",
+          }}
+        >
+          <ReadIcon />
+          Read
+        </Button>
+        <Button
+          onClick={handleTrash}
+          style={{
+            background: "hsla(350, 100%, 95%, 1)",
+          }}
+        >
+          <TrashIcon />
+          Trash
+        </Button>
       </ControlsContainer>
 
       {missionSuccessful && <Redirect to="/declutter" />}
     </MassDestructionContainer>
   );
 };
+
+const iconStyles = css`
+  font-size: 3rem;
+  margin-right: 1rem;
+`;
+
+const SpamIcon = styled(RiSpam2Line)`
+  ${iconStyles}
+`;
+
+const ReadIcon = styled(AiOutlineRead)`
+  ${iconStyles}
+`;
+
+const TrashIcon = styled(FiTrash2)`
+  ${iconStyles}
+  font-size: 2.5rem;
+`;
 
 const PageContainer = styled.div`
   display: grid;
@@ -162,19 +209,25 @@ const ControlsContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  background: #f9f9f9;
   box-shadow: 10px 0 10px -2px #888;
+  border-radius: 60% 60% 0 0;
 `;
 
 const Button = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 4px;
+  ${centerContent}
+  flex-basis: 15rem;
+
   margin: 1rem;
   padding: 1.5rem;
-  flex-basis: 15rem;
+
+  background: white;
   font-weight: bold;
-  border: 3px black solid;
+
+  border: 2px #b5b5b5 solid;
+  border-radius: 20px;
+  box-shadow: 0px 10px 13px -7px #000000;
 `;
 
 export { MassDestruction };
