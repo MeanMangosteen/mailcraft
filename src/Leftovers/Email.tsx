@@ -19,7 +19,7 @@ export const Email = ({
 
     const contentW = contentDim.width;
     const contentH = contentDim.height;
-    const scaleFactor = parentH / contentH;
+    const scaleFactor = Math.min(parentH / contentH, 1);
     setScaleFactor(scaleFactor);
   }, [contentDim, parentH, parentW]);
 

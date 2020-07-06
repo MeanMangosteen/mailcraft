@@ -20,7 +20,7 @@ export const MailThumbnail = ({
 
     const contentW = contentDim.width;
     const contentH = contentDim.height;
-    const scaleFactor = parentH / contentH;
+    const scaleFactor = Math.min(parentH / contentH, 1); // We don't ever want to be scaling up the content
     setIframeStyles({
       /**
        * Height ->
