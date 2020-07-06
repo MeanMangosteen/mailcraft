@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SizeMe } from "react-sizeme";
-import { MailThumbnail } from "./MailThumbnail";
+import { MailThumbnail, MailThumbnailContainer } from "./MailThumbnail";
 import styled from "styled-components";
 import { Transition } from "react-transition-group";
 
@@ -12,11 +12,12 @@ export const MailCard = ({ html, subject, selected, index, onClick }) => {
       <SizeMe monitorHeight>
         {({ size }) => (
           <ContentWrapper>
-            <MailThumbnail
+            <StyledMailThumbnail
               parentH={size?.height && size.height}
               parentW={size.width && size.width / 2}
               html={html}
               onClick={() => setExpandIframe(true)}
+              expandable
             />
             <SubjectText>{subject}</SubjectText>
           </ContentWrapper>
@@ -39,7 +40,7 @@ const ExpandedIframe = ({ html, onClose, show }) => {
     <Transition appear mountOnEnter unmountOnExit in={show} timeout={300}>
       {(state) => (
         <ExpandedIframeContainer className={state} onClick={onClose}>
-          <Iframe srcDoc={html} sandbox="" />
+          <Iframe srcDoc={html} />
         </ExpandedIframeContainer>
       )}
     </Transition>
@@ -115,6 +116,31 @@ const SubjectText = styled.div`
   left: 75%;
 
   transform: translate(-50%, -50%);
+`;
+
+const StyledMailThumbnail = styled(MailThumbnail)`
+  /* Below makes one hell of a vertical divider */
+  /* Credit: https://stackoverflow.com/questions/19069943/css-vertical-border-with-horizontal-gradients */
+  /* Divider between iframe thumbnail and subject text */
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    display: block;
+    right: -10px;
+    width: 1px;
+    height: 50%;
+  }
+
+  &::before {
+    top: 0;
+    background: linear-gradient(to top, #333 0%, transparent 100%);
+  }
+
+  &::after {
+    bottom: 0;
+    background: linear-gradient(to bottom, #333 0%, transparent 100%);
+  }
 `;
 
 const ContentWrapper = styled.div`

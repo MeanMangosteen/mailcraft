@@ -3,17 +3,16 @@ import styled from "styled-components";
 import { RiZoomInLine } from "react-icons/ri";
 import { GiFalloutShelter } from "react-icons/gi";
 
-export const MailThumbnail = ({
+export const Email = ({
   parentH,
   parentW,
   html,
   onClick,
   expandable = false,
 }) => {
-  const [iframeStyles, setIframeStyles] = useState<any>(null);
-  const [containerStyles, setContainerStyles] = useState<any>(null);
   const [contentDim, setContentDim] = useState<any>(null);
   const [shouldDisplay, setShouldDisplay] = useState<any>(false);
+  const [scaleFactor, setScaleFactor] = useState<any>(0);
 
   useEffect(() => {
     if (!contentDim) return; // iframe hasn't loaded yet
@@ -21,33 +20,7 @@ export const MailThumbnail = ({
     const contentW = contentDim.width;
     const contentH = contentDim.height;
     const scaleFactor = parentH / contentH;
-    setIframeStyles({
-      /**
-       * Height ->
-       * Height of the email content, or trimmed amount.
-       * We want this to be scaled down
-       *
-       * Width ->
-       * Grow to take as much room the parent gives it.
-       * We want the email content to be scaled up,
-       * since we want it to fit the parent,
-       * we have to counteract the scaling down.
-       */
-      height: contentH,
-      width: parentW * (1 / scaleFactor),
-    });
-
-    /**
-     * Allow the iframe to grow like a mad giant.
-     * Then cast the scale spell to shrink.
-     * Cast the translate spell to move it to it's allocated space.
-     * This all looks very unintuitive... that's because it is.
-     * I've tried all the obvious methods of making this happen,
-     * This is the one that ended making that vision come true.
-     */
-    setContainerStyles({
-      transform: `scale(${scaleFactor}) translate(-50%, -50%)`,
-    });
+    setScaleFactor(scaleFactor);
   }, [contentDim, parentH, parentW]);
 
   const handleLoad = (something) => {
@@ -83,9 +56,6 @@ export const MailThumbnail = ({
       width: contentW,
       height: contentH,
     });
-
-    // Tis just a thumbnail, no scrolling allowed!
-    something.target.contentWindow.document.body.style.overflow = "hidden";
   };
 
   const handleExpandClick = (event) => {
@@ -101,15 +71,16 @@ export const MailThumbnail = ({
 
   return (
     <MailThumbnailContainer
-      style={containerStyles && { ...containerStyles }}
       display={shouldDisplay}
+      scaleFactor={scaleFactor}
+      contentDim={contentDim}
+      parentDim={{ height: parentH, width: parentW }}
     >
       <ThumbnailIframe
         title="Hey, look an iframe!"
         srcDoc={html}
         width="100%"
         height="100%"
-        style={iframeStyles && { ...iframeStyles }}
         onLoad={handleLoad}
       />
       {expandable && <ThumbnailZoomOverlay onClick={handleExpandClick} />}
@@ -117,11 +88,34 @@ export const MailThumbnail = ({
   );
 };
 
-export const MailThumbnailContainer = styled.div<{ display: boolean }>`
+export const MailThumbnailContainer = styled.div<{
+  display: boolean;
+  scaleFactor: number;
+  parentDim: { height: number; width: number };
+  contentDim: { height: number; width: number };
+}>`
   position: absolute;
   transform-origin: top left;
   top: 50%;
-  left: 25%;
+  left: 50%;
+
+  /** Scale downt to fit mail in parent */
+  transform: ${({ scaleFactor }) =>
+    `scale(${scaleFactor}) translate(-50%, -50%)`};
+
+  /**
+   * Height ->
+   * Height of the email content
+   *
+   * Width ->
+   * Grow to take as much room the parent gives it.
+   * We want the email content to be scaled up,
+   * since this value is not of the content,
+   * but of the parent we have to counteract the scaling down.
+  */
+  height: ${({ contentDim }) => contentDim?.height}px;
+  width: ${({ parentDim, scaleFactor }) =>
+    parentDim?.width * (1 / scaleFactor)}px;
 
   opacity: ${({ display }) => (display ? 1 : 0)};
   transition: opacity 1s;

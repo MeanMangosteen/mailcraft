@@ -5,7 +5,7 @@ import { Declutter } from "./Declutter/Declutter";
 import { Analyse } from "./Analyse/Analyse";
 import { OAuth } from "./OAuth";
 import { MassDestruction } from "./MassDestruction/MassDestruction";
-import { Leftovers } from "./Leftovers";
+import { Leftovers } from "./Leftovers/Leftovers";
 import { Home } from "./Home/NewHome";
 import { Playground } from "./Playground";
 import { TwoLevelPieChart } from "./ChartPlayground";
@@ -16,7 +16,7 @@ const AppRouter = () => {
       <Route exact path="/" component={Home} />
       <Route exact path="/declutter" component={Declutter} />
       <Route path="/declutter/mass_destruction" component={MassDestruction} />
-      <Route path="/analyse" component={Analyse} />
+      <Route path="/analyse" component={Leftovers} />
       <Route path="/OAuthSuccess" component={OAuth} />
       <Route path="/leftovers" component={Leftovers} />
       <Route path="/play" component={TwoLevelPieChart} />
