@@ -19,10 +19,11 @@ export const Leftovers = () => {
   console.log("active button: ", activeButton);
 
   const handleKeyPress = (event) => {
+    if (activeButton) return; // You gotta let go of key before we deal with the next email
     const [left, down, right] = [37, 40, 39]; // Keycodes
     console.log(event.keyCode);
     if (event.keyCode === down) {
-      // readMail([mail[0].uid]);
+      readMail([mail[0].uid]);
       setActiveButton("read");
     } else if (event.keyCode === left) {
       // spamMail([mail[0].uid]);
@@ -151,7 +152,8 @@ const KBD = styled.kbd`
 `;
 
 const EmailContainer = styled.div`
-  ${CSSDividerTop({ width: "30%" })}
+  position: relative;
+  ${CSSDividerTop({ width: "30%", IHaveSetRelativePosition: true })}
 `;
 
 const SubjectText = styled.div`
@@ -179,6 +181,8 @@ const SubjectContainer = styled.div`
 `;
 
 const ControlsContainer = styled.div`
+  position: relative;
+  ${CSSDividerTop({ width: "20%", IHaveSetRelativePosition: true })}
   ${centerContent}
   font-size: 4rem;
 `;

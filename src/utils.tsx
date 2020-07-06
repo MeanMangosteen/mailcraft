@@ -1,6 +1,7 @@
 import { css } from "styled-components";
 
-export const CSSDividerTop = ({ width }) => {
+export const CSSDividerTop = ({ width, IHaveSetRelativePosition = false }) => {
+  if (!IHaveSetRelativePosition) return;
   return css`
     &::before,
     &::after {
