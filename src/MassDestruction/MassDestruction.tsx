@@ -158,6 +158,12 @@ const MassDestruction = () => {
           <TrashIcon />
           Trash
         </Button>
+        <SelectedInfo
+          total={victimEmails.length}
+          selected={
+            Object.values(selected).filter((selected) => !!selected).length
+          }
+        />
       </ControlsContainer>
 
       {missionSuccessful && <Redirect to="/declutter" />}
@@ -165,8 +171,17 @@ const MassDestruction = () => {
   );
 };
 
+const SelectedInfo = ({ selected, total }) => {
+  return (
+    <SelectedInfoContainer>{`${selected}/${total} selected`}</SelectedInfoContainer>
+  );
+};
+const SelectedInfoContainer = styled.div`
+  margin-left: 2rem;
+  font-weight: bold;
+`;
 const iconStyles = css`
-  font-size: 3rem;
+  font-size: 2.8rem;
   margin-right: 1rem;
 `;
 
@@ -228,6 +243,11 @@ const Button = styled.div`
   border: 2px #b5b5b5 solid;
   border-radius: 20px;
   box-shadow: 0px 10px 13px -7px #000000;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+  transition: transform 0.2s ease-in-out;
 `;
 
 export { MassDestruction };

@@ -8,30 +8,32 @@ export const MailCard = ({ html, subject, selected, index, onClick }) => {
   const [expandIframe, setExpandIframe] = useState<boolean>(false);
 
   return (
-    <MailCardContainer selected={selected} onClick={onClick(index)}>
-      <SizeMe monitorHeight>
-        {({ size }) => (
-          <ContentWrapper>
-            <StyledMailThumbnail
-              parentH={size?.height && size.height}
-              parentW={size.width && size.width / 2}
-              html={html}
-              onClick={() => setExpandIframe(true)}
-              expandable
-            />
-            <SubjectText>{subject}</SubjectText>
-          </ContentWrapper>
-        )}
-      </SizeMe>
+    <>
+      <MailCardContainer selected={selected} onClick={onClick(index)}>
+        <SizeMe monitorHeight>
+          {({ size }) => (
+            <ContentWrapper>
+              <StyledMailThumbnail
+                parentH={size?.height && size.height}
+                parentW={size.width && size.width / 2}
+                html={html}
+                onClick={() => setExpandIframe(true)}
+                expandable
+              />
+              <SubjectText>{subject}</SubjectText>
+            </ContentWrapper>
+          )}
+        </SizeMe>
+      </MailCardContainer>
       <ExpandedIframe
         show={expandIframe}
         html={html}
         onClose={(e) => {
-          e.stopPropagation();
+          // e.stopPropagation();
           setExpandIframe(false);
         }}
       />
-    </MailCardContainer>
+    </>
   );
 };
 
@@ -39,7 +41,14 @@ const ExpandedIframe = ({ html, onClose, show }) => {
   return (
     <Transition appear mountOnEnter unmountOnExit in={show} timeout={300}>
       {(state) => (
-        <ExpandedIframeContainer className={state} onClick={onClose}>
+        <ExpandedIframeContainer
+          className={state}
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            onClose();
+          }}
+        >
           <Iframe srcDoc={html} />
         </ExpandedIframeContainer>
       )}
@@ -81,22 +90,30 @@ const ExpandedIframeContainer = styled.div`
 `;
 
 export const MailCardContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+
   margin: 1px;
   border-radius: 10px;
   box-shadow: ${({ selected }: { selected: boolean }) =>
     selected
-      ? "4px 4px 10px 4px rgba(0, 28, 132, 0.75)"
+      ? "4px 4px 10px 4px hsla(216, 54%, 65%, 1)"
       : "2px 2px 5px 0px rgba(0,0,0,0.75)"};
-  transition: all 0.3s;
+
   &:hover {
     box-shadow: ${({ selected }: { selected: boolean }) =>
       selected
-        ? "10px 9px 14px 3px rgba(0, 28, 132, 0.75)"
+        ? "10px 9px 14px 3px hsla(216, 44%, 35%, 1)"
         : "10px 9px 14px 3px rgba(0,0,0,0.75)"};
   }
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
+
+  &:active {
+    transform: scale(0.975);
+  }
+
+  transition: box-shadow 0.3s, transform 15ms;
+  z-index: 1;
 `;
 
 const SubjectText = styled.div`
