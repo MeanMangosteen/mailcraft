@@ -9,6 +9,7 @@ export const MailThumbnail = ({
   html,
   onClick,
   expandable = false,
+  className = "",
 }) => {
   const [iframeStyles, setIframeStyles] = useState<any>(null);
   const [containerStyles, setContainerStyles] = useState<any>(null);
@@ -103,6 +104,7 @@ export const MailThumbnail = ({
     <MailThumbnailContainer
       style={containerStyles && { ...containerStyles }}
       display={shouldDisplay}
+      className={className}
     >
       <ThumbnailIframe
         title="Hey, look an iframe!"

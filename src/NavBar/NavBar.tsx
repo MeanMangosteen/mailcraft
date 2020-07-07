@@ -48,13 +48,42 @@ const slideFromLeft = keyframes`
  }
 `;
 
-const Container = styled.div`
+const NavBarContainer = styled.div`
+  position: relative;
+  /* when you play the game of z-indexes you either lose or you die */
+  z-index: 100;
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    display: block;
+    right: 0px;
+    width: 1px;
+    height: 100%;
+  }
+
+  /* &::before {
+    top: 0%;
+    background: linear-gradient(to top, #ccc 0%, transparent 100%);
+  } */
+
+  &::after {
+    top: 0;
+    background: linear-gradient(to bottom, #ccc 0%, transparent 100%);
+    /* transform: translateY(100%); */
+  }
+`;
+
+const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  position: relative;
+  box-shadow: -47px -83px 48px 19px;
+  height: 50vh;
 `;
 
-const DeclutterIcon = styled(Emoji)`
+const iconStyles = css`
   width: 100%;
   height: auto;
   font-size: 4rem;
@@ -67,21 +96,14 @@ const DeclutterIcon = styled(Emoji)`
         `
       : undefined};
   text-align: center;
+  filter: drop-shadow(#7d7d7d 2px 4px 3px);
+`;
+const DeclutterIcon = styled(Emoji)`
+  ${iconStyles}
 `;
 
 const AnalyseIcon = styled(Emoji)`
-  width: 100%;
-  height: auto;
-  font-size: 4rem;
-
-  will-change: transform;
-  animation: ${(props: { hovered: boolean }) =>
-    props.hovered
-      ? css`
-          ${grow} 0.5s ease-in-out 1
-        `
-      : undefined};
-  text-align: center;
+  ${iconStyles}
 `;
 
 const NavLinkText = styled.h1`
@@ -100,6 +122,7 @@ const NavLinkText = styled.h1`
   display: ${(props: { hovered: boolean }) =>
     props.hovered ? undefined : `none`};
   right: 0;
+  filter: drop-shadow(#888 2px 4px 3px);
 `;
 
 const NavLinkWrapper = styled.div`
@@ -170,34 +193,36 @@ const NavBar = styled(({}: NavBarProps) => {
     setHovered({ ...hovered });
   };
   return (
-    <Container>
-      <HomeIconWrapper>
-        <HomeIcon text=":postbox:" />
-      </HomeIconWrapper>
-      <BaseNavLink
-        to="/declutter"
-        activeStyle={{ color: "red" }}
-        onMouseEnter={handleMouseEnter("declutter")}
-        onMouseLeave={handleMouseLeave("declutter")}
-      >
-        <NavLinkWrapper>
-          <DeclutterIcon hovered={hovered["declutter"]} text=":bowling:" />
-          <NavLinkText hovered={hovered["declutter"]}>Declutter</NavLinkText>
-        </NavLinkWrapper>
-      </BaseNavLink>
-      <BaseNavLink
-        to="/leftovers"
-        activeStyle={{}}
-        onMouseEnter={handleMouseEnter("analyse")}
-        onMouseLeave={handleMouseLeave("analyse")}
-      >
-        <NavLinkWrapper>
-          <AnalyseIcon hovered={hovered["analyse"]} text=":microscope:" />
-          <NavLinkText hovered={hovered["analyse"]}>Analyse</NavLinkText>
-        </NavLinkWrapper>
-        {/* <h3>Analyse</h3> */}
-      </BaseNavLink>
-    </Container>
+    <NavBarContainer>
+      <ContentWrapper>
+        <HomeIconWrapper>
+          <HomeIcon text=":postbox:" />
+        </HomeIconWrapper>
+        <BaseNavLink
+          to="/declutter"
+          activeStyle={{ color: "red" }}
+          onMouseEnter={handleMouseEnter("declutter")}
+          onMouseLeave={handleMouseLeave("declutter")}
+        >
+          <NavLinkWrapper>
+            <DeclutterIcon hovered={hovered["declutter"]} text=":bowling:" />
+            <NavLinkText hovered={hovered["declutter"]}>Declutter</NavLinkText>
+          </NavLinkWrapper>
+        </BaseNavLink>
+        <BaseNavLink
+          to="/leftovers"
+          activeStyle={{}}
+          onMouseEnter={handleMouseEnter("analyse")}
+          onMouseLeave={handleMouseLeave("analyse")}
+        >
+          <NavLinkWrapper>
+            <AnalyseIcon hovered={hovered["analyse"]} text=":microscope:" />
+            <NavLinkText hovered={hovered["analyse"]}>Analyse</NavLinkText>
+          </NavLinkWrapper>
+          {/* <h3>Analyse</h3> */}
+        </BaseNavLink>
+      </ContentWrapper>
+    </NavBarContainer>
   );
 })``;
 

@@ -150,7 +150,7 @@ const PieChartWrapper = styled.div`
 
 const ProgressLife = keyframes`
   0% { 
-    transform: translate3d(-30%, 0, 0);
+    transform: translate3d(-50%, 0, 0);
   }
 
   100% { 
@@ -232,12 +232,27 @@ const ProgressPowa = styled.div`
 
   animation: ${ProgressLife} 1s linear infinite running;
   will-change: transform;
-  background: repeating-linear-gradient(
+  /* background: repeating-linear-gradient(
     120deg,
     rgb(221, 0, 0) 0%,
     rgb(206, 215, 0) 10%,
     rgb(76, 255, 0) 20%,
     rgb(221, 0, 0) 30%
+  ); */
+  /* background: repeating-linear-gradient(
+    120deg,
+    #59981a 0%,
+    #db1f48 10%,
+    #81b622 20%,
+    #59981a 30%
+  ); */
+  background: repeating-linear-gradient(
+    120deg,
+    hsl(0, 100%, 50%) 0%,
+    hsl(43, 100%, 50%) 10%,
+    hsla(64, 78%, 50%, 1) 20%,
+    hsl(43, 100%, 50%) 40%,
+    hsl(0, 100%, 50%) 50%
   );
   filter: blur(10px); /* Blend the colours */
 `;
