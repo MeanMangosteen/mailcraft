@@ -10,7 +10,7 @@ interface DeclutterProps {
   className?: string;
 }
 
-const Declutter = ({ className = "declutter" }) => {
+export const ChooseVictim = ({ onComplete }) => {
   const [cookies, setCookie] = useCookies();
   const [chartData, setChartData] = useState<any>(undefined);
   const [victim, setVictim] = useState<string | null>(null);
@@ -47,6 +47,7 @@ const Declutter = ({ className = "declutter" }) => {
       if (count > 3) success = false;
     });
     if (success) {
+      onComplete();
       setMissionSuccessful(success);
     }
   }, [mail]);
@@ -84,9 +85,9 @@ const Declutter = ({ className = "declutter" }) => {
         </Fragment>
       )}
       {victim ? (
-        <Redirect to={`/declutter/mass_destruction?victim=${victim}`} />
+        <Redirect to={`/declutter/mass-destruction/destroy?victim=${victim}`} />
       ) : null}
-      {missionSuccessful && <Redirect to="/leftovers" />}
+      {/* {missionSuccessful && <Redirect to="/leftovers" />} */}
     </PageContainer>
   );
 };
@@ -302,5 +303,3 @@ const PageContainer = styled.div`
   justify-content: space-around;
   align-items: center;
 `;
-
-export { Declutter };

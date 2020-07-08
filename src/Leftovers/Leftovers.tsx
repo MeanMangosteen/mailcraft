@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import { CSSDividerTop, centerContent } from "../utils";
 import { SwitchTransition, Transition } from "react-transition-group";
-import { ProgressBar } from "../Declutter/Declutter";
+import { ProgressBar } from "../Declutter/ChooseVictim";
 
 export const Leftovers = () => {
   const { mail, readMail, spamMail, trashMail, info } = useMail();

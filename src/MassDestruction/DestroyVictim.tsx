@@ -10,16 +10,15 @@ import { FiTrash2 } from "react-icons/fi";
 import { centerContent } from "../utils";
 
 // TODO: come back to page based scrolling
-const MassDestruction = () => {
+export const DestroyVictim = () => {
   const location = useLocation();
   const qParams = queryString.parse(location.search);
-  const { mail, readMail, spamMail, trashMail, info } = useMail();
+  const { mail, readMail, spamMail, trashMail } = useMail();
   const [victimEmails, setVictimEmails] = useState<any[]>([]);
   const [mailPages, setMailPages] = useState<any[]>([]);
   const [selected, setSelected] = useState<Object>({});
   const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
-
-  console.log("mail info", info);
+  console.log("here");
 
   useEffect(() => {
     /**
@@ -249,5 +248,3 @@ const Button = styled.div`
   }
   transition: transform 0.2s ease-in-out;
 `;
-
-export { MassDestruction };
