@@ -133,7 +133,7 @@ const NavLinkWrapper = styled.div`
   padding: 1rem;
 `;
 
-const BaseNavLink = styled(NavLink)`
+export const BaseNavLink = styled(NavLink)`
   color: inherit;
   text-decoration: inherit;
 `;
@@ -195,9 +195,11 @@ const NavBar = styled(({}: NavBarProps) => {
   return (
     <NavBarContainer>
       <ContentWrapper>
-        <HomeIconWrapper>
-          <HomeIcon text=":postbox:" />
-        </HomeIconWrapper>
+        <BaseNavLink to="/">
+          <HomeIconWrapper>
+            <HomeIcon text=":postbox:" />
+          </HomeIconWrapper>
+        </BaseNavLink>
         <BaseNavLink
           to="/declutter"
           activeStyle={{ color: "red" }}

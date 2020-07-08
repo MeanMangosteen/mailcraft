@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { BaseNavLink } from "../NavBar/NavBar";
 
-export const HomePageButton = ({ imgSrc }) => {
+export const HomePageButton = ({ imgSrc, title, path }) => {
   const [mousePos, setMousePos] = useState<any>();
 
   const handleMouse = (event) => {
@@ -28,8 +29,8 @@ export const HomePageButton = ({ imgSrc }) => {
       onMouseLeave={() => setMousePos(undefined)}
     >
       <MegaWrapper mouse={mousePos}>
-        <Button style={{ backgroundImage: `url(${imgSrc})` }}>
-          <ButtonText>Declutter</ButtonText>
+        <Button style={{ backgroundImage: `url(${imgSrc})` }} href={path}>
+          <ButtonText>{title}</ButtonText>
         </Button>
       </MegaWrapper>
     </LuckyDuckyAura>
@@ -37,7 +38,7 @@ export const HomePageButton = ({ imgSrc }) => {
 };
 
 const LuckyDuckyAura = styled.div`
-  background: linear-gradient(
+  /* background: linear-gradient(
       90deg,
       rgba(255, 255, 255, 1) 0%,
       rgba(133, 255, 231, 1) 15%,
@@ -52,7 +53,27 @@ const LuckyDuckyAura = styled.div`
       rgba(106, 255, 226, 1) 50%,
       rgba(157, 255, 236, 1) 85%,
       rgba(255, 255, 255, 1) 100%
-    );
+    ); */
+  /* background: linear-gradient(
+      90deg,
+      rgba(139, 78, 180, 0) 0%,
+      rgba(139, 78, 180, 1) 15%,
+      rgba(139, 78, 180, 1) 85%,
+      rgba(139, 78, 180, 0) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(139, 78, 180, 0) 0%,
+      rgba(139, 78, 180, 1) 15%,
+      rgba(139, 78, 180, 1) 85%,
+      rgba(139, 78, 180, 0) 100%
+    ); */
+
+  &:hover {
+    transform: scale(1.025);
+  }
+  transition: transform 200ms ease-out;
+
   background-blend-mode: hard-light;
   width: 70%;
 `;
@@ -67,12 +88,16 @@ const MegaWrapper = styled.div`
     mouse
       ? `radial-gradient(farthest-side at ${mouse && mouse.x}% ${
           mouse && mouse.y
-        }%, rgba(255,0,0,1) 0%, rgba(255,185,33,1) 0%, rgba(246,233,227,1) 67%, rgba(255,255,255,0) 100%)`
-      : undefined};
+        }%, rgba(40,0,134,0.8155637254901961) 0%, rgba(181,147,53,0.4430147058823529) 67%, rgba(255,255,255,0) 100%)`
+      : // }%, rgba(40,0,134,0.8155637254901961) 0%, rgba(0,0,0,0.19931722689075626) 67%, rgba(255,255,255,0) 100%)`
+        // }%, rgba(60,0,200,1) 0%, rgba(60,0,200,0.19931722689075626) 67%, rgba(96,0,185,0) 100%)`
+        // }%, rgba(255,0,0,1) 0%, rgba(255,185,33,1) 0%, rgba(246,233,227,1) 67%, rgba(255,255,255,0) 100%)`
+        undefined};
   box-shadow: inset 0px 0px 9px 10px #ffffff;
+  border-radius: 60% 60% 60% 60% / 90% 90% 90% 90%;
 `;
 
-const Button = styled.div`
+const Button = styled.a`
   /* margin: 1rem; */
   border-radius: 2rem;
   color: white;
@@ -83,6 +108,11 @@ const Button = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  box-shadow: 5px 5px 15px 5px #000000;
+
+  /* Remove 'a' tag styling */
+  /* color: inherit; */
+  text-decoration: none;
 `;
 
 const ButtonText = styled.div`
@@ -91,4 +121,5 @@ const ButtonText = styled.div`
   backdrop-filter: blur(8px);
   padding: 0 1rem;
   border-radius: 20%;
+  text-decoration: none;
 `;

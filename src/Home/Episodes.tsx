@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { ShowTextWithStyle, StylishItem } from "../ShowTextWithStyle";
 import { SwitchTransition, Transition } from "react-transition-group";
 import { HomePageButton } from "./HomePageButton";
+import { BaseNavLink } from "../NavBar/NavBar";
+import { NavLink } from "react-router-dom";
 
 type EpisodeProps = {
   state: any;
@@ -87,9 +89,17 @@ export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
       </ShowTextWithStyle>
     </TextContainer>
     <PictureContainer>
-      <ButtonContainer>
-        <HomePageButton imgSrc={Images.CleanRoom} />
-        <HomePageButton imgSrc={Images.Buddha} />
+      <ButtonContainer as="a" href="/declutter">
+        <HomePageButton
+          imgSrc={Images.CleanRoom}
+          title="Declutter"
+          path="/declutter"
+        />
+        <HomePageButton
+          imgSrc={Images.Buddha}
+          title="Insights"
+          path="/insights"
+        />
       </ButtonContainer>
     </PictureContainer>
   </EpisodeContainer>
