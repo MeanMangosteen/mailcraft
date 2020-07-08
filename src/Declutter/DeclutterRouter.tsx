@@ -23,11 +23,13 @@ export const DeclutterRouter = () => {
         urlPieces.length > 3 && urlPieces[2] === "mass-destruction" ? ( // Pre-existing path in the address bar. Use it.
           <Redirect to={location} />
         ) : (
-          <Redirect to="/declutter/mass-destruction" />
+          <Redirect key={location.pathname} to="/declutter/mass-destruction" />
         );
       break;
     case "stage2":
-      stageToDisplay = <Redirect to="/declutter/leftovers" />;
+      stageToDisplay = (
+        <Redirect key={location.pathname} to="/declutter/leftovers" />
+      );
       break;
   }
 
