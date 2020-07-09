@@ -13,6 +13,8 @@ type EpisodeProps = {
 
 enum Images {
   Empty = "data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
+  FailedDreams = "https://raw.githubusercontent.com/gist/ll-aashwin-ll/5b31951331a62392fe55dd0368205712/raw/f6f26b68b8c64abb11e6588c99993590580a057e/failed-dreams.svg",
+  GymSurprise = "https://raw.githubusercontent.com/gist/ll-aashwin-ll/3254e0bec1848bf69ef737b166aa5b5d/raw/d878dc109449ae8f833a10ec16a6024397ac66fc/gym-surprise.svg",
   Insomnia = "https://i.imgur.com/wQlhbfX.jpg",
   Shredded = "https://i.imgur.com/Y4Wfd4p.jpg",
   CleanRoom = "https://i.imgur.com/G8jSfk0.jpg",
@@ -20,28 +22,22 @@ enum Images {
 }
 
 export const Episode1 = ({ state, onFinish }: EpisodeProps) => {
-  const [currImage, setCurrImage] = useState(Images.Empty);
+  const [currImage, setCurrImage] = useState<any>(Images.Empty);
   return (
     <EpisodeContainer state={state}>
       <TextContainer>
         <ShowTextWithStyle key="ep1" onFinish={onFinish}>
           <StylishItem
             onShow={() => {
-              setCurrImage(Images.Insomnia);
+              setCurrImage(Images.FailedDreams);
             }}
-            // onShow={() => console.log("somefin")}
           >
             <Text>Do you have sleepless nights?</Text>
           </StylishItem>
           <StylishItem>
             <Text>Don't have the perfect body?</Text>
           </StylishItem>
-          <StylishItem
-            //    onShow={() => console.log("we showin baby!")}
-            onShow={() => {
-              setCurrImage(Images.Shredded);
-            }}
-          >
+          <StylishItem>
             <Text>Dreams not coming true?</Text>
           </StylishItem>
         </ShowTextWithStyle>
@@ -57,21 +53,30 @@ export const Episode1 = ({ state, onFinish }: EpisodeProps) => {
   );
 };
 
-export const Episode2 = ({ state, onFinish }: EpisodeProps) => (
-  <EpisodeContainer state={state}>
-    <TextContainer>
-      <ShowTextWithStyle key="ep2" onFinish={onFinish}>
-        <StylishItem>
-          <Text>Don't listen to what they say...</Text>
-        </StylishItem>
-        <StylishItem>
-          <Text>It's not time and effort that will get you there!</Text>
-        </StylishItem>
-      </ShowTextWithStyle>
-    </TextContainer>
-    <PictureContainer></PictureContainer>
-  </EpisodeContainer>
-);
+export const Episode2 = ({ state, onFinish }: EpisodeProps) => {
+  const [currImage, setCurrImage] = useState<any>(Images.Empty);
+  return (
+    <EpisodeContainer state={state}>
+      <TextContainer>
+        <ShowTextWithStyle key="ep2" onFinish={onFinish}>
+          <StylishItem onShow={() => setCurrImage(Images.GymSurprise)}>
+            <Text>Don't listen to what they say...</Text>
+          </StylishItem>
+          <StylishItem>
+            <Text>It's not time and effort that will get you there!</Text>
+          </StylishItem>
+        </ShowTextWithStyle>
+      </TextContainer>
+      <PictureContainer>
+        <SwitchTransition mode={"out-in"}>
+          <Transition key={currImage} timeout={200}>
+            {(state) => <Image src={currImage} state={state} />}
+          </Transition>
+        </SwitchTransition>
+      </PictureContainer>
+    </EpisodeContainer>
+  );
+};
 
 export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
   <EpisodeContainer state={state}>
