@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, Redirect } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import OauthPopup from "react-oauth-popup";
 import Axios from "axios";
@@ -11,7 +11,7 @@ export const Login = () => {
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
 
-  const location = useLocation();
+  const location = useLocation<{ referrer: any }>();
   const [cookies, setCookie] = useCookies();
   useEffect(() => {
     // if not logged in get oauth login url
@@ -51,22 +51,25 @@ export const Login = () => {
   };
 
   return (
-    <LoginContainer>
-      <GlobalStyle hovered={hovered} clicked={clicked} />
-      <LoginText
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        onClick={handleLoginClick}
-      >
-        <OauthPopup
-          url={oAuthUrl}
-          onCode={handleOAuthCode}
-          onClose={handleOAuthClose}
+    <>
+      {cookies.logged_in && <Redirect to={location?.state?.referrer || "/"} />}
+      <LoginContainer>
+        <GlobalStyle hovered={hovered} clicked={clicked} />
+        <LoginText
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onClick={handleLoginClick}
         >
-          <LoginLink href={oAuthUrl}>Log me in!</LoginLink>
-        </OauthPopup>
-      </LoginText>
-    </LoginContainer>
+          <OauthPopup
+            url={oAuthUrl}
+            onCode={handleOAuthCode}
+            onClose={handleOAuthClose}
+          >
+            <LoginLink href={oAuthUrl}>Log me in!</LoginLink>
+          </OauthPopup>
+        </LoginText>
+      </LoginContainer>
+    </>
   );
 };
 
@@ -85,7 +88,7 @@ const LoginContainer = styled.div`
 
 const LoginText = styled.h1`
   transform: none;
-  color: #00ff97;
+  color: #36f0e6;
   mix-blend-mode: screen;
   text-shadow: 0 0 5px #9dbd1a;
 

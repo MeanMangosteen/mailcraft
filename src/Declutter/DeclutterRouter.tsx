@@ -4,33 +4,46 @@ import { ChooseVictim } from "./ChooseVictim";
 import { Redirect, Route, Link, useLocation, Switch } from "react-router-dom";
 import { DestroyVictim } from "../MassDestruction/DestroyVictim";
 import { Leftovers } from "../Leftovers/Leftovers";
+import { useCookies } from "react-cookie";
 
 export const DeclutterRouter = () => {
   const [currStage, setCurrStage] = useState<"stage1" | "stage2">("stage1");
   const { mail } = useMail();
   const location = useLocation();
+  const [cookies, setCookie] = useCookies();
 
   // Let's start of which just direct towards MD or leftovers
   let stageToDisplay;
-  switch (currStage) {
-    case "stage1":
-      /**
-       * location.pathname = /declutter/mass-destruction
-       * urlPieces = ["", "declutter", "mass-destruction"]
-       */
-      const urlPieces = location.pathname.split("/");
-      stageToDisplay =
-        urlPieces.length > 3 && urlPieces[2] === "mass-destruction" ? ( // Pre-existing path in the address bar. Use it.
-          <Redirect to={location} />
-        ) : (
-          <Redirect key={location.pathname} to="/declutter/mass-destruction" />
+  if (!cookies.logged_in) {
+    stageToDisplay = (
+      <Redirect
+        to={{ pathname: "/login", state: { referrer: location.pathname } }}
+      />
+    );
+  } else {
+    switch (currStage) {
+      case "stage1":
+        /**
+         * location.pathname = /declutter/mass-destruction
+         * urlPieces = ["", "declutter", "mass-destruction"]
+         */
+        const urlPieces = location.pathname.split("/");
+        stageToDisplay =
+          urlPieces.length > 3 && urlPieces[2] === "mass-destruction" ? ( // Pre-existing path in the address bar. Use it.
+            <Redirect to={location} />
+          ) : (
+            <Redirect
+              key={location.pathname}
+              to="/declutter/mass-destruction"
+            />
+          );
+        break;
+      case "stage2":
+        stageToDisplay = (
+          <Redirect key={location.pathname} to="/declutter/leftovers" />
         );
-      break;
-    case "stage2":
-      stageToDisplay = (
-        <Redirect key={location.pathname} to="/declutter/leftovers" />
-      );
-      break;
+        break;
+    }
   }
 
   return (

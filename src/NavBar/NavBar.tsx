@@ -144,7 +144,7 @@ const NavBar = styled(({}: NavBarProps) => {
   return (
     <NavBarContainer>
       <ContentWrapper>
-        <BaseNavLink to="/" activeStyle={{ color: "red" }}>
+        <BaseNavLink to="/" exact activeStyle={{ color: "red" }}>
           <NavLinkWrapper>
             <HomeIcon src={logoSrc} />
             <NavLinkText>Home</NavLinkText>

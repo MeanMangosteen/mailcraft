@@ -11,9 +11,9 @@ interface DeclutterProps {
 }
 
 export const ChooseVictim = ({ onComplete }) => {
-  const [cookies, setCookie] = useCookies();
+  // const [cookies, setCookie] = useCookies();
   const [chartData, setChartData] = useState<any>(undefined);
-  const [victim, setVictim] = useState<string | null>(null);
+  const [selectedVictim, setVictim] = useState<string | null>(null);
   const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
   const { mail, info } = useMail();
 
@@ -59,35 +59,27 @@ export const ChooseVictim = ({ onComplete }) => {
 
   return (
     <PageContainer>
-      {!cookies.logged_in ? (
-        // TODO: this should redirect to login rather than render it.
-        <Login />
-      ) : (
-        <Fragment>
-          <PieChartWrapper>
-            <ChartTitle>{`Top\nOffenders`}</ChartTitle>
-            <VictimText>
-              {`Choose your\n`}
-              <VictimTextHighlight>Victim</VictimTextHighlight>
-            </VictimText>
-            <PieChart
-              data={chartData}
-              signalListeners={{ click: handlePieClick, hover: handlePieClick }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                filter: "drop-shadow(2px 4px 6px black)",
-              }}
-            />
-          </PieChartWrapper>
-          <ProgressBar progress={info?.progress} total={info?.total} />
-        </Fragment>
-      )}
-      {victim ? (
-        <Redirect to={`/declutter/mass-destruction/destroy?victim=${victim}`} />
+      <PieChartWrapper>
+        <ChartTitle>{`Top\nOffenders`}</ChartTitle>
+        <VictimText>
+          {`Choose your\n`}
+          <VictimTextHighlight>Victim</VictimTextHighlight>
+        </VictimText>
+        <PieChart
+          data={chartData}
+          signalListeners={{ click: handlePieClick, hover: handlePieClick }}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            filter: "drop-shadow(2px 4px 6px black)",
+          }}
+        />
+      </PieChartWrapper>
+      <ProgressBar progress={info?.progress} total={info?.total} />
+      {selectedVictim ? (
+        <Redirect to={`/declutter/mass-destruction/destroy?victim=${selectedVictim}`} />
       ) : null}
-      {/* {missionSuccessful && <Redirect to="/leftovers" />} */}
     </PageContainer>
   );
 };
