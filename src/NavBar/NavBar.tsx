@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import styled, { keyframes, css } from "styled-components";
-import { Link, NavLink } from "react-router-dom";
-import { GiWheelbarrow, GiMicroscope } from "react-icons/gi";
+import { NavLink } from "react-router-dom";
 import Emoji from "react-emoji-render";
 
 interface NavBarProps {}
+const logoSrc =
+  "https://raw.githubusercontent.com/gist/ll-aashwin-ll/8881a789f33ec7cd1681920e86db1dca/raw/89ded47674850103c22aea8c14cec4a8a551334e/mailcraft.svg";
 
 const grow = keyframes`
   0% {
@@ -62,15 +63,9 @@ const NavBarContainer = styled.div`
     height: 100%;
   }
 
-  /* &::before {
-    top: 0%;
-    background: linear-gradient(to top, #ccc 0%, transparent 100%);
-  } */
-
   &::after {
     top: 0;
     background: linear-gradient(to bottom, #ccc 0%, transparent 100%);
-    /* transform: translateY(100%); */
   }
 `;
 
@@ -83,21 +78,61 @@ const ContentWrapper = styled.div`
   height: 50vh;
 `;
 
+// const iconStyles = css`
+//   width: 100%;
+//   height: auto;
+//   font-size: 4rem;
+
+//   will-change: transform;
+//   animation: ${(props: { hovered: boolean }) =>
+//     props.hovered
+//       ? css`
+//           ${grow} 0.5s ease-in-out 1
+//         `
+//       : undefined};
+//   text-align: center;
+//   filter: drop-shadow(#7d7d7d 2px 4px 3px);
+// `;
+// const NavLinkText = styled.h1`
+//   position: absolute;
+//   z-index: 5;
+//   margin: 0;
+
+//   will-change: transform;
+//   animation: ${(props: { hovered: boolean }) =>
+//     props.hovered
+//       ? css`
+//           ${slideFromLeft} 0.5s ease-in-out 1
+//         `
+//       : undefined};
+//   transform: translate3d(100%, 0, 0);
+//   display: ${(props: { hovered: boolean }) =>
+//     props.hovered ? undefined : `none`};
+//   right: 0;
+//   filter: drop-shadow(#888 2px 4px 3px);
+// `;
+
+const NavLinkWrapper = styled.div`
+  display: flex;
+  align-items: center;
+
+  position: relative;
+  padding: 1rem;
+`;
+
 const iconStyles = css`
   width: 100%;
   height: auto;
   font-size: 4rem;
 
   will-change: transform;
-  animation: ${(props: { hovered: boolean }) =>
-    props.hovered
-      ? css`
-          ${grow} 0.5s ease-in-out 1
-        `
-      : undefined};
+  ${NavLinkWrapper}:hover & {
+    animation: ${grow} 0.5s ease-in-out 1;
+  }
   text-align: center;
   filter: drop-shadow(#7d7d7d 2px 4px 3px);
 `;
+
 const DeclutterIcon = styled(Emoji)`
   ${iconStyles}
 `;
@@ -111,26 +146,16 @@ const NavLinkText = styled.h1`
   z-index: 5;
   margin: 0;
 
-  will-change: transform;
-  animation: ${(props: { hovered: boolean }) =>
-    props.hovered
-      ? css`
-          ${slideFromLeft} 0.5s ease-in-out 1
-        `
-      : undefined};
-  transform: translate3d(100%, 0, 0);
-  display: ${(props: { hovered: boolean }) =>
-    props.hovered ? undefined : `none`};
+  opacity: 0;
+  transform: translate3d(-100%, 0, 0);
+  opacity: 0;
+  ${NavLinkWrapper}:hover & {
+    animation: ${slideFromLeft} 0.5s ease-in-out 1;
+    transform: translate3d(100%, 0, 0);
+    opacity: 1;
+  }
   right: 0;
   filter: drop-shadow(#888 2px 4px 3px);
-`;
-
-const NavLinkWrapper = styled.div`
-  display: flex;
-  align-items: center;
-
-  position: relative;
-  padding: 1rem;
 `;
 
 export const BaseNavLink = styled(NavLink)`
@@ -162,12 +187,21 @@ const HomeIconWrapper = styled.div`
     /* background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red) 1; */
   }
 `;
-const HomeIcon = styled(Emoji)`
+const HomeIcon = styled.img`
+  ${iconStyles}
+
   width: 100%;
   height: auto;
   font-size: 4rem;
   text-align: center;
 
+  filter: saturate(1.5) drop-shadow(#7d7d7d 2px 4px 3px);
+  /* &:hover {
+    transform: scale(1.1);
+  }
+
+  transition: transform 0.2s ease-in-out; */
+}
   /* &::after {
     content: "";
     border-bottom: 1px solid #888;
@@ -196,9 +230,13 @@ const NavBar = styled(({}: NavBarProps) => {
     <NavBarContainer>
       <ContentWrapper>
         <BaseNavLink to="/">
-          <HomeIconWrapper>
-            <HomeIcon text=":postbox:" />
-          </HomeIconWrapper>
+          {/* <HomeIconWrapper> */}
+          {/* <HomeIcon text=":postbox:" /> */}
+          <NavLinkWrapper>
+            <HomeIcon src={logoSrc} />
+            <NavLinkText>Test</NavLinkText>
+          </NavLinkWrapper>
+          {/* </HomeIconWrapper> */}
         </BaseNavLink>
         <BaseNavLink
           to="/declutter"
@@ -207,8 +245,8 @@ const NavBar = styled(({}: NavBarProps) => {
           onMouseLeave={handleMouseLeave("declutter")}
         >
           <NavLinkWrapper>
-            <DeclutterIcon hovered={hovered["declutter"]} text=":bowling:" />
-            <NavLinkText hovered={hovered["declutter"]}>Declutter</NavLinkText>
+            <DeclutterIcon text=":bowling:" />
+            <NavLinkText>Declutter</NavLinkText>
           </NavLinkWrapper>
         </BaseNavLink>
         <BaseNavLink
@@ -218,8 +256,8 @@ const NavBar = styled(({}: NavBarProps) => {
           onMouseLeave={handleMouseLeave("analyse")}
         >
           <NavLinkWrapper>
-            <AnalyseIcon hovered={hovered["analyse"]} text=":microscope:" />
-            <NavLinkText hovered={hovered["analyse"]}>Analyse</NavLinkText>
+            <AnalyseIcon text=":microscope:" />
+            <NavLinkText>Analyse</NavLinkText>
           </NavLinkWrapper>
           {/* <h3>Analyse</h3> */}
         </BaseNavLink>
