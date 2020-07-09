@@ -78,40 +78,6 @@ const ContentWrapper = styled.div`
   height: 50vh;
 `;
 
-// const iconStyles = css`
-//   width: 100%;
-//   height: auto;
-//   font-size: 4rem;
-
-//   will-change: transform;
-//   animation: ${(props: { hovered: boolean }) =>
-//     props.hovered
-//       ? css`
-//           ${grow} 0.5s ease-in-out 1
-//         `
-//       : undefined};
-//   text-align: center;
-//   filter: drop-shadow(#7d7d7d 2px 4px 3px);
-// `;
-// const NavLinkText = styled.h1`
-//   position: absolute;
-//   z-index: 5;
-//   margin: 0;
-
-//   will-change: transform;
-//   animation: ${(props: { hovered: boolean }) =>
-//     props.hovered
-//       ? css`
-//           ${slideFromLeft} 0.5s ease-in-out 1
-//         `
-//       : undefined};
-//   transform: translate3d(100%, 0, 0);
-//   display: ${(props: { hovered: boolean }) =>
-//     props.hovered ? undefined : `none`};
-//   right: 0;
-//   filter: drop-shadow(#888 2px 4px 3px);
-// `;
-
 const NavLinkWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -163,30 +129,6 @@ export const BaseNavLink = styled(NavLink)`
   text-decoration: inherit;
 `;
 
-const HomeIconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-
-  position: relative;
-  /* padding: 1rem; */
-
-  width: 100%;
-  height: auto;
-  /* margin: 1rem; */
-
-  box-sizing: border-box;
-  border: 5px solid;
-  border-image: conic-gradient(red, yellow, lime, aqua, blue, magenta, red) 1;
-
-  transform-origin: center;
-  transition: 0.2s;
-  &:hover {
-    transform: scale(0.8);
-    font-size: 8rem;
-    /* border: 1px solid; */
-    /* background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red) 1; */
-  }
-`;
 const HomeIcon = styled.img`
   ${iconStyles}
 
@@ -196,70 +138,29 @@ const HomeIcon = styled.img`
   text-align: center;
 
   filter: saturate(1.5) drop-shadow(#7d7d7d 2px 4px 3px);
-  /* &:hover {
-    transform: scale(1.1);
-  }
-
-  transition: transform 0.2s ease-in-out; */
-}
-  /* &::after {
-    content: "";
-    border-bottom: 1px solid #888;
-    border-radius: 100%;
-    width: 90%;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 1px;
-  } */
 `;
 
 const NavBar = styled(({}: NavBarProps) => {
-  const [hovered, setHovered] = useState({ declutter: false, analyse: false });
-  const handleMouseEnter = (option: "declutter" | "analyse") => () => {
-    hovered[option] = true;
-    setHovered({ ...hovered });
-  };
-
-  const handleMouseLeave = (option: "declutter" | "analyse") => () => {
-    hovered[option] = false;
-    setHovered({ ...hovered });
-  };
   return (
     <NavBarContainer>
       <ContentWrapper>
-        <BaseNavLink to="/">
-          {/* <HomeIconWrapper> */}
-          {/* <HomeIcon text=":postbox:" /> */}
+        <BaseNavLink to="/" activeStyle={{ color: "red" }}>
           <NavLinkWrapper>
             <HomeIcon src={logoSrc} />
-            <NavLinkText>Test</NavLinkText>
+            <NavLinkText>Home</NavLinkText>
           </NavLinkWrapper>
-          {/* </HomeIconWrapper> */}
         </BaseNavLink>
-        <BaseNavLink
-          to="/declutter"
-          activeStyle={{ color: "red" }}
-          onMouseEnter={handleMouseEnter("declutter")}
-          onMouseLeave={handleMouseLeave("declutter")}
-        >
+        <BaseNavLink to="/declutter" activeStyle={{ color: "red" }}>
           <NavLinkWrapper>
             <DeclutterIcon text=":bowling:" />
             <NavLinkText>Declutter</NavLinkText>
           </NavLinkWrapper>
         </BaseNavLink>
-        <BaseNavLink
-          to="/leftovers"
-          activeStyle={{}}
-          onMouseEnter={handleMouseEnter("analyse")}
-          onMouseLeave={handleMouseLeave("analyse")}
-        >
+        <BaseNavLink to="/leftovers" activeStyle={{}}>
           <NavLinkWrapper>
             <AnalyseIcon text=":microscope:" />
-            <NavLinkText>Analyse</NavLinkText>
+            <NavLinkText>Insights</NavLinkText>
           </NavLinkWrapper>
-          {/* <h3>Analyse</h3> */}
         </BaseNavLink>
       </ContentWrapper>
     </NavBarContainer>
