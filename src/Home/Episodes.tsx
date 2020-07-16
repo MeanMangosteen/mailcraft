@@ -15,6 +15,8 @@ enum Images {
   Empty = "data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
   FailedDreams = "https://raw.githubusercontent.com/gist/ll-aashwin-ll/5b31951331a62392fe55dd0368205712/raw/f6f26b68b8c64abb11e6588c99993590580a057e/failed-dreams.svg",
   GymSurprise = "https://raw.githubusercontent.com/gist/ll-aashwin-ll/3254e0bec1848bf69ef737b166aa5b5d/raw/d878dc109449ae8f833a10ec16a6024397ac66fc/gym-surprise.svg",
+  Declutter = "https://raw.githubusercontent.com/gist/ll-aashwin-ll/435d3a2d0ffdbb23aabd080892ab6160/raw/7d43d44ac00343f43b953549e4c14214ed1158c0/declutter.svg",
+  Insights = "https://raw.githubusercontent.com/gist/ll-aashwin-ll/ad413b60bc3b4e1963a18adfa8c310cb/raw/779dc0bf90abae428c2a753c8ac717155386349d/insights.svg",
   Insomnia = "https://i.imgur.com/wQlhbfX.jpg",
   Shredded = "https://i.imgur.com/Y4Wfd4p.jpg",
   CleanRoom = "https://i.imgur.com/G8jSfk0.jpg",
@@ -96,12 +98,12 @@ export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
     <PictureContainer>
       <ButtonContainer as="a" href="/declutter">
         <HomePageButton
-          imgSrc={Images.CleanRoom}
+          imgSrc={Images.Declutter}
           title="Declutter"
           path="/declutter"
         />
         <HomePageButton
-          imgSrc={Images.Buddha}
+          imgSrc={Images.Insights}
           title="Insights"
           path="/insights"
         />

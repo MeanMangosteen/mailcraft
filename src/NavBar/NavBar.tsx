@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled, { keyframes, css } from "styled-components";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import Emoji from "react-emoji-render";
 
 interface NavBarProps {}
@@ -129,6 +129,11 @@ export const BaseNavLink = styled(NavLink)`
   text-decoration: inherit;
 `;
 
+export const BaseLink = styled(Link)`
+  color: inherit;
+  text-decoration: inherit;
+`;
+
 const HomeIcon = styled.img`
   ${iconStyles}
 
@@ -156,7 +161,7 @@ const NavBar = styled(({}: NavBarProps) => {
             <NavLinkText>Declutter</NavLinkText>
           </NavLinkWrapper>
         </BaseNavLink>
-        <BaseNavLink to="/leftovers" activeStyle={{}}>
+        <BaseNavLink to="/insights" activeStyle={{}}>
           <NavLinkWrapper>
             <AnalyseIcon text=":microscope:" />
             <NavLinkText>Insights</NavLinkText>
