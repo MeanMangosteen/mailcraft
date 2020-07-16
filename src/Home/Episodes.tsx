@@ -96,7 +96,7 @@ export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
       </ShowTextWithStyle>
     </TextContainer>
     <PictureContainer>
-      <ButtonContainer as="a" href="/declutter">
+      <ButtonContainer>
         <HomePageButton
           imgSrc={Images.Declutter}
           title="Declutter"

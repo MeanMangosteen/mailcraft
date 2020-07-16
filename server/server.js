@@ -21,11 +21,15 @@ const fs = require("fs");
 const app = express();
 const ImapClient = require("emailjs-imap-client").default;
 const simpleParser = require("mailparser").simpleParser;
-//Here we are configuring express to use body-parser as middle-ware.
+const cookieParser = require('cookie-parser')
+
 const port = 4000;
+//Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(cookieParser());
+
 
 // const scopes = ["https://www.googleapis.com/auth/gmail.readonly"];
 const scopes = ["https://mail.google.com/"];
@@ -69,7 +73,12 @@ app.post("/OAuthConfirm", async (req, res) => {
       })
     ).data;
 
-    res.sendStatus(200);
+    res.cookie('access_token', tokens.access_token, {
+      // expires: new Date(Date.now() + 8 * 3600000), // cookie will be removed after 8 hours
+      // secure: true, httpOnly: true,
+    });
+    res.status(200).send({});
+
   } catch (err) {
     res.status(400).send(err);
     console.error(err);
@@ -154,6 +163,8 @@ app.post("/read-mail", async (req, res) => {
 // OMGTODO: follow this variable. No more needs to be said.
 let authDeets = {};
 app.get("/mail", async (req, res) => {
+  res.cookie('cookieName', 'cookieValue', { httpOnly: true });
+  console.log('cookies', req.cookies);
   if (demo) {
     const messages = fs.readFileSync('demo.json');
     return res.status(200).send(messages);

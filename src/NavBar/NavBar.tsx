@@ -130,8 +130,15 @@ export const BaseNavLink = styled(NavLink)`
 `;
 
 export const BaseLink = styled(Link)`
-  color: inherit;
-  text-decoration: inherit;
+  text-decoration: none;
+
+  &:focus,
+  &:hover,
+  &:visited,
+  &:link,
+  &:active {
+    text-decoration: none;
+  }
 `;
 
 const HomeIcon = styled.img`

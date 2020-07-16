@@ -16,7 +16,7 @@ export const Login = () => {
   useEffect(() => {
     // if not logged in get oauth login url
     if (!cookies.logged_in) {
-      setCookie("redirect", "/declutter");
+      setCookie("redirect", "/declutter"); // OMGTODO: might not be needed anymore.
       axios
         .get("http://localhost:4000/OAuthUrl", {
           params: { pathname: location.pathname },
