@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import { BaseNavLink, BaseLink } from "../NavBar/NavBar";
 
-export const HomePageButton = ({ imgSrc, title, path }) => {
+export const HomePageButton = ({ imgSrc, title, path, levitate = false }) => {
   const [mousePos, setMousePos] = useState<any>();
 
   const handleMouse = (event) => {
@@ -25,7 +25,7 @@ export const HomePageButton = ({ imgSrc, title, path }) => {
 
   // onMouseMove={handleMouse} onMouseLeave={() => setMousePos(undefined)}
   return (
-    <ButtonContainer>
+    <ButtonContainer levitate={levitate}>
       <Button style={{ backgroundImage: `url(${imgSrc})` }} to={path}>
         <ButtonText>{title}</ButtonText>
       </Button>
@@ -33,12 +33,16 @@ export const HomePageButton = ({ imgSrc, title, path }) => {
   );
 };
 
-const ButtonContainer = styled.div`
-  &:hover {
-    transform: scale(1.125);
+const Levitate = keyframes`
+  from {
+    transform: translate3d(0, -1.5%, 0);
   }
-  transition: transform 250ms ease-in-out;
+  to {
+    transform: translate3d(0, 1.5%, 0);
+  }
+`;
 
+const ButtonContainer = styled.div<{ levitate?: boolean }>`
   background-blend-mode: hard-light;
   width: 70%;
   display: flex;
@@ -46,6 +50,12 @@ const ButtonContainer = styled.div`
     flex-grow: 1;
   }
   padding: 6rem;
+
+  animation: ${({ levitate }) =>
+    levitate &&
+    css`
+      ${Levitate} 0.9s ease-in-out 1s infinite alternate both running
+    `};
 `;
 
 const Button = styled(BaseLink)`
@@ -60,6 +70,11 @@ const Button = styled(BaseLink)`
   background-size: contain;
   background-repeat: no-repeat;
   filter: drop-shadow(2px 4px 6px black);
+
+  &:hover {
+    transform: scale(1.125);
+  }
+  transition: transform 250ms ease-in-out;
 
   /* Remove 'a' tag styling */
   /* color: inherit; */

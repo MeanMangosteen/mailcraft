@@ -101,6 +101,7 @@ export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
           imgSrc={Images.Declutter}
           title="Declutter"
           path="/declutter"
+          levitate
         />
         <HomePageButton
           imgSrc={Images.Insights}
