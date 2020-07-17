@@ -1,20 +1,16 @@
-import React, { useContext, useEffect, useState, Fragment } from "react";
-import styled, { createGlobalStyle, keyframes } from "styled-components";
+import React, { useEffect, useState } from "react";
+import styled, { keyframes } from "styled-components";
 import PieChart from "./PieChart";
 import { Redirect } from "react-router-dom";
-import { useCookies } from "react-cookie";
 import { useMail } from "../reducers/mail";
-import { Login } from "../Login";
 
 interface DeclutterProps {
   className?: string;
 }
 
 export const ChooseVictim = ({ onComplete }) => {
-  const [cookies, setCookie] = useCookies();
   const [chartData, setChartData] = useState<any>(undefined);
   const [selectedVictim, setVictim] = useState<string | null>(null);
-  const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
   const { mail, info } = useMail();
 
   useEffect(() => {
@@ -48,9 +44,8 @@ export const ChooseVictim = ({ onComplete }) => {
     });
     if (success) {
       onComplete();
-      setMissionSuccessful(success);
     }
-  }, [mail]);
+  }, [mail, onComplete]);
 
   const handlePieClick = (name, leMagic) => {
     console.log(leMagic);

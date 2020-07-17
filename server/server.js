@@ -94,8 +94,8 @@ app.post("/trash-mail", authMiddleware, async (req, res) => {
     res.status(400).send("Missing 'uids' parameter");
   }
 
-  client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
   try {
+    client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
     await client.connect();
     const response = await client.moveMessages(
       "INBOX",
@@ -108,6 +108,8 @@ app.post("/trash-mail", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(400).send(err);
+  } finally {
+    await client.close()
   }
 });
 

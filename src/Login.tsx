@@ -1,19 +1,19 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation, Redirect } from "react-router-dom";
-import { useCookies } from "react-cookie";
 import OauthPopup from "react-oauth-popup";
 import styled, { createGlobalStyle } from "styled-components";
 import { api } from "./utils";
 import { UserContext } from "./App";
+import { useCookies } from "react-cookie";
 
 export const Login = () => {
   const [oAuthUrl, setOAuthUrl] = useState(undefined);
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
   const userCtx = useContext(UserContext);
+  const [cookies, setCookie] = useCookies();
 
   const location = useLocation<{ referrer: any }>();
-  const [cookies, setCookie] = useCookies();
   useEffect(() => {
     // if not logged in get oauth login url
     if (!userCtx.loggedIn) {
@@ -43,7 +43,11 @@ export const Login = () => {
       })
       .then(() => {
         userCtx.setLoggedIn(true);
-        // setCookie("logged_in", true, { path: "/" });
+        // On app init, we'll see this to gather if the user was logged in.
+        setCookie("loggedIn", true, {
+          path: "/",
+          expires: new Date(Date.now() + 8 * 3600000), // expires after 8 hours
+        });
       })
       .catch((err) => {
         console.log("error", err);

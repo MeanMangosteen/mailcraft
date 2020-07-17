@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { NavBar } from "./NavBar/NavBar";
 import { BrowserRouter } from "react-router-dom";
 import { AppRouter } from "./AppRouter";
-import { CookiesProvider, useCookies } from "react-cookie";
 import { MailProvider } from "./reducers/mail";
-import * as types from "styled-components/cssprop";
-import { createBrowserHistory } from "history";
-import { api, setupInterceptors } from "./utils";
+import { setupInterceptors } from "./utils";
+import { useCookies } from "react-cookie";
 
 const StyledNavBar = styled(NavBar)`
   grid-area: nav-bar;
@@ -17,9 +15,6 @@ const StyledAppRouter = styled(AppRouter)`
   grid-area: content;
 `;
 
-// Used by axios interceptors
-export const history = createBrowserHistory();
-
 export const UserContext = React.createContext<{
   loggedIn: boolean;
   setLoggedIn: any;
@@ -27,17 +22,10 @@ export const UserContext = React.createContext<{
   loggedIn: false,
   setLoggedIn: () => false,
 });
-// OMGTODO: delete if not needed;
-// export const MailContext: React.Context<{
-//   mail: any;
-//   setMail: (mail) => void;
-// }> = React.createContext({ mail: null, setMail: (mail) => {} });
 
 const App = styled(({ className }) => {
-  // OMGTODO: delete if not needed;
-  // const [mail, setMail] = useState(null);
-  // const mailCtxInitial = { mail, setMail };
-  const [loggedIn, setLoggedIn] = useState<boolean>(true);
+  const [cookies] = useCookies(["loggedIn"]);
+  const [loggedIn, setLoggedIn] = useState<boolean>(!!cookies?.loggedIn);
 
   setupInterceptors(setLoggedIn);
 

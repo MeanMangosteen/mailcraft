@@ -1,8 +1,5 @@
 import { css } from "styled-components";
 import Axios from "axios";
-import Cookies from "universal-cookie";
-import { history, UserContext } from "./App";
-import { useContext } from "react";
 
 export const CSSDividerTop = ({ width, IHaveSetRelativePosition = false }) => {
   if (!IHaveSetRelativePosition) return;

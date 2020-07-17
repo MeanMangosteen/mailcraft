@@ -1,14 +1,6 @@
-import React, {
-  useContext,
-  useReducer,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
-import { useCookies } from "react-cookie";
+import React, { useContext, useReducer, useEffect, useCallback } from "react";
 import { api } from "../utils";
 import { UserContext } from "../App";
-// import { MailContext } from "../App";
 
 type MailAction = "store";
 
@@ -21,7 +13,6 @@ export const MailContext: React.Context<[
 // TODO: rename folder to utils
 export const useMail = () => {
   const [state, dispatch] = useContext(MailContext);
-  // const [cookies] = useCookies();
   const userCtx = useContext(UserContext);
 
   const setMail = useCallback(
@@ -68,8 +59,9 @@ export const useMail = () => {
         console.error(err);
       });
   }, []);
+
   useEffect(() => {
-    // if (!) return;
+    if (!userCtx.loggedIn) return;
     if (state?.mail) return; // We only need to run this if we're fetching for the first time
 
     api
