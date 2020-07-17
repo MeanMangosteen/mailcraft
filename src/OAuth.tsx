@@ -11,7 +11,7 @@ const OAuth = () => {
   const [cookies, setCookies] = useCookies();
 
   useEffect(() => {
-    Axios.post("http://localhost:4000/OAuthConfirm", {
+    Axios.post("/OAuthConfirm", {
       code: queryParams.code,
     })
       .then(() => {

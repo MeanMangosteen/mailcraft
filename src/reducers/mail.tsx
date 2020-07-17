@@ -32,7 +32,7 @@ export const useMail = () => {
   const readMail = useCallback(
     (uids: string[], callback?: (err: Error | null) => void) => {
       axios
-        .post("http://localhost:4000/read-mail", { uids })
+        .post("/read-mail", { uids })
         .then(() => {
           callback && callback(null);
           // remove mail from state
@@ -47,7 +47,7 @@ export const useMail = () => {
 
   const trashMail = useCallback((uids: string[]) => {
     axios
-      .post("http://localhost:4000/trash-mail", { uids })
+      .post("/trash-mail", { uids })
       .then(() => {
         dispatch({ type: "remove", uids });
       })
@@ -58,7 +58,7 @@ export const useMail = () => {
 
   const spamMail = useCallback((uids: string[]) => {
     axios
-      .post("http://localhost:4000/spam-mail", { uids })
+      .post("/spam-mail", { uids })
       .then(() => {
         dispatch({ type: "remove", uids });
       })
@@ -71,7 +71,7 @@ export const useMail = () => {
     if (state) return; // We only need to run this if we're fetching for the first time
 
     axios
-      .get("http://localhost:4000/mail")
+      .get("/mail")
       .then((res) => {
         setMail(res.data);
       })

@@ -39,7 +39,7 @@ export const Login = () => {
   const handleOAuthClose = () => {};
 
   const handleOAuthCode = (code, params) => {
-    Axios.post("http://localhost:4000/OAuthConfirm", {
+    Axios.post("/OAuthConfirm", {
       code,
     })
       .then(() => {

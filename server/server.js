@@ -1,16 +1,3 @@
-// Copyright 2018 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 const { google } = require("googleapis");
 const auth = require("./auth");
 
@@ -30,23 +17,32 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(cookieParser());
 
+const authMiddleware = async (req, res, next) => {
+  const authDeets = {
+    user: req.cookies.profile,
+    xoauth2: req.cookies.access_token,
+    requireTLS: true,
+  };
 
-// const scopes = ["https://www.googleapis.com/auth/gmail.readonly"];
+  console.log('in middleware', authDeets);
+  req['authDeets'] = authDeets;
+  next();
+};
+
+
 const scopes = ["https://mail.google.com/"];
 let gmail = null;
 let profile = null;
 let client = null; // TODO: change name to imap
 
-const demo = true;
+const demo = false;
 
 app.get("/OAuthUrl", (req, res) => {
-  const { pathname } = req.query;
   const loginUrl = auth.oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: scopes.join(" "),
   });
 
-  res.cookie("redirect", pathname);
   res.status(200).send(loginUrl);
 });
 
@@ -74,9 +70,16 @@ app.post("/OAuthConfirm", async (req, res) => {
     ).data;
 
     res.cookie('access_token', tokens.access_token, {
-      // expires: new Date(Date.now() + 8 * 3600000), // cookie will be removed after 8 hours
-      // secure: true, httpOnly: true,
+      expires: new Date(Date.now() + 8 * 3600000), // cookie will be removed after 8 hours
+      httpOnly: true,
+      sameSite: true,
+      // secure: true,
+    }).cookie('profile', profile.emailAddress, {
+      expires: new Date(Date.now() + 8 * 3600000), // cookie will be removed after 8 hours
+      httpOnly: true,
+      sameSite: true,
     });
+
     res.status(200).send({});
 
   } catch (err) {
@@ -85,13 +88,13 @@ app.post("/OAuthConfirm", async (req, res) => {
   }
 });
 
-app.post("/trash-mail", async (req, res) => {
+app.post("/trash-mail", authMiddleware, async (req, res) => {
   const { uids } = req.body;
   if (!uids) {
     res.status(400).send("Missing 'uids' parameter");
   }
 
-  client = new ImapClient("imap.gmail.com", 993, { auth: authDeets });
+  client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
   try {
     await client.connect();
     const response = await client.moveMessages(
@@ -108,13 +111,13 @@ app.post("/trash-mail", async (req, res) => {
   }
 });
 
-app.post("/spam-mail", async (req, res) => {
+app.post("/spam-mail", authMiddleware, async (req, res) => {
   const { uids } = req.body;
   if (!uids) {
     res.status(400).send("Missing 'uids' parameter");
   }
 
-  client = new ImapClient("imap.gmail.com", 993, { auth: authDeets });
+  client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
   try {
     await client.connect();
     const response = await client.moveMessages(
@@ -131,23 +134,22 @@ app.post("/spam-mail", async (req, res) => {
   }
 });
 
-app.post("/read-mail", async (req, res) => {
+app.post("/read-mail", authMiddleware, async (req, res) => {
   if (demo) {
     return res.sendStatus(200);
   }
 
   const { uids } = req.body;
   if (!uids) {
-    res.status(400).send("Missing 'code' parameter");
+    res.status(400).send("Missing 'uids' parameter");
   }
 
-  client = new ImapClient("imap.gmail.com", 993, { auth: authDeets });
+  client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
   try {
     await client.connect();
     const response = await client.setFlags(
       "INBOX",
       uids.join(","),
-      // uids[2].toString(),
       {
         remove: ["\\Seen"], // OMGTODO: change to add.
       },
@@ -160,38 +162,22 @@ app.post("/read-mail", async (req, res) => {
   }
 });
 
-// OMGTODO: follow this variable. No more needs to be said.
-let authDeets = {};
-app.get("/mail", async (req, res) => {
-  res.cookie('cookieName', 'cookieValue', { httpOnly: true });
-  console.log('cookies', req.cookies);
+app.get("/mail", authMiddleware, async (req, res) => {
   if (demo) {
     const messages = fs.readFileSync('demo.json');
     return res.status(200).send(messages);
   }
-  if (!gmail) {
-    res.sendStatus(401);
-    return;
-  }
 
-  authDeets = {
-    user: profile.emailAddress,
-    // xoauth2: Buffer.from(accessToken).toString("base64"),
-    xoauth2: auth.oAuth2Client.credentials.access_token,
-    requireTLS: true,
-  };
 
   client = new ImapClient("imap.gmail.com", 993, {
-    // auth: {
-    //   user: profile.emailAddress,
-    //   // xoauth2: Buffer.from(accessToken).toString("base64"),
-    //   xoauth2: auth.oAuth2Client.credentials.access_token,
-    //   requireTLS: true,
-    // },
-    auth: authDeets,
+    auth: req.authDeets,
   });
 
-  await client.connect();
+  try {
+    await client.connect();
+  } catch (err) {
+    console.error(err);
+  }
 
   console.log("connected!");
 
@@ -229,47 +215,8 @@ app.get("/mail", async (req, res) => {
   const data = JSON.stringify(messages);
   fs.writeFileSync('demo.json', data);
   res.status(200).send(messages);
-  // try {
-  //   const mail = [];
-  //   let npt = null;
-  //   while (true) {
-  //     const res = await gmail.users.messages.list({
-  //       userId: "me",
-  //       maxResults: 1000,
-  //       pageToken: npt,
-  //     });
-  //     mail.push(...res.data.messages);
-  //     npt = res.data.nextPageToken;
-  //     // if (!res.data.nextPageToken) break;
-  //     break;
-  //   }
-  //   const messages = [];
-  //   const promises = mail.map(async (m) => {
-  //     const msg = await gmail.users.messages.get({
-  //       id: mail[0].id,
-  //       userId: "me",
-  //     });
-  //     messages.push(msg);
-  //     console.log(messages.length);
-  //   });
-  //   await Promise.all(promises);
-  //   res.status(200).send(mail);
-  // } catch (err) {
-  //   res.status(400).send(err);
-  // }
 });
 
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
 );
-
-// async function runSample() {
-//   const res = await gmail.users.messages.list({ userId: "me" });
-//   console.log(res.data);
-//   return res.data;
-// }
-
-// if (module === require.main) {
-//   const scopes = ["https://www.googleapis.com/auth/gmail.readonly"];
-//   auth.authenticate(scopes).then(runSample).catch(console.error);
-// }
