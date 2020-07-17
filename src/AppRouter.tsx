@@ -1,6 +1,5 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
-import { OAuth } from "./OAuth";
 import { Leftovers } from "./Leftovers/Leftovers";
 import { Home } from "./Home/NewHome";
 import { Playground } from "./Playground";
@@ -18,7 +17,7 @@ const AppRouter = () => {
       <Route path="/insights" component={Insights} />
       <Route path="/login" component={Login} />
       <Route path="/analyse" component={Leftovers} />
-      <Route path="/OAuthSuccess" component={OAuth} />
+      {/* <Route path="/OAuthSuccess" component={OAuth} /> */}
       <Route path="/play" component={TwoLevelPieChart} />
     </Switch>
   );

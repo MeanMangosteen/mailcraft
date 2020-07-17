@@ -5,8 +5,9 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import axios from "axios";
 import { useCookies } from "react-cookie";
+import { api } from "../utils";
+import { UserContext } from "../App";
 // import { MailContext } from "../App";
 
 type MailAction = "store";
@@ -20,7 +21,8 @@ export const MailContext: React.Context<[
 // TODO: rename folder to utils
 export const useMail = () => {
   const [state, dispatch] = useContext(MailContext);
-  const [cookies] = useCookies();
+  // const [cookies] = useCookies();
+  const userCtx = useContext(UserContext);
 
   const setMail = useCallback(
     (mail) => {
@@ -31,7 +33,7 @@ export const useMail = () => {
 
   const readMail = useCallback(
     (uids: string[], callback?: (err: Error | null) => void) => {
-      axios
+      api
         .post("/read-mail", { uids })
         .then(() => {
           callback && callback(null);
@@ -46,7 +48,7 @@ export const useMail = () => {
   );
 
   const trashMail = useCallback((uids: string[]) => {
-    axios
+    api
       .post("/trash-mail", { uids })
       .then(() => {
         dispatch({ type: "remove", uids });
@@ -57,7 +59,7 @@ export const useMail = () => {
   }, []);
 
   const spamMail = useCallback((uids: string[]) => {
-    axios
+    api
       .post("/spam-mail", { uids })
       .then(() => {
         dispatch({ type: "remove", uids });
@@ -67,10 +69,10 @@ export const useMail = () => {
       });
   }, []);
   useEffect(() => {
-    if (!cookies.logged_in) return;
-    if (state) return; // We only need to run this if we're fetching for the first time
+    // if (!) return;
+    if (state?.mail) return; // We only need to run this if we're fetching for the first time
 
-    axios
+    api
       .get("/mail")
       .then((res) => {
         setMail(res.data);
@@ -78,7 +80,7 @@ export const useMail = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [cookies]);
+  }, [setMail, state]);
 
   return {
     mail: state?.mail,

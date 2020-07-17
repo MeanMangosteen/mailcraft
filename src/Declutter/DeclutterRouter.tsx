@@ -1,20 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useMail } from "../reducers/mail";
 import { ChooseVictim } from "./ChooseVictim";
 import { Redirect, Route, Link, useLocation, Switch } from "react-router-dom";
 import { DestroyVictim } from "../MassDestruction/DestroyVictim";
 import { Leftovers } from "../Leftovers/Leftovers";
 import { useCookies } from "react-cookie";
+import { UserContext } from "../App";
 
 export const DeclutterRouter = () => {
   const [currStage, setCurrStage] = useState<"stage1" | "stage2">("stage1");
   const { mail } = useMail();
   const location = useLocation();
-  const [cookies, setCookie] = useCookies();
+  const userCtx = useContext(UserContext);
+  // const [cookies, setCookie] = useCookies(["logged_in"]);
 
   // Let's start of which just direct towards MD or leftovers
   let stageToDisplay;
-  if (!cookies.logged_in) {
+  if (!userCtx.loggedIn) {
     stageToDisplay = (
       <Redirect
         to={{ pathname: "/login", state: { referrer: location.pathname } }}

@@ -1,26 +1,24 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useContext } from "react";
 import { useLocation, Redirect } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import OauthPopup from "react-oauth-popup";
-import Axios from "axios";
 import styled, { createGlobalStyle } from "styled-components";
+import { api } from "./utils";
+import { UserContext } from "./App";
 
 export const Login = () => {
   const [oAuthUrl, setOAuthUrl] = useState(undefined);
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
+  const userCtx = useContext(UserContext);
 
   const location = useLocation<{ referrer: any }>();
   const [cookies, setCookie] = useCookies();
   useEffect(() => {
     // if not logged in get oauth login url
-    if (!cookies.logged_in) {
-      setCookie("redirect", "/declutter"); // OMGTODO: might not be needed anymore.
-      axios
-        .get("http://localhost:4000/OAuthUrl", {
-          params: { pathname: location.pathname },
-        })
+    if (!userCtx.loggedIn) {
+      api
+        .get("/OAuthUrl")
         .then((res) => {
           setOAuthUrl(res.data);
         })
@@ -29,7 +27,7 @@ export const Login = () => {
         });
     } else {
     }
-  }, [cookies.logged_in]);
+  }, [userCtx.loggedIn]);
 
   const handleLoginClick = (event) => {
     event.preventDefault();
@@ -39,11 +37,13 @@ export const Login = () => {
   const handleOAuthClose = () => {};
 
   const handleOAuthCode = (code, params) => {
-    Axios.post("/OAuthConfirm", {
-      code,
-    })
+    api
+      .post("/OAuthConfirm", {
+        code,
+      })
       .then(() => {
-        setCookie("logged_in", true);
+        userCtx.setLoggedIn(true);
+        // setCookie("logged_in", true, { path: "/" });
       })
       .catch((err) => {
         console.log("error", err);
@@ -52,7 +52,9 @@ export const Login = () => {
 
   return (
     <>
-      {cookies.logged_in && <Redirect to={location?.state?.referrer || "/"} />}
+      {/* Redirect the user to where they came from, else redirect home */}
+      {userCtx.loggedIn && <Redirect to={location?.state?.referrer || "/"} />}
+
       <LoginContainer>
         <GlobalStyle hovered={hovered} clicked={clicked} />
         <LoginText

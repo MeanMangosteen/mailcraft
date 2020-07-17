@@ -3,6 +3,7 @@ import { useLocation, Redirect } from "react-router-dom";
 import QueryString from "query-string";
 import Axios from "axios";
 import { useCookies } from "react-cookie";
+import { api } from "./utils";
 
 const OAuth = () => {
   const location = useLocation();
@@ -11,12 +12,13 @@ const OAuth = () => {
   const [cookies, setCookies] = useCookies();
 
   useEffect(() => {
-    Axios.post("/OAuthConfirm", {
-      code: queryParams.code,
-    })
+    api
+      .post("/OAuthConfirm", {
+        code: queryParams.code,
+      })
       .then(() => {
         setShouldRedirect(true);
-        setCookies("logged_in", true);
+        setCookies("logged_in", true, { path: "/" });
       })
       .catch((err) => {
         console.log("error", err);

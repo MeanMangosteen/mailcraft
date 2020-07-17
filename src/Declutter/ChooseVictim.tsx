@@ -11,7 +11,7 @@ interface DeclutterProps {
 }
 
 export const ChooseVictim = ({ onComplete }) => {
-  // const [cookies, setCookie] = useCookies();
+  const [cookies, setCookie] = useCookies();
   const [chartData, setChartData] = useState<any>(undefined);
   const [selectedVictim, setVictim] = useState<string | null>(null);
   const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
@@ -56,7 +56,7 @@ export const ChooseVictim = ({ onComplete }) => {
     console.log(leMagic);
     setVictim(leMagic.id);
   };
-
+  if (!mail) return <h1>Loading!</h1>;
   return (
     <PageContainer>
       <PieChartWrapper>
@@ -78,7 +78,9 @@ export const ChooseVictim = ({ onComplete }) => {
       </PieChartWrapper>
       <ProgressBar progress={info?.progress} total={info?.total} />
       {selectedVictim ? (
-        <Redirect to={`/declutter/mass-destruction/destroy?victim=${selectedVictim}`} />
+        <Redirect
+          to={`/declutter/mass-destruction/destroy?victim=${selectedVictim}`}
+        />
       ) : null}
     </PageContainer>
   );

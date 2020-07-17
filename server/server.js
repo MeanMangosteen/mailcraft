@@ -175,46 +175,49 @@ app.get("/mail", authMiddleware, async (req, res) => {
 
   try {
     await client.connect();
+
+    console.log("connected!");
+
+    const mailboxes = await client.listMailboxes();
+    console.log(mailboxes);
+
+    const inbox = await client.selectMailbox("INBOX");
+
+    // OMGTODO:
+    // const messageIds = await client.search("INBOX", { unseen: true });
+    // const messages = await client.listMessages("INBOX", messageIds.join(","), [
+    const messages = await client.listMessages(
+      "INBOX",
+      `${inbox.exists - 100}:${inbox.exists}`,
+      ["uid", "flags", "body.peek[]", "X-GM-MSGID", "X-GM-THRID", "envelope"]
+    );
+
+    await client.close();
+
+    const parsePromises = messages.map((m) => {
+      return new Promise((resolve, reject) => {
+        simpleParser(m["body[]"])
+          .then((goodStuff) => {
+            m["body[]"] = goodStuff;
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    });
+
+    await Promise.all(parsePromises);
+
+    const data = JSON.stringify(messages);
+    fs.writeFileSync('demo.json', data);
+    res.status(200).send(messages);
   } catch (err) {
     console.error(err);
+    if (err.code === "AUTHENTICATIONFAILED") {
+      res.status(401).send("Try logging in again m8y");
+    }
   }
-
-  console.log("connected!");
-
-  const mailboxes = await client.listMailboxes();
-  console.log(mailboxes);
-
-  const inbox = await client.selectMailbox("INBOX");
-
-  // OMGTODO:
-  // const messageIds = await client.search("INBOX", { unseen: true });
-  // const messages = await client.listMessages("INBOX", messageIds.join(","), [
-  const messages = await client.listMessages(
-    "INBOX",
-    `${inbox.exists - 100}:${inbox.exists}`,
-    ["uid", "flags", "body.peek[]", "X-GM-MSGID", "X-GM-THRID", "envelope"]
-  );
-
-  await client.close();
-
-  const parsePromises = messages.map((m) => {
-    return new Promise((resolve, reject) => {
-      simpleParser(m["body[]"])
-        .then((goodStuff) => {
-          m["body[]"] = goodStuff;
-          resolve();
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  });
-
-  await Promise.all(parsePromises);
-
-  const data = JSON.stringify(messages);
-  fs.writeFileSync('demo.json', data);
-  res.status(200).send(messages);
 });
 
 app.listen(port, () =>
