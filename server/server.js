@@ -133,6 +133,8 @@ app.post("/spam-mail", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(400).send(err);
+  } finally {
+    await client.close()
   }
 });
 
@@ -161,6 +163,8 @@ app.post("/read-mail", authMiddleware, async (req, res) => {
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
+  } finally {
+    await client.close()
   }
 });
 
@@ -187,14 +191,11 @@ app.get("/mail", authMiddleware, async (req, res) => {
 
     // OMGTODO:
     // const messageIds = await client.search("INBOX", { unseen: true });
-    // const messages = await client.listMessages("INBOX", messageIds.join(","), [
     const messages = await client.listMessages(
       "INBOX",
       `${inbox.exists - 100}:${inbox.exists}`,
       ["uid", "flags", "body.peek[]", "X-GM-MSGID", "X-GM-THRID", "envelope"]
     );
-
-    await client.close();
 
     const parsePromises = messages.map((m) => {
       return new Promise((resolve, reject) => {
@@ -219,6 +220,8 @@ app.get("/mail", authMiddleware, async (req, res) => {
     if (err.code === "AUTHENTICATIONFAILED") {
       res.status(401).send("Try logging in again m8y");
     }
+  } finally {
+    await client.close()
   }
 });
 
