@@ -69,6 +69,7 @@ const StyledWIPSVG = styled(WorkInProgressSVG)`
     transform-origin: center center;
     transform-box: fill-box;
 
+    will-change: transform;
     animation: ${rotateRight} infinite 4s linear;
   }
 
@@ -76,6 +77,7 @@ const StyledWIPSVG = styled(WorkInProgressSVG)`
     transform-origin: center center;
     transform-box: fill-box;
 
+    will-change: transform;
     animation: ${rotateLeft} infinite 6s linear;
   }
 `;

@@ -16,10 +16,13 @@ export const ShowTextWithStyle = ({
   const [visibleChildren, setVisibleChildren] = useState(
     Array(children.length).fill(false) // the indexes represent each child, the value: whether it's visible.
   );
+  const [isFinished, setIsFinished] = useState<boolean>(false);
 
   useEffect(() => {
+    if (isFinished) return;
     if (childCount > children.length) {
       onFinish && onFinish();
+      setIsFinished(true);
       return;
     }
     setTimeout(() => {

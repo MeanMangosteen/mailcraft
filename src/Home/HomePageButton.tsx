@@ -51,6 +51,7 @@ const ButtonContainer = styled.div<{ levitate?: boolean }>`
   }
   padding: 6rem;
 
+  will-change: transform;
   animation: ${({ levitate }) =>
     levitate &&
     css`
