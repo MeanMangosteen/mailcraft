@@ -34,11 +34,16 @@ export const HomePageButton = ({ imgSrc, title, path, levitate = false }) => {
 };
 
 const Levitate = keyframes`
-  from {
+  0% {
     transform: translate3d(0, -1.5%, 0);
   }
-  to {
+
+  66% {
     transform: translate3d(0, 1.5%, 0);
+  }
+
+  100% {
+    transform: translate3d(0, -1.5%, 0);
   }
 `;
 
@@ -55,7 +60,7 @@ const ButtonContainer = styled.div<{ levitate?: boolean }>`
   animation: ${({ levitate }) =>
     levitate &&
     css`
-      ${Levitate} 0.9s ease-in-out 1s infinite alternate both running
+      ${Levitate} 2s ease-in-out infinite
     `};
 `;
 
