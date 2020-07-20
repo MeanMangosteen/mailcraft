@@ -17,20 +17,26 @@ export const Leftovers = ({ onComplete }) => {
   const { mail, readMail, spamMail, trashMail, info } = useMail();
   const containerRef = useRef<any>();
   const [activeButton, setActiveButton] = useState<any>(null);
+  const [mailCopy, setMailCopy] = useState<any>(null);
+  const [offset, setOffset] = useState<number>(0);
 
   const handleKeyPress = (event) => {
     if (activeButton) return; // You gotta let go of key before we deal with the next email
     const [left, down, right] = [37, 40, 39]; // Keycodes
     console.log(event.keyCode);
     if (event.keyCode === down) {
-      readMail([mail[0].uid]);
+      readMail([mail[0].uid], (err) => err && console.error(err));
+      console.log("sending read request");
       setActiveButton("read");
+      setOffset(offset + 1);
     } else if (event.keyCode === left) {
       // spamMail([mail[0].uid]);
       setActiveButton("spam");
+      setOffset(offset + 1);
     } else if (event.keyCode === right) {
       // trashMail([mail[0].uid]);
       setActiveButton("trash");
+      setOffset(offset + 1);
     }
   };
 
@@ -47,41 +53,64 @@ export const Leftovers = ({ onComplete }) => {
   }, []);
 
   useEffect(() => {
-    if (!mail.length) {
+    if (mail && !mailCopy) {
+      setMailCopy(mail);
+    }
+
+    if (mail && !mail.length) {
       onComplete();
     }
-  }, [mail]);
+  }, [mail, mailCopy]);
+
+  const buffer =
+    mailCopy &&
+    mailCopy.slice(offset, offset + 3).map((mail) => (
+      <EmailContainer key={mail.uid}>
+        <SubjectContainer>{mail.envelope.subject}</SubjectContainer>
+        <SizeMe monitorHeight>
+          {({ size }) => (
+            <EmailBodyContainer tabIndex={-1}>
+              <Email
+                parentH={size?.height && size.height * 0.85}
+                parentW={size.width}
+                html={mail["body[]"].html}
+                onClick={() => {}}
+                className="email"
+              />
+            </EmailBodyContainer>
+          )}
+        </SizeMe>
+      </EmailContainer>
+    ));
 
   if (!mail || !mail.length) return null;
   return (
     <LeftoversContainer>
-      <ActuallyUsefulThings
+      <UsefulThings
         onKeyDown={handleKeyPress}
         onKeyUp={handleKeyLift}
         ref={containerRef}
         tabIndex={-1}
       >
-        <SubjectContainer>{mail[0].envelope.subject}</SubjectContainer>
-        <SizeMe monitorHeight>
-          {({ size }) => (
-            <EmailContainer tabIndex={-1}>
-              <SwitchTransition mode={"out-in"}>
-                <Transition key={mail.length} timeout={200}>
-                  {(state) => (
-                    <StyledEmail
-                      parentH={size?.height && size.height * 0.85}
-                      parentW={size.width}
-                      html={mail[0]["body[]"].html}
-                      onClick={() => {}}
-                      className="email"
-                      state={state}
-                    />
-                  )}
-                </Transition>
-              </SwitchTransition>
-            </EmailContainer>
-          )}
-        </SizeMe>
+        {/* <EmailBuffer>
+          <EmailContainer key={mail[0].uid}>
+            <SubjectContainer>{mail[0].envelope.subject}</SubjectContainer>
+            <SizeMe monitorHeight>
+              {({ size }) => (
+                <EmailBodyContainer tabIndex={-1}>
+                  <Email
+                    parentH={size?.height && size.height * 0.85}
+                    parentW={size.width}
+                    html={mail[0]["body[]"].html}
+                    onClick={() => {}}
+                    className="email"
+                  />
+                </EmailBodyContainer>
+              )}
+            </SizeMe>
+          </EmailContainer>
+        </EmailBuffer> */}
+        <EmailBuffer>{buffer}</EmailBuffer>
         <ControlsContainer>
           <Control id="spam" activeButton={activeButton}>
             <KBD>
@@ -102,7 +131,7 @@ export const Leftovers = ({ onComplete }) => {
             <ControlText>Trash</ControlText>
           </Control>
         </ControlsContainer>
-      </ActuallyUsefulThings>
+      </UsefulThings>
       <ProgressContainer>
         <StyledProgressBar
           progress={info?.progress}
@@ -114,6 +143,40 @@ export const Leftovers = ({ onComplete }) => {
   );
 };
 
+const SubjectContainer = styled.div`
+  ${centerContent}
+  font-size: 4rem;
+`;
+
+const EmailBodyContainer = styled.div`
+  position: relative;
+  ${CSSDividerTop({ width: "30%", IHaveSetRelativePosition: true })}
+`;
+
+const EmailContainer = styled.div`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  ${SubjectContainer} {
+    height: 10%;
+  }
+
+  ${EmailBodyContainer} {
+    height: 85%;
+  }
+`;
+const EmailBuffer = styled.div`
+  position: relative;
+  ${EmailContainer} {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    z-index: -1;
+  }
+  & ${EmailContainer}:nth-child(1) {
+    opacity: 1;
+    z-index: 1;
+  }
+`;
 const StyledProgressBar = styled(ProgressBar)`
   position: absolute;
 
@@ -128,11 +191,6 @@ const StyledProgressBar = styled(ProgressBar)`
   z-index: -1;
 `;
 
-const StyledEmail = styled(Email)<{ state: string }>`
-  transition: 0.3s;
-  opacity: ${({ state }) => (state === "entered" ? 1 : 0)};
-  will-change: opacity;
-`;
 const Control = styled.div<{ id: string; activeButton: string }>`
   ${centerContent}
   margin-right: 2rem;
@@ -170,11 +228,6 @@ const KBD = styled.kbd`
   white-space: nowrap;
 `;
 
-const EmailContainer = styled.div`
-  position: relative;
-  ${CSSDividerTop({ width: "30%", IHaveSetRelativePosition: true })}
-`;
-
 const SubjectText = styled.div`
   font-size: 2.5rem;
   text-align: center;
@@ -191,14 +244,6 @@ const SubjectText = styled.div`
   bottom: 0;
 `;
 
-const SubjectContainer = styled.div`
-  ${centerContent}
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
-  font-size: 4rem;
-`;
-
 const ControlsContainer = styled.div`
   position: relative;
   ${CSSDividerTop({ width: "20%", IHaveSetRelativePosition: true })}
@@ -206,19 +251,14 @@ const ControlsContainer = styled.div`
   font-size: 4rem;
 `;
 
-const ActuallyUsefulThings = styled.div`
+const UsefulThings = styled.div`
   outline: none;
   display: flex;
   flex-direction: column;
 
-  ${SubjectContainer} {
-    flex-basis: 10%;
+  ${EmailBuffer} {
+    flex-basis: 90%;
   }
-
-  ${EmailContainer} {
-    flex-basis: 80%;
-  }
-
   ${ControlsContainer} {
     flex-basis: 10%;
   }
@@ -230,7 +270,7 @@ const ProgressContainer = styled.div`
 const LeftoversContainer = styled.div`
   display: flex;
 
-  ${ActuallyUsefulThings} {
+  ${UsefulThings} {
     flex-grow: 1;
   }
 

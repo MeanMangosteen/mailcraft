@@ -11,7 +11,7 @@ import { SwitchTransition, Transition } from "react-transition-group";
 
 export const DeclutterRouter = () => {
   const [currStage, setCurrStage] = useState<"stage1" | "stage2" | "success!">(
-    "stage1"
+    "stage2"
   );
   const location = useLocation();
   const userCtx = useContext(UserContext);
@@ -102,7 +102,7 @@ const Stage1 = ({ onComplete }) => {
 };
 
 const Stage2 = ({ onComplete }) => {
-  const [introComplete, setIntroComplete] = useState<boolean>(false);
+  const [introComplete, setIntroComplete] = useState<boolean>(true);
   const compToDisplay = introComplete ? (
     <Leftovers onComplete={onComplete} />
   ) : (
@@ -132,7 +132,9 @@ const Success = () => {
           <Text>Your life just got a little cleaner.</Text>
         </StylishItem>
         <StylishItem>
-          <Text>The author wants to hear from you. Leave whatever's on your mind.</Text>
+          <Text>
+            The author wants to hear from you. Leave whatever's on your mind.
+          </Text>
         </StylishItem>
       </ShowTextWithStyle>
     </StageIntroContainer>
