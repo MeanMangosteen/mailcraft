@@ -13,12 +13,10 @@ import { CSSDividerTop, centerContent } from "../utils";
 import { SwitchTransition, Transition } from "react-transition-group";
 import { ProgressBar } from "../Declutter/ChooseVictim";
 
-export const Leftovers = () => {
+export const Leftovers = ({ onComplete }) => {
   const { mail, readMail, spamMail, trashMail, info } = useMail();
   const containerRef = useRef<any>();
   const [activeButton, setActiveButton] = useState<any>(null);
-  //   const [curr, setCurr] = useState<any>(mail[0]);
-  console.log("active button: ", activeButton);
 
   const handleKeyPress = (event) => {
     if (activeButton) return; // You gotta let go of key before we deal with the next email
@@ -46,7 +44,14 @@ export const Leftovers = () => {
       containerRef.current?.focus();
     }, 1000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (!mail.length) {
+      onComplete();
+    }
   }, [mail]);
+
   if (!mail || !mail.length) return null;
   return (
     <LeftoversContainer>
@@ -121,8 +126,6 @@ const StyledProgressBar = styled(ProgressBar)`
   transform-origin: right bottom;
   /* transform: rotate(-90deg); */
   z-index: -1;
-
-  
 `;
 
 const StyledEmail = styled(Email)<{ state: string }>`
