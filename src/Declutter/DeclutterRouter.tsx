@@ -11,7 +11,7 @@ import { SwitchTransition, Transition } from "react-transition-group";
 
 export const DeclutterRouter = () => {
   const [currStage, setCurrStage] = useState<"stage1" | "stage2" | "success!">(
-    "stage2"
+    "stage1"
   );
   const location = useLocation();
   const userCtx = useContext(UserContext);
