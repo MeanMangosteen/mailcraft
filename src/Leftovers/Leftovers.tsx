@@ -9,7 +9,7 @@ import {
   FaArrowRight,
   FaArrowDown,
 } from "react-icons/fa";
-import { CSSDividerTop, centerContent } from "../utils";
+import { CSSDividerTop, centerContent, CSSDividerBottom } from "../utils";
 import { SwitchTransition, Transition } from "react-transition-group";
 import { ProgressBar } from "../Declutter/ChooseVictim";
 
@@ -19,26 +19,6 @@ export const Leftovers = ({ onComplete }) => {
   const [activeButton, setActiveButton] = useState<any>(null);
   const [mailCopy, setMailCopy] = useState<any>(null);
   const [offset, setOffset] = useState<number>(0);
-
-  const handleKeyPress = (event) => {
-    if (activeButton) return; // You gotta let go of key before we deal with the next email
-    const [left, down, right] = [37, 40, 39]; // Keycodes
-    console.log(event.keyCode);
-    if (event.keyCode === down) {
-      readMail([mail[0].uid], (err) => err && console.error(err));
-      console.log("sending read request");
-      setActiveButton("read");
-      setOffset(offset + 1);
-    } else if (event.keyCode === left) {
-      // spamMail([mail[0].uid]);
-      setActiveButton("spam");
-      setOffset(offset + 1);
-    } else if (event.keyCode === right) {
-      // trashMail([mail[0].uid]);
-      setActiveButton("trash");
-      setOffset(offset + 1);
-    }
-  };
 
   const handleKeyLift = (event) => {
     const keysToButton = { 37: "spam", 40: "read", 39: "trash" };
@@ -67,6 +47,9 @@ export const Leftovers = ({ onComplete }) => {
     mailCopy.slice(offset, offset + 3).map((mail) => (
       <EmailContainer key={mail.uid}>
         <SubjectContainer>{mail.envelope.subject}</SubjectContainer>
+        <SenderContainer>
+          {mail.envelope.from[0].address.split("@")[1]}
+        </SenderContainer>
         <SizeMe monitorHeight>
           {({ size }) => (
             <EmailBodyContainer tabIndex={-1}>
@@ -83,6 +66,26 @@ export const Leftovers = ({ onComplete }) => {
       </EmailContainer>
     ));
 
+  const handleKeyPress = (event) => {
+    if (activeButton) return; // You gotta let go of key before we deal with the next email
+    const [left, down, right] = [37, 40, 39]; // Keycodes
+    console.log(event.keyCode);
+    if (event.keyCode === down) {
+      readMail([mail[0].uid], (err) => err && console.error(err));
+      console.log("sending read request");
+      setActiveButton("read");
+      setOffset(offset + 1);
+    } else if (event.keyCode === left) {
+      // spamMail([mail[0].uid]);
+      setActiveButton("spam");
+      setOffset(offset + 1);
+    } else if (event.keyCode === right) {
+      // trashMail([mail[0].uid]);
+      setActiveButton("trash");
+      setOffset(offset + 1);
+    }
+  };
+
   if (!mail || !mail.length) return null;
   return (
     <LeftoversContainer>
@@ -92,24 +95,6 @@ export const Leftovers = ({ onComplete }) => {
         ref={containerRef}
         tabIndex={-1}
       >
-        {/* <EmailBuffer>
-          <EmailContainer key={mail[0].uid}>
-            <SubjectContainer>{mail[0].envelope.subject}</SubjectContainer>
-            <SizeMe monitorHeight>
-              {({ size }) => (
-                <EmailBodyContainer tabIndex={-1}>
-                  <Email
-                    parentH={size?.height && size.height * 0.85}
-                    parentW={size.width}
-                    html={mail[0]["body[]"].html}
-                    onClick={() => {}}
-                    className="email"
-                  />
-                </EmailBodyContainer>
-              )}
-            </SizeMe>
-          </EmailContainer>
-        </EmailBuffer> */}
         <EmailBuffer>{buffer}</EmailBuffer>
         <ControlsContainer>
           <Control id="spam" activeButton={activeButton}>
@@ -146,11 +131,17 @@ export const Leftovers = ({ onComplete }) => {
 const SubjectContainer = styled.div`
   ${centerContent}
   font-size: 4rem;
+  position: relative;
+  ${CSSDividerBottom({ width: "30%", IHaveSetRelativePosition: true })}
+`;
+const SenderContainer = styled.div`
+  ${centerContent}
+  font-size: 2rem;
+  color: #a6a6a6;
 `;
 
 const EmailBodyContainer = styled.div`
   position: relative;
-  ${CSSDividerTop({ width: "30%", IHaveSetRelativePosition: true })}
 `;
 
 const EmailContainer = styled.div`
@@ -159,6 +150,10 @@ const EmailContainer = styled.div`
   width: 100%;
   ${SubjectContainer} {
     height: 10%;
+  }
+
+  ${SenderContainer} {
+    height: 5%;
   }
 
   ${EmailBodyContainer} {

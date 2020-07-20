@@ -35,7 +35,7 @@ let gmail = null;
 let profile = null;
 let client = null; // TODO: change name to imap
 
-const demo = false;
+const demo = true;
 
 app.get("/OAuthUrl", (req, res) => {
   const loginUrl = auth.oAuth2Client.generateAuthUrl({
