@@ -12,6 +12,7 @@ export const Email = ({
 }) => {
   const [contentDim, setContentDim] = useState<any>(null);
   const [scaleFactor, setScaleFactor] = useState<any>(0);
+  const [trueHeight, setTrueHeight] = useState<any>(0);
 
   useEffect(() => {
     if (!contentDim) return; // iframe hasn't loaded yet
@@ -22,7 +23,7 @@ export const Email = ({
     setScaleFactor(scaleFactor);
   }, [contentDim, parentH, parentW]);
 
-  const handleLoad = (something) => {
+  const handleLoad = (event) => {
     /**
      * Okay so what we're doing here:
      * We want to squeeze a big iframe into a small space.
@@ -42,11 +43,13 @@ export const Email = ({
      * */
 
     const contentH = Math.min(
-      something.target.contentWindow.document.body.scrollHeight,
+      event.target.contentWindow.document.body.scrollHeight,
       800
     );
 
-    const contentW = something.target.contentWindow.document.body.scrollWidth;
+    setTrueHeight(event.target.contentWindow.document.body.scrollHeight);
+
+    const contentW = event.target.contentWindow.document.body.scrollWidth;
     setContentDim({
       width: contentW,
       height: contentH,
@@ -69,6 +72,7 @@ export const Email = ({
       scaleFactor={scaleFactor}
       contentDim={contentDim}
       parentDim={{ height: parentH, width: parentW }}
+      trueHeight={trueHeight}
       className={className}
     >
       <ThumbnailIframe
@@ -87,15 +91,16 @@ const EmailContainer = styled.div<{
   scaleFactor: number;
   parentDim: { height: number; width: number };
   contentDim: { height: number; width: number };
+  trueHeight: number;
 }>`
   position: absolute;
   transform-origin: top left;
-  top: 50%;
+  top: 0;
   left: 50%;
 
   /** Scale downt to fit mail in parent */
   transform: ${({ scaleFactor }) =>
-    `scale(${scaleFactor}) translate(-50%, -50%)`};
+    `scale(${scaleFactor}) translate(-50%, 0%)`};
 
   /**
    * Height ->
@@ -107,9 +112,20 @@ const EmailContainer = styled.div<{
    * since this value is not of the content,
    * but of the parent we have to counteract the scaling down.
   */
-  height: ${({ contentDim }) => contentDim?.height}px;
+  // height: ${({ contentDim }) => contentDim?.height}px;
+  height: ${({ trueHeight, scaleFactor }) => trueHeight * scaleFactor}px;
   width: ${({ parentDim, scaleFactor }) =>
     parentDim?.width * (1 / scaleFactor)}px;
+  pointer-events: none;
+`;
+
+const ClickGateDiv = styled.div`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
 `;
 
 const ThumbnailIframe = styled.iframe`

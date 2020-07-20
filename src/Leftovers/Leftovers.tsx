@@ -53,13 +53,22 @@ export const Leftovers = ({ onComplete }) => {
           </SenderContainer>
           <SizeMe monitorHeight>
             {({ size }) => (
-              <EmailBodyContainer tabIndex={-1}>
+              <EmailBodyContainer
+                tabIndex={-1}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
                 <Email
                   parentH={size?.height && size.height * 0.85}
                   parentW={size.width}
                   html={mail["body[]"].html}
-                  onClick={() => {}}
                   className="email"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }}
                 />
               </EmailBodyContainer>
             )}
@@ -154,6 +163,8 @@ const SenderContainer = styled.div`
 
 const EmailBodyContainer = styled.div`
   position: relative;
+  overflow-y: scroll;
+  overflow-x: hidden;
 `;
 
 const EmailContainer = styled.div`
@@ -240,6 +251,7 @@ const ControlsContainer = styled.div`
   ${CSSDividerTop({ width: "20%", IHaveSetRelativePosition: true })}
   ${centerContent}
   font-size: 4rem;
+  padding-top: 10px;
 `;
 
 const UsefulThings = styled.div`

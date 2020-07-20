@@ -53,7 +53,6 @@ export const ChooseVictim = ({ onComplete }) => {
     setVictim(leMagic.id);
   };
 
-  if (!mail) return <Loading />;
 
   return (
     <PageContainer>

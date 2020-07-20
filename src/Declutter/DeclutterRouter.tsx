@@ -8,6 +8,8 @@ import styled from "styled-components";
 import { ShowTextWithStyle, StylishItem } from "../ShowTextWithStyle";
 import { centerContent } from "../utils";
 import { SwitchTransition, Transition } from "react-transition-group";
+import { Loading } from "../Loading";
+import { useMail } from "../reducers/mail";
 
 export const DeclutterRouter = () => {
   const [currStage, setCurrStage] = useState<"stage1" | "stage2" | "success!">(
@@ -15,6 +17,7 @@ export const DeclutterRouter = () => {
   );
   const location = useLocation();
   const userCtx = useContext(UserContext);
+  const { mail } = useMail();
 
   // Let's start of which just direct towards MD or leftovers
   let stageToDisplay;
@@ -24,6 +27,8 @@ export const DeclutterRouter = () => {
         to={{ pathname: "/login", state: { referrer: location.pathname } }}
       />
     );
+  } else if (!mail) {
+    stageToDisplay = <Loading />;
   } else {
     switch (currStage) {
       case "stage1":

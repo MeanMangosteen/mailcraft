@@ -9,7 +9,7 @@ export const CSSDividerTop = ({ width, IHaveSetRelativePosition = false }) => {
       content: "";
       position: absolute;
       display: block;
-      top: -10px;
+      top: 0px;
       height: 1px;
       width: ${width};
     }
