@@ -3,6 +3,7 @@ import styled, { keyframes } from "styled-components";
 import PieChart from "./PieChart";
 import { Redirect } from "react-router-dom";
 import { useMail } from "../reducers/mail";
+import { Loading } from "../Loading";
 
 interface DeclutterProps {
   className?: string;
@@ -51,7 +52,9 @@ export const ChooseVictim = ({ onComplete }) => {
     console.log(leMagic);
     setVictim(leMagic.id);
   };
-  if (!mail) return <h1>Loading!</h1>;
+
+  if (!mail) return <Loading />;
+
   return (
     <PageContainer>
       <PieChartWrapper>

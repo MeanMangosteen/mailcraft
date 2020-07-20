@@ -5,7 +5,7 @@ import Emoji from "react-emoji-render";
 
 interface NavBarProps {}
 const logoSrc =
-  "https://raw.githubusercontent.com/gist/ll-aashwin-ll/8881a789f33ec7cd1681920e86db1dca/raw/89ded47674850103c22aea8c14cec4a8a551334e/mailcraft.svg";
+  "https://raw.githubusercontent.com/gist/MeanMangosteen/8881a789f33ec7cd1681920e86db1dca/raw/89ded47674850103c22aea8c14cec4a8a551334e/mailcraft.svg";
 
 const grow = keyframes`
   0% {

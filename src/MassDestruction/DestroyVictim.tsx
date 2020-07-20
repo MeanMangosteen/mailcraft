@@ -8,6 +8,7 @@ import { RiSpam2Line } from "react-icons/ri";
 import { AiOutlineRead } from "react-icons/ai";
 import { FiTrash2 } from "react-icons/fi";
 import { centerContent } from "../utils";
+import { Loading } from "../Loading";
 
 // TODO: come back to page based scrolling
 export const DestroyVictim = () => {
@@ -18,6 +19,7 @@ export const DestroyVictim = () => {
   const [mailPages, setMailPages] = useState<any[]>([]);
   const [selected, setSelected] = useState<Object>({});
   const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
+  const [opInProgress, setOpInProgress] = useState<boolean>(false);
   console.log("here");
 
   useEffect(() => {
@@ -86,6 +88,7 @@ export const DestroyVictim = () => {
 
   const handleRead = () => {
     /** All selected emails will be marked as 'read' */
+    setOpInProgress(true);
     const uids = Object.keys(selected)
       .filter((cardIdx) => selected[cardIdx])
       .map((cardIdx) => {
@@ -97,8 +100,7 @@ export const DestroyVictim = () => {
         console.error(err);
         return;
       }
-
-      // OMGTODO: delete the callback
+      setOpInProgress(false);
     });
   };
 
@@ -110,7 +112,13 @@ export const DestroyVictim = () => {
         return victimEmails[cardIdx].uid;
       });
 
-    spamMail(uids);
+    spamMail(uids, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      setOpInProgress(false);
+    });
   };
 
   const handleTrash = () => {
@@ -121,9 +129,16 @@ export const DestroyVictim = () => {
         return victimEmails[cardIdx].uid;
       });
 
-    trashMail(uids);
+    trashMail(uids, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      setOpInProgress(false);
+    });
   };
 
+  if (opInProgress) return <Loading />;
   // OMGTODO: remove slice
   return (
     <MassDestructionContainer>

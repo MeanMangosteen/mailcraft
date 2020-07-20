@@ -27,38 +27,46 @@ export const useMail = () => {
       api
         .post("/read-mail", { uids })
         .then(() => {
-          callback && callback(null);
           // remove mail from state
           dispatch({ type: "remove", uids });
+          callback && callback(null);
         })
         .catch((err) => {
           callback && callback(err);
         });
     },
-    []
+    [dispatch]
   );
 
-  const trashMail = useCallback((uids: string[]) => {
-    api
-      .post("/trash-mail", { uids })
-      .then(() => {
-        dispatch({ type: "remove", uids });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
+  const trashMail = useCallback(
+    (uids: string[], callback: (err: Error | null) => void) => {
+      api
+        .post("/trash-mail", { uids })
+        .then(() => {
+          dispatch({ type: "remove", uids });
+          callback && callback(null);
+        })
+        .catch((err) => {
+          callback && callback(err);
+        });
+    },
+    [dispatch]
+  );
 
-  const spamMail = useCallback((uids: string[]) => {
-    api
-      .post("/spam-mail", { uids })
-      .then(() => {
-        dispatch({ type: "remove", uids });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
+  const spamMail = useCallback(
+    (uids: string[], callback: (err: Error | null) => void) => {
+      api
+        .post("/spam-mail", { uids })
+        .then(() => {
+          dispatch({ type: "remove", uids });
+          callback && callback(null);
+        })
+        .catch((err) => {
+          callback && callback(err);
+        });
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (!userCtx.loggedIn) return;

@@ -212,8 +212,8 @@ app.get("/mail", authMiddleware, async (req, res) => {
 
     await Promise.all(parsePromises);
 
-    const data = JSON.stringify(messages);
-    fs.writeFileSync('demo.json', data);
+    // const data = JSON.stringify(messages);
+    // fs.writeFileSync('demo.json', data);
     res.status(200).send(messages);
   } catch (err) {
     console.error(err);
