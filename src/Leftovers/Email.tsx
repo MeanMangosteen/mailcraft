@@ -12,12 +12,10 @@ export const Email = ({
 }) => {
   const [contentDim, setContentDim] = useState<any>(null);
   const [scaleFactor, setScaleFactor] = useState<any>(0);
-  const [trueHeight, setTrueHeight] = useState<any>(0);
 
   useEffect(() => {
     if (!contentDim) return; // iframe hasn't loaded yet
 
-    const contentW = contentDim.width;
     const contentH = contentDim.height;
     const scaleFactor = Math.min(parentH / contentH, 1);
     setScaleFactor(scaleFactor);
@@ -37,7 +35,7 @@ export const Email = ({
      * down way too much.
      *
      * So we set an upper limit for the height, in
-     * this case we will see a window/segment of the
+     * this case we will see a segment of the
      * email in the thumbnail. Sad, but we will get
      * through these tough times.
      * */
@@ -47,12 +45,11 @@ export const Email = ({
       800
     );
 
-    setTrueHeight(event.target.contentWindow.document.body.scrollHeight);
-
     const contentW = event.target.contentWindow.document.body.scrollWidth;
     setContentDim({
       width: contentW,
-      height: contentH,
+      height: contentH, // used to determine the scaleFactor
+      trueHeight: event.target.contentWindow.document.body.scrollHeight, // used to determine the height of the element
     });
   };
 
@@ -68,36 +65,38 @@ export const Email = ({
   };
 
   return (
-    <EmailContainer
-      scaleFactor={scaleFactor}
-      contentDim={contentDim}
-      parentDim={{ height: parentH, width: parentW }}
-      trueHeight={trueHeight}
-      className={className}
-    >
-      <ThumbnailIframe
-        title="Hey, look an iframe!"
-        srcDoc={html}
-        width="100%"
-        height="100%"
-        onLoad={handleLoad}
-      />
-      {expandable && <ThumbnailZoomOverlay onClick={handleExpandClick} />}
-    </EmailContainer>
+    <EmailSuperContainer>
+      <EmailContainer
+        scaleFactor={scaleFactor}
+        contentDim={contentDim}
+        parentDim={{ height: parentH, width: parentW }}
+        className={className}
+      >
+        <ThumbnailIframe
+          title="Hey, look an iframe!"
+          srcDoc={html}
+          width="100%"
+          height="100%"
+          onLoad={handleLoad}
+        />
+        {expandable && <ThumbnailZoomOverlay onClick={handleExpandClick} />}
+      </EmailContainer>
+    </EmailSuperContainer>
   );
 };
 
+const EmailSuperContainer = styled.div`
+  position: relative;
+`;
 const EmailContainer = styled.div<{
   scaleFactor: number;
   parentDim: { height: number; width: number };
-  contentDim: { height: number; width: number };
-  trueHeight: number;
+  contentDim: { height: number; width: number; trueHeight: number };
 }>`
   position: absolute;
   transform-origin: top left;
   top: 0;
   left: 50%;
-
   /** Scale downt to fit mail in parent */
   transform: ${({ scaleFactor }) =>
     `scale(${scaleFactor}) translate(-50%, 0%)`};
@@ -112,19 +111,10 @@ const EmailContainer = styled.div<{
    * since this value is not of the content,
    * but of the parent we have to counteract the scaling down.
   */
-  // height: ${({ contentDim }) => contentDim?.height}px;
-  height: ${({ trueHeight, scaleFactor }) => trueHeight * scaleFactor}px;
+  height: ${({ contentDim, scaleFactor }) =>
+    contentDim?.trueHeight * scaleFactor}px;
   width: ${({ parentDim, scaleFactor }) =>
     parentDim?.width * (1 / scaleFactor)}px;
-  pointer-events: none;
-`;
-
-const ClickGateDiv = styled.div`
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
   pointer-events: none;
 `;
 

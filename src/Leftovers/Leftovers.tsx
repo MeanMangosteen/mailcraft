@@ -158,7 +158,6 @@ const SenderContainer = styled.div`
 `;
 
 const EmailBodyContainer = styled.div`
-  position: relative;
   overflow-y: scroll;
   overflow-x: hidden;
 `;

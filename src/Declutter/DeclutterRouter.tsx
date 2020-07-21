@@ -12,7 +12,7 @@ import { useMail } from "../reducers/mail";
 
 export const DeclutterRouter = () => {
   const [currStage, setCurrStage] = useState<"stage1" | "stage2" | "success!">(
-    "stage1"
+    "stage2"
   );
   const location = useLocation();
   const userCtx = useContext(UserContext);
