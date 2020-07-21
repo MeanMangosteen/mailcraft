@@ -115,12 +115,12 @@ const EmailContainer = styled.div<{
     contentDim?.trueHeight * scaleFactor}px;
   width: ${({ parentDim, scaleFactor }) =>
     parentDim?.width * (1 / scaleFactor)}px;
-  pointer-events: none;
 `;
 
 const ThumbnailIframe = styled.iframe`
   display: block;
   border: none;
+  pointer-events: none;
 `;
 
 const ThumbnailZoomOverlay = ({ onClick }) => {
