@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa";
 import { CSSDividerTop, centerContent, CSSDividerBottom } from "../utils";
 import { ProgressBar } from "../Declutter/ChooseVictim";
+import { WebUILink } from "../WebUILink";
 
 export const Leftovers = ({}) => {
   const { mail, readMail, spamMail, trashMail, info } = useMail();
@@ -66,6 +67,7 @@ export const Leftovers = ({}) => {
                     e.preventDefault();
                   }}
                 />
+                <StyledWebUILink threadId={mail["x-gm-thrid"]} />
               </EmailBodyContainer>
             )}
           </SizeMe>
@@ -160,6 +162,15 @@ const SenderContainer = styled.div`
 const EmailBodyContainer = styled.div`
   overflow-y: scroll;
   overflow-x: hidden;
+`;
+
+const StyledWebUILink = styled(WebUILink)`
+  z-index: 2;
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0;
+  ${EmailBodyContainer}:hover & {
+    opacity: 1;
+  }
 `;
 
 const EmailContainer = styled.div`

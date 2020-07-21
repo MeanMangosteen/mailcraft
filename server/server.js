@@ -76,7 +76,6 @@ app.post("/OAuthConfirm", async (req, res) => {
       // secure: true,
     }).cookie('profile', profile.emailAddress, {
       expires: new Date(Date.now() + 8 * 3600000), // cookie will be removed after 8 hours
-      httpOnly: true,
       sameSite: true,
     });
 
@@ -194,7 +193,8 @@ app.get("/mail", authMiddleware, async (req, res) => {
     const messages = await client.listMessages(
       "INBOX",
       `${inbox.exists - 100}:${inbox.exists}`,
-      ["uid", "flags", "body.peek[]", "X-GM-MSGID", "X-GM-THRID", "envelope"]
+      // ["uid", "flags", "body.peek[]", "X-GM-MSGID", "X-GM-THRID", "envelope"]
+      ["uid", "body.peek[]", "X-GM-THRID", "envelope"]
     );
 
     const parsePromises = messages.map((m) => {
