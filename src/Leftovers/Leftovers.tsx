@@ -18,7 +18,7 @@ import {
 import { CSSDividerTop, centerContent, CSSDividerBottom } from "../utils";
 import { ProgressBar } from "../Declutter/ChooseVictim";
 
-export const Leftovers = ({ onComplete }) => {
+export const Leftovers = ({}) => {
   const { mail, readMail, spamMail, trashMail, info } = useMail();
   const containerRef = useRef<any>();
   const [activeButton, setActiveButton] = useState<any>(null);
@@ -35,10 +35,6 @@ export const Leftovers = ({ onComplete }) => {
   useEffect(() => {
     if (mail && !mailCopy) {
       setMailCopy(mail);
-    }
-
-    if (mail && !mail.length) {
-      onComplete();
     }
   }, [mail, mailCopy]);
 

@@ -3,13 +3,12 @@ import styled, { keyframes } from "styled-components";
 import PieChart from "./PieChart";
 import { Redirect } from "react-router-dom";
 import { useMail } from "../reducers/mail";
-import { Loading } from "../Loading";
 
 interface DeclutterProps {
   className?: string;
 }
 
-export const ChooseVictim = ({ onComplete }) => {
+export const ChooseVictim = ({}) => {
   const [chartData, setChartData] = useState<any>(undefined);
   const [selectedVictim, setVictim] = useState<string | null>(null);
   const { mail, info } = useMail();
@@ -37,22 +36,12 @@ export const ChooseVictim = ({ onComplete }) => {
         };
       });
     setChartData({ table: countSorted.slice(0, 5) });
-
-    // if all senders have a count of 3 or less move to the leftovers stage
-    let success = true;
-    Object.values(count).forEach((count: any) => {
-      if (count > 3) success = false;
-    });
-    if (success) {
-      onComplete();
-    }
-  }, [mail, onComplete]);
+  }, [mail]);
 
   const handlePieClick = (name, leMagic) => {
     console.log(leMagic);
     setVictim(leMagic.id);
   };
-
 
   return (
     <PageContainer>
