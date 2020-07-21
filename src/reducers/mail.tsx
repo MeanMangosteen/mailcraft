@@ -75,7 +75,7 @@ export const useMail = () => {
     api
       .get("/mail")
       .then((res) => {
-        setMail(res.data.slice(0, 3));
+        setMail(res.data);
       })
       .catch((err) => {
         console.log(err);

@@ -110,12 +110,19 @@ export const DeclutterRouter = () => {
 };
 
 const Stage1 = ({}) => {
-  const [introComplete, setIntroComplete] = useState<boolean>(true);
+  const [introComplete, setIntroComplete] = useState<boolean>(
+    sessionStorage.getItem("stage1IntroComplete") === "true"
+  );
   const compToDisplay = introComplete ? (
     <ChooseVictim />
   ) : (
     <StageIntroContainer>
-      <ShowTextWithStyle onFinish={() => setIntroComplete(true)}>
+      <ShowTextWithStyle
+        onFinish={() => {
+          setIntroComplete(true);
+          sessionStorage.setItem("stage1IntroComplete", "true");
+        }}
+      >
         <StylishItem>
           <Text>Stage I:</Text>
         </StylishItem>
@@ -126,20 +133,23 @@ const Stage1 = ({}) => {
     </StageIntroContainer>
   );
 
-  // <SwitchTransition mode={"out-in"}>
-  //   <Transition timeout={0} key={introComplete ? 1 : 0}>
-  //   </Transition>
-  // </SwitchTransition>
   return <>{compToDisplay}</>;
 };
 
 const Stage2 = ({}) => {
-  const [introComplete, setIntroComplete] = useState<boolean>(false);
+  const [introComplete, setIntroComplete] = useState<boolean>(
+    sessionStorage.getItem("stage2IntroComplete") === "true"
+  );
   const compToDisplay = introComplete ? (
     <Leftovers />
   ) : (
     <StageIntroContainer>
-      <ShowTextWithStyle onFinish={() => setIntroComplete(true)}>
+      <ShowTextWithStyle
+        onFinish={() => {
+          setIntroComplete(true);
+          sessionStorage.setItem("stage2IntroComplete", "true");
+        }}
+      >
         <StylishItem>
           <Text>Stage II:</Text>
         </StylishItem>
