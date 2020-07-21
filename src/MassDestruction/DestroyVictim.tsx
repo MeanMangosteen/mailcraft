@@ -53,6 +53,7 @@ export const DestroyVictim = () => {
               selected={selected[i + idx]}
               index={i + idx}
               key={idx}
+              mail={mail}
               subject={mail["envelope"].subject}
               html={mail["body[]"].html}
               onClick={handleCardClick}

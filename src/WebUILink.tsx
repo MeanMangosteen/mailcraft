@@ -35,6 +35,11 @@ const WebUILinkContainer = styled.div`
   align-items: center;
   justify-content: center;
   color: #7c7c7c;
+
+  transition: transform 0.2s ease-in;
+  &:hover {
+    transform: scale(1.15);
+  }
 `;
 
 const IconText = styled.div`

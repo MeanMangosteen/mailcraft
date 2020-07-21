@@ -4,8 +4,9 @@ import { MailThumbnail, MailThumbnailContainer } from "./MailThumbnail";
 import styled from "styled-components";
 import { Transition } from "react-transition-group";
 import { centerContent } from "../utils";
+import { WebUILink } from "../WebUILink";
 
-export const MailCard = ({ html, subject, selected, index, onClick }) => {
+export const MailCard = ({ mail, html, subject, selected, index, onClick }) => {
   const [expandIframe, setExpandIframe] = useState<boolean>(false);
 
   return (
@@ -17,18 +18,18 @@ export const MailCard = ({ html, subject, selected, index, onClick }) => {
               <StyledMailThumbnail
                 parentH={size?.height && size.height}
                 parentW={size.width && size.width / 2}
-                html={html}
+                html={mail["body[]"].html}
                 onClick={() => setExpandIframe(true)}
                 expandable
               />
-              <SubjectText>{subject}</SubjectText>
+              <SubjectText>{mail["envelope"].subject}</SubjectText>
             </ContentWrapper>
           )}
         </SizeMe>
       </MailCardContainer>
       <ExpandedIframe
         show={expandIframe}
-        html={html}
+        mail={mail}
         onClose={(e) => {
           // e.stopPropagation();
           setExpandIframe(false);
@@ -38,7 +39,7 @@ export const MailCard = ({ html, subject, selected, index, onClick }) => {
   );
 };
 
-const ExpandedIframe = ({ html, onClose, show }) => {
+const ExpandedIframe = ({ onClose, show, mail }) => {
   const [iframeHeight, setIframeHeight] = useState<number>();
   const handleIframeLoad = useCallback((event) => {
     console.log(event.target.contentWindow.document.body.scrollHeight);
@@ -57,11 +58,12 @@ const ExpandedIframe = ({ html, onClose, show }) => {
         >
           <ExpandedIframeContainer className={state}>
             <Iframe
-              srcDoc={html}
+              srcDoc={mail["body[]"].html}
               onLoad={handleIframeLoad}
               iframeHeight={iframeHeight}
             />
           </ExpandedIframeContainer>
+          <WebUILink threadId={mail["x-gm-thrid"]} />
         </Background>
       )}
     </Transition>
