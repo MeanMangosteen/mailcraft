@@ -4,7 +4,7 @@ import { Redirect, Route, useLocation, Switch } from "react-router-dom";
 import { DestroyVictim } from "../MassDestruction/DestroyVictim";
 import { Leftovers } from "../Leftovers/Leftovers";
 import { UserContext } from "../App";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { ShowTextWithStyle, StylishItem } from "../ShowTextWithStyle";
 import { centerContent } from "../utils";
 import { Loading } from "../Loading";
@@ -181,14 +181,36 @@ const Success = () => {
           <Text>Your life just got a little cleaner.</Text>
         </StylishItem>
         <StylishItem>
-          <Text>
-            The author wants to hear from you. Leave whatever's on your mind.
-          </Text>
+          <Text>The author wants to hear from you. Leave a message.</Text>
         </StylishItem>
+        <MessageBox />
       </ShowTextWithStyle>
+      <Background />
     </StageIntroContainer>
   );
 };
+
+const MessageBox = () => {
+  return (
+    <MessageBoxContainer>
+      <MessageBoxInput />
+    </MessageBoxContainer>
+  );
+};
+
+const MessageBoxInput = styled.textarea`
+  width: 50%;
+  height: 100%;
+  border: none;
+  border-radius: 30px;
+  font-size: 5rem;
+  resize: none;
+`;
+const MessageBoxContainer = styled.div`
+  ${centerContent}
+  height: 21rem;
+  width: 100%;
+`;
 
 const StageIntroContainer = styled.div`
   ${centerContent}
@@ -196,10 +218,53 @@ const StageIntroContainer = styled.div`
   height: 100%;
 `;
 
+const Zoom = keyframes`
+0%{
+  
+  transform: scale(0);
+}
+
+100%{
+  transform: scale(12.5);
+}
+`;
+
+const Background = styled.div`
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  /* background: radial-gradient(
+    circle,
+    rgba(63, 94, 251, 1) 0%,
+    rgba(252, 70, 107, 1) 100%
+  ); */
+  background: radial-gradient(
+    circle closest-side,
+    rgba(132, 17, 255, 1) 0%,
+    rgba(233, 63, 251, 1) 16%,
+    rgba(255, 247, 0, 1) 42%,
+    rgba(255, 34, 0, 1) 69%,
+    rgba(252, 70, 107, 0) 100%
+  );
+  /* rgba(208, 63, 251, 1) 0%,
+    rgba(63, 94, 251, 1) 10%,
+    rgba(182, 137, 82, 1) 42%,
+    rgba(252, 70, 107, 1) 100%
+  ); */
+  top: 0;
+  left: 0;
+  z-index: -1;
+  animation: ${Zoom} 1.5s ease-out forwards;
+`;
+
 const Text = styled.div`
   text-align: center;
   font-size: 4rem;
   margin: 2rem;
+  /* background-attachment: fixed;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text; */
+  color: white;
 `;
 
 const Smiley = styled(Text)`
