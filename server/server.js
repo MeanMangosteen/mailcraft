@@ -192,7 +192,8 @@ app.get("/mail", authMiddleware, async (req, res) => {
     // const messageIds = await client.search("INBOX", { unseen: true });
     const messages = await client.listMessages(
       "INBOX",
-      `${inbox.exists - 100}:${inbox.exists}`,
+      // `${inbox.exists - 100}:${inbox.exists}`,
+      `1:*`,
       // ["uid", "flags", "body.peek[]", "X-GM-MSGID", "X-GM-THRID", "envelope"]
       ["uid", "body.peek[]", "X-GM-THRID", "envelope"]
     );

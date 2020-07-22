@@ -12,7 +12,7 @@ import { useMail } from "../reducers/mail";
 
 export const DeclutterRouter = () => {
   const [currStage, setCurrStage] = useState<"stage1" | "stage2" | "success!">(
-    "stage1"
+    "success!"
   );
   const location = useLocation();
   const userCtx = useContext(UserContext);
@@ -87,24 +87,28 @@ export const DeclutterRouter = () => {
     }
   }
 
+  const routes = (
+    <Switch>
+      <Route
+        path="/declutter/mass-destruction/destroy"
+        component={DestroyVictim}
+      />
+      <Route path="/declutter/mass-destruction">
+        <Stage1 />
+      </Route>
+      <Route path="/declutter/leftovers">
+        <Stage2 />
+      </Route>
+      <Route path="/declutter/success">
+        <Success />
+      </Route>
+    </Switch>
+  );
+
   return (
     <>
       {stageToDisplay}
-      <Switch>
-        <Route
-          path="/declutter/mass-destruction/destroy"
-          component={DestroyVictim}
-        />
-        <Route path="/declutter/mass-destruction">
-          <Stage1 />
-        </Route>
-        <Route path="/declutter/leftovers">
-          <Stage2 />
-        </Route>
-        <Route path="/declutter/success">
-          <Success />
-        </Route>
-      </Switch>
+      {mail && routes}
     </>
   );
 };
@@ -168,6 +172,9 @@ const Success = () => {
     <StageIntroContainer>
       <ShowTextWithStyle>
         <StylishItem>
+          <Smiley>: )</Smiley>
+        </StylishItem>
+        <StylishItem>
           <Text>Congratulations!</Text>
         </StylishItem>
         <StylishItem>
@@ -193,4 +200,12 @@ const Text = styled.div`
   text-align: center;
   font-size: 4rem;
   margin: 2rem;
+`;
+
+const Smiley = styled(Text)`
+  ${centerContent}
+  transform: rotate(90deg);
+  font-size: 25rem;
+  line-height: 20rem;
+  margin-left: 8rem;
 `;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment, useCallback as cb } from "react";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
+import { centerContent } from "./utils";
 
 type ShowTextWithStyleProps = {
   children: React.ReactElement<StylishItemProps>[];

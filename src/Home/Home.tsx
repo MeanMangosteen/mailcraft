@@ -23,7 +23,6 @@ export const Home = () => {
               <Episode3
                 state={state}
                 onFinish={() => {
-                  console.log("Houston we have a problem");
                   var expiry = new Date();
                   expiry.setHours(expiry.getHours() + 5); // 5 hours from now
                   !cookies?.homepageComplete &&

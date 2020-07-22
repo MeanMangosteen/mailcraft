@@ -68,6 +68,9 @@ export const Episode2 = ({ state, onFinish }: EpisodeProps) => {
             <Text>It's not time and effort that will get you there!</Text>
           </StylishItem>
         </ShowTextWithStyle>
+        <StylishItem>
+          <Text>But a hygenic mailbox will...</Text>
+        </StylishItem>
       </TextContainer>
       <PictureContainer>
         <SwitchTransition mode={"out-in"}>
@@ -85,13 +88,12 @@ export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
     <TextContainer>
       <ShowTextWithStyle key="ep3" onFinish={onFinish}>
         <StylishItem>
-          <Text>But a hygenic mailbox will</Text>
+          <Text>
+            Declutter your inbox and let Mailcraft make your dreams come true!
+          </Text>
         </StylishItem>
         <StylishItem>
-          <Text>
-            Start your journey today and let Mailcraft solve all your live's
-            problems!
-          </Text>
+          <SmallText>...if you use gmail, otherwise you're on your own kiddo.</SmallText>
         </StylishItem>
       </ShowTextWithStyle>
     </TextContainer>
@@ -151,6 +153,12 @@ const PictureContainer = styled.div`
 const Text = styled.div`
   text-align: center;
   font-size: 4rem;
+  margin: 2rem;
+`;
+
+const SmallText = styled.div`
+  text-align: center;
+  font-size: 1.5rem;
   margin: 2rem;
 `;
 
