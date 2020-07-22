@@ -9,6 +9,8 @@ import { ShowTextWithStyle, StylishItem } from "../ShowTextWithStyle";
 import { centerContent } from "../utils";
 import { Loading } from "../Loading";
 import { useMail } from "../reducers/mail";
+import { GrSend } from "react-icons/gr";
+import { FiSend } from "react-icons/fi";
 
 export const DeclutterRouter = () => {
   const [currStage, setCurrStage] = useState<"stage1" | "stage2" | "success!">(
@@ -193,10 +195,22 @@ const Success = () => {
 const MessageBox = () => {
   return (
     <MessageBoxContainer>
-      <MessageBoxInput />
+      <MessageBoxInput placeholder="Anything at all..." />
+      <SendIcon />
     </MessageBoxContainer>
   );
 };
+
+const SendIcon = styled(FiSend)`
+  color: white;
+  font-size: 7rem;
+  margin-left: 3rem;
+
+  transition: transform 0.2s ease-out;
+  &:hover {
+    transform: scale(1.15);
+  }
+`;
 
 const MessageBoxInput = styled.textarea`
   width: 50%;
@@ -205,6 +219,7 @@ const MessageBoxInput = styled.textarea`
   border-radius: 30px;
   font-size: 5rem;
   resize: none;
+  margin-left: 10rem;
 `;
 const MessageBoxContainer = styled.div`
   ${centerContent}
@@ -233,11 +248,6 @@ const Background = styled.div`
   position: fixed;
   height: 100vh;
   width: 100vw;
-  /* background: radial-gradient(
-    circle,
-    rgba(63, 94, 251, 1) 0%,
-    rgba(252, 70, 107, 1) 100%
-  ); */
   background: radial-gradient(
     circle closest-side,
     rgba(132, 17, 255, 1) 0%,
@@ -246,11 +256,6 @@ const Background = styled.div`
     rgba(255, 34, 0, 1) 69%,
     rgba(252, 70, 107, 0) 100%
   );
-  /* rgba(208, 63, 251, 1) 0%,
-    rgba(63, 94, 251, 1) 10%,
-    rgba(182, 137, 82, 1) 42%,
-    rgba(252, 70, 107, 1) 100%
-  ); */
   top: 0;
   left: 0;
   z-index: -1;

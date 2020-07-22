@@ -67,10 +67,10 @@ export const Episode2 = ({ state, onFinish }: EpisodeProps) => {
           <StylishItem>
             <Text>It's not time and effort that will get you there!</Text>
           </StylishItem>
+          <StylishItem>
+            <Text>But a hygenic mailbox will...</Text>
+          </StylishItem>
         </ShowTextWithStyle>
-        <StylishItem>
-          <Text>But a hygenic mailbox will...</Text>
-        </StylishItem>
       </TextContainer>
       <PictureContainer>
         <SwitchTransition mode={"out-in"}>
@@ -93,7 +93,9 @@ export const Episode3 = ({ state, onFinish }: EpisodeProps) => (
           </Text>
         </StylishItem>
         <StylishItem>
-          <SmallText>...if you use gmail, otherwise you're on your own kiddo.</SmallText>
+          <SmallText>
+            ...if you use gmail, otherwise you're on your own kiddo.
+          </SmallText>
         </StylishItem>
       </ShowTextWithStyle>
     </TextContainer>
