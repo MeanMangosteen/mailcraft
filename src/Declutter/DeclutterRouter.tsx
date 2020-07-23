@@ -107,6 +107,7 @@ export const DeclutterRouter = () => {
     </Switch>
   );
 
+  return <Loading />;
   return (
     <>
       {stageToDisplay}
