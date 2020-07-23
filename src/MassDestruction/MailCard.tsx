@@ -6,8 +6,17 @@ import { Transition } from "react-transition-group";
 import { centerContent } from "../utils";
 import { WebUILink } from "../WebUILink";
 
-export const MailCard = ({ mail, html, subject, selected, index, onClick }) => {
+export const MailCard = ({ mail, selected, index, onClick }) => {
   const [expandIframe, setExpandIframe] = useState<boolean>(false);
+
+  const headerLines = mail["body[]"]["headerLines"];
+  let useText: boolean;
+  for (let i = 0; i < headerLines.length; i++) {
+    const header = headerLines[i];
+    if (header.key === "content-type") {
+      useText = header.line.match(/Content-Type: text\/plain/g);
+    }
+  }
 
   return (
     <>
@@ -18,7 +27,7 @@ export const MailCard = ({ mail, html, subject, selected, index, onClick }) => {
               <StyledMailThumbnail
                 parentH={size?.height && size.height}
                 parentW={size.width && size.width / 2}
-                html={mail["body[]"].html}
+                html={mail["body[]"].html || mail["body[]"].textAsHtml}
                 onClick={() => setExpandIframe(true)}
                 expandable
               />
@@ -58,7 +67,7 @@ const ExpandedIframe = ({ onClose, show, mail }) => {
         >
           <ExpandedIframeContainer className={state}>
             <Iframe
-              srcDoc={mail["body[]"].html}
+              srcDoc={mail["body[]"].html || mail["body[]"].textAsHtml}
               onLoad={handleIframeLoad}
               iframeHeight={iframeHeight}
             />
@@ -107,6 +116,8 @@ const ExpandedIframeContainer = styled.div`
 
   overflow-y: scroll;
   overflow-x: hidden;
+
+  background: white;
 `;
 
 export const MailCardContainer = styled.div`

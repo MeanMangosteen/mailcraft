@@ -54,6 +54,7 @@ export const Loading = () => {
             </StyledCat>
             <StyledCat>I prefer not to talk about it.</StyledCat>
             <StyledCat>Virtual Lives Matter, you know.</StyledCat>
+            {/* 56 seconds total */}
           </StyledCatwalk>
         </LoadingTextContainer>
       </SpinnerWrapper>

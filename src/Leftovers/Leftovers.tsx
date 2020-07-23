@@ -60,7 +60,7 @@ export const Leftovers = ({}) => {
                 <Email
                   parentH={size?.height && size.height * 0.85}
                   parentW={size.width}
-                  html={mail["body[]"].html}
+                  html={mail["body[]"].html || mail["body[]"].textAsHtml}
                   className="email"
                   onClick={(e) => {
                     e.stopPropagation();

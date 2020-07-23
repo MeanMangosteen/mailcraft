@@ -54,8 +54,6 @@ export const DestroyVictim = () => {
               index={i + idx}
               key={idx}
               mail={mail}
-              subject={mail["envelope"].subject}
-              html={mail["body[]"].html}
               onClick={handleCardClick}
             />
           );
@@ -143,7 +141,7 @@ export const DestroyVictim = () => {
   // OMGTODO: remove slice
   return (
     <MassDestructionContainer>
-      <CardsContainer>{mailPages.slice(0, 2)}</CardsContainer>
+      <CardsContainer>{mailPages.slice(0, 3)}</CardsContainer>
       <ControlsContainer>
         <Button
           onClick={handleSpam}

@@ -31,11 +31,8 @@ const authMiddleware = async (req, res, next) => {
 
 
 const scopes = ["https://mail.google.com/"];
-let gmail = null;
-let profile = null;
-let client = null; // TODO: change name to imap
 
-const demo = true;
+const demo = false;
 
 app.get("/OAuthUrl", (req, res) => {
   const loginUrl = auth.oAuth2Client.generateAuthUrl({
@@ -58,12 +55,12 @@ app.post("/OAuthConfirm", async (req, res) => {
   console.log(tokens);
 
   try {
-    gmail = google.gmail({
+    const gmail = google.gmail({
       version: "v1",
       auth: auth.oAuth2Client,
     });
 
-    profile = (
+    const profile = (
       await gmail.users.getProfile({
         userId: "me",
       })
@@ -93,6 +90,7 @@ app.post("/trash-mail", authMiddleware, async (req, res) => {
     res.status(400).send("Missing 'uids' parameter");
   }
 
+  let client;
   try {
     client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
     await client.connect();
@@ -118,8 +116,9 @@ app.post("/spam-mail", authMiddleware, async (req, res) => {
     res.status(400).send("Missing 'uids' parameter");
   }
 
-  client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
+  let client
   try {
+    client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
     await client.connect();
     const response = await client.moveMessages(
       "INBOX",
@@ -147,8 +146,9 @@ app.post("/read-mail", authMiddleware, async (req, res) => {
     res.status(400).send("Missing 'uids' parameter");
   }
 
-  client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
+  let client;
   try {
+    client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
     await client.connect();
     const response = await client.setFlags(
       "INBOX",
@@ -174,11 +174,10 @@ app.get("/mail", authMiddleware, async (req, res) => {
   }
 
 
-  client = new ImapClient("imap.gmail.com", 993, {
-    auth: req.authDeets,
-  });
+  let client;
 
   try {
+    client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets, });
     await client.connect();
 
     console.log("connected!");
@@ -190,13 +189,15 @@ app.get("/mail", authMiddleware, async (req, res) => {
 
     // OMGTODO:
     // const messageIds = await client.search("INBOX", { unseen: true });
+    console.time('fetch');
     const messages = await client.listMessages(
       "INBOX",
       // `${inbox.exists - 100}:${inbox.exists}`,
-      `1:*`,
+      `1:1000`,
       // ["uid", "flags", "body.peek[]", "X-GM-MSGID", "X-GM-THRID", "envelope"]
       ["uid", "body.peek[]", "X-GM-THRID", "envelope"]
     );
+    console.timeEnd('fetch');
 
     const parsePromises = messages.map((m) => {
       return new Promise((resolve, reject) => {

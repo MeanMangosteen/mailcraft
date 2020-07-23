@@ -14,7 +14,7 @@ import { FiSend } from "react-icons/fi";
 
 export const DeclutterRouter = () => {
   const [currStage, setCurrStage] = useState<"stage1" | "stage2" | "success!">(
-    "success!"
+    "stage1"
   );
   const location = useLocation();
   const userCtx = useContext(UserContext);
@@ -107,7 +107,6 @@ export const DeclutterRouter = () => {
     </Switch>
   );
 
-  return <Loading />;
   return (
     <>
       {stageToDisplay}
