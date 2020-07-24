@@ -75,4 +75,14 @@ export const setupInterceptors = (setLoggedIn) => {
       return Promise.reject(error);
     }
   );
+
+  api.interceptors.request.use((request) => {
+    console.log("Starting Request", request);
+    return request;
+  });
+
+  api.interceptors.response.use((response) => {
+    console.log("Recieved Response: ", response);
+    return response;
+  });
 };

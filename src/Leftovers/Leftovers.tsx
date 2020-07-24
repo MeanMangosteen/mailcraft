@@ -20,7 +20,14 @@ import { ProgressBar } from "../Declutter/ChooseVictim";
 import { WebUILink } from "../WebUILink";
 
 export const Leftovers = ({}) => {
-  const { mail, readMail, spamMail, trashMail, info } = useMail();
+  const {
+    mail,
+    readMail,
+    spamMail,
+    trashMail,
+    userProgress,
+    totalUnread,
+  } = useMail();
   const containerRef = useRef<any>();
   const [activeButton, setActiveButton] = useState<any>(null);
   const [mailCopy, setMailCopy] = useState<any>(null);
@@ -138,8 +145,8 @@ export const Leftovers = ({}) => {
       </UsefulThings>
       <ProgressContainer>
         <StyledProgressBar
-          progress={info?.progress}
-          total={info?.total}
+          progress={userProgress}
+          total={totalUnread}
           className="progress-bar"
         />
       </ProgressContainer>

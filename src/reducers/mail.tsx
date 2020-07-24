@@ -1,20 +1,50 @@
-import React, { useContext, useReducer, useEffect, useCallback } from "react";
+import React, {
+  useContext,
+  useReducer,
+  useEffect,
+  useCallback,
+  useState,
+  useRef,
+} from "react";
 import { api } from "../utils";
 import { UserContext, UnreadUidsCtx } from "../App";
 
-type MailAction = "store";
-
-export const MailContext: React.Context<[
-  any,
-  (action) => void
-]> = React.createContext([null, (action) => {}]); // initial value of [state, dispatchFn]
+export const MailContext: React.Context<{
+  state: MailState;
+  dispatch: React.Dispatch<MailAction>;
+}> = React.createContext({
+  state: {
+    userProgress: 0,
+    fetchProgress: 0,
+    isFetching: false,
+  } as MailState,
+  dispatch: ((action) => {}) as React.Dispatch<MailAction>,
+});
 
 // TODO: setMail may be redundant
 // TODO: rename folder to utils
-export const useMail = () => {
-  const [state, dispatch] = useContext(MailContext);
+type MailHookReturnType = {
+  mail?: any[];
+  totalUnread?: number;
+  userProgress: number;
+  readMail: (
+    uids: string[],
+    callback?: ((err: Error | null) => void) | undefined
+  ) => void;
+  spamMail: (
+    uids: string[],
+    callback?: ((err: Error | null) => void) | undefined
+  ) => void;
+  trashMail: (
+    uids: string[],
+    callback?: ((err: Error | null) => void) | undefined
+  ) => void;
+};
+export const useMail = (): MailHookReturnType => {
+  // const [fetchInProgress, setFetchInProgress] = useState<boolean>(false);
+  const { state, dispatch } = useContext(MailContext);
   const userCtx = useContext(UserContext);
-  const unreadUids = useContext(UnreadUidsCtx);
+  // const unreadUids = useContext(UnreadUidsCtx);
 
   const setMail = useCallback(
     (mail) => {
@@ -22,6 +52,17 @@ export const useMail = () => {
     },
     [dispatch]
   );
+
+  // const setup = useCallback(
+  //   (totalUnread) => {
+  //     dispatch({ type: "setup", totalUnread });
+  //   },
+  //   [dispatch]
+  // );
+
+  const fetch = useCallback(() => {
+    dispatch({ type: "fetch" });
+  }, [dispatch]);
 
   const readMail = useCallback(
     (uids: string[], callback?: (err: Error | null) => void) => {
@@ -40,7 +81,7 @@ export const useMail = () => {
   );
 
   const trashMail = useCallback(
-    (uids: string[], callback: (err: Error | null) => void) => {
+    (uids: string[], callback?: (err: Error | null) => void) => {
       api
         .post("/trash-mail", { uids })
         .then(() => {
@@ -55,11 +96,11 @@ export const useMail = () => {
   );
 
   const spamMail = useCallback(
-    (uids: string[], callback: (err: Error | null) => void) => {
+    (uids: string[], callback?: (err: Error | null) => void) => {
       api
         .post("/spam-mail", { uids })
         .then(() => {
-          dispatch({ type: "remove", uids });
+          dispatch({ type: "remove", uids }); //OMGTODO
           callback && callback(null);
         })
         .catch((err) => {
@@ -71,64 +112,117 @@ export const useMail = () => {
 
   useEffect(() => {
     if (!userCtx.loggedIn) return;
-    if (state?.mail) return; // We only need to run this if we're fetching for the first time
-    if (!unreadUids.uids) {
-      api
-        .get("/unreadUids")
-        .then((res) => {
-          unreadUids.setUids(res.data);
-          console.log("unread uids", res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    if (state.unreadUids) return;
 
-      return;
-    }
+    // First get uids to fetch
     api
-      .get("/mail")
+      .get("/unreadUids")
       .then((res) => {
-        setMail(res.data);
+        // unreadUids.setUids(res.data);
+        dispatch({ type: "setup", unreadUids: res.data });
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [setMail, state, unreadUids.uids]);
+  }, [userCtx.loggedIn]);
+
+  useEffect(() => {
+    if (!state.unreadUids) return;
+    // if (unreadUids.fetchProgress.isFetching) return;
+    if (state.isFetching) return;
+    if (state.fetchProgress === state.totalUnread) return;
+
+    // Now fetch those uids in chuncks
+    // unreadUids.setFetchProgress({
+    //   fetched: unreadUids.fetchProgress.fetched,
+    //   isFetching: true,
+    // });
+    // isFetching.current = true;
+    dispatch({ type: "fetch" });
+    api
+      .get("/mail", {
+        params: {
+          uids: JSON.stringify(
+            state.unreadUids.slice(
+              state.fetchProgress,
+              Math.min(state.fetchProgress + 2000, state.totalUnread!)
+            )
+          ),
+        },
+      })
+      .then((res) => {
+        // setMail(res.data);
+        // unreadUids.setFetchProgress({
+        //   fetched: unreadUids.fetchProgress.fetched + res.data.length,
+        //   isFetching: false,
+        // });
+        // isFetching.current = false;
+        dispatch({ type: "store", mail: res.data });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [state]);
 
   return {
     mail: state?.mail,
-    info: state?.info,
-    setMail,
+    totalUnread: state.totalUnread,
+    userProgress: state.userProgress,
     readMail,
     spamMail,
     trashMail,
   };
 };
 
+type MailState = {
+  mail?: any[];
+  totalUnread?: number;
+  userProgress: number;
+  fetchProgress: number;
+  isFetching: boolean;
+  unreadUids?: number[];
+};
+
+type MailAction =
+  | {
+      type: "setup";
+      unreadUids: number[];
+    }
+  | { type: "fetch" }
+  | { type: "store"; mail: any[] }
+  | { type: "remove"; uids: string[] };
+
 export const MailProvider = ({ children }) => {
-  const reducer = (state, action) => {
+  const unreadUids = useContext(UnreadUidsCtx);
+
+  const reducer = (state: MailState, action: MailAction): MailState => {
     switch (action.type) {
+      case "setup":
+        return {
+          ...state,
+          userProgress: 0,
+          totalUnread: action.unreadUids.length,
+          unreadUids: action.unreadUids,
+        };
+      case "fetch":
+        return { ...state, isFetching: true };
       case "store":
         return {
-          mail: action.mail,
-          info: {
-            total: action.mail.length,
-            progress: 0,
-          },
+          ...state,
+          mail: state?.mail ? state.mail.concat(action.mail) : action.mail,
+          fetchProgress: state.fetchProgress + action.mail.length,
+          isFetching: false,
         };
       case "remove":
-        const filtered = state.mail.filter((mail) => {
+        const filtered = state.mail!.filter((mail) => {
           return !action.uids.includes(mail.uid);
         });
 
-        // Get all mail which isn't in the uid array
         return {
+          ...state,
           mail: filtered,
-          info: {
-            ...state.info,
-            progress:
-              state.info.progress + (state.mail.length - filtered.length),
-          },
+          userProgress:
+            state.userProgress + (state.mail!.length - filtered.length),
         };
       default:
         throw Error(
@@ -137,10 +231,14 @@ export const MailProvider = ({ children }) => {
     }
   };
 
-  const [mailState, dispatch] = useReducer<any>(reducer, null);
+  const [mailState, dispatch] = useReducer(reducer, {
+    userProgress: 0,
+    fetchProgress: 0,
+    isFetching: false,
+  });
 
   return (
-    <MailContext.Provider value={[mailState, dispatch]}>
+    <MailContext.Provider value={{ state: mailState, dispatch }}>
       {children}
     </MailContext.Provider>
   );

@@ -11,7 +11,7 @@ interface DeclutterProps {
 export const ChooseVictim = ({}) => {
   const [chartData, setChartData] = useState<any>(undefined);
   const [selectedVictim, setVictim] = useState<string | null>(null);
-  const { mail, info } = useMail();
+  const { mail, totalUnread, userProgress } = useMail();
 
   useEffect(() => {
     if (!mail) return; // wait for mail fetch
@@ -62,7 +62,7 @@ export const ChooseVictim = ({}) => {
           }}
         />
       </PieChartWrapper>
-      <ProgressBar progress={info?.progress} total={info?.total} />
+      <ProgressBar progress={userProgress} total={totalUnread} />
       {selectedVictim ? (
         <Redirect
           to={`/declutter/mass-destruction/destroy?victim=${selectedVictim}`}

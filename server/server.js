@@ -24,9 +24,20 @@ const authMiddleware = async (req, res, next) => {
     requireTLS: true,
   };
 
-  console.log('in middleware', authDeets);
-  req['authDeets'] = authDeets;
-  next();
+  let client;
+  try {
+    client = new ImapClient("imap.gmail.com", 993, { auth: authDeets });
+    await client.connect();
+
+    req['imap'] = client;
+    next();
+  } catch (err) {
+    console.error(err);
+    if (err.code === "AUTHENTICATIONFAILED") {
+      res.status(401).send("Try logging in again m8y");
+    }
+    await client.close()
+  }
 };
 
 
@@ -66,18 +77,18 @@ app.post("/OAuthConfirm", async (req, res) => {
       })
     ).data;
 
-    const authDeets = {
-      user: profile.emailAddress,
-      xoauth2: tokens.access_token,
-      requireTLS: true,
-    };
+    // const authDeets = {
+    //   user: profile.emailAddress,
+    //   xoauth2: tokens.access_token,
+    //   requireTLS: true,
+    // };
 
-    const client = new ImapClient("imap.gmail.com", 993, { auth: authDeets });
-    await client.connect();
+    // const client = new ImapClient("imap.gmail.com", 993, { auth: authDeets });
+    // await client.connect();
     // OMGTODO: change to unseen in production
     // const result = await client.search('INBOX', { unseen: true });
-    const unreadUids = await client.search('INBOX', { or: { unseen: true, seen: true } }, { byUid: true });
-    const unreadMailCount = unreadUids.length;
+    // const unreadUids = await req.imap.search('INBOX', { or: { unseen: true, seen: true } }, { byUid: true });
+    // const unreadMailCount = unreadUids.length;
 
     res.cookie('access_token', tokens.access_token, {
       expires: new Date(Date.now() + 8 * 3600000), // cookie will be removed after 8 hours
@@ -85,9 +96,6 @@ app.post("/OAuthConfirm", async (req, res) => {
       sameSite: true,
       // secure: true,
     }).cookie('profile', profile.emailAddress, {
-      expires: new Date(Date.now() + 8 * 3600000), // cookie will be removed after 8 hours
-      sameSite: true,
-    }).cookie('mailCount', unreadMailCount, {
       expires: new Date(Date.now() + 8 * 3600000), // cookie will be removed after 8 hours
       sameSite: true,
     });
@@ -106,11 +114,11 @@ app.post("/trash-mail", authMiddleware, async (req, res) => {
     res.status(400).send("Missing 'uids' parameter");
   }
 
-  let client;
+  // let client;
   try {
-    client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
-    await client.connect();
-    const response = await client.moveMessages(
+    // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
+    // await client.connect();
+    const response = await req.imap.moveMessages(
       "INBOX",
       uids.join(","),
       "[Gmail]/Trash",
@@ -122,7 +130,7 @@ app.post("/trash-mail", authMiddleware, async (req, res) => {
     console.error(err);
     res.status(400).send(err);
   } finally {
-    await client.close()
+    await req.imap.close()
   }
 });
 
@@ -132,11 +140,11 @@ app.post("/spam-mail", authMiddleware, async (req, res) => {
     res.status(400).send("Missing 'uids' parameter");
   }
 
-  let client
+  // let client
   try {
-    client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
-    await client.connect();
-    const response = await client.moveMessages(
+    // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
+    // await client.connect();
+    const response = await req.imap.moveMessages(
       "INBOX",
       uids.join(","),
       "[Gmail]/Spam",
@@ -148,7 +156,7 @@ app.post("/spam-mail", authMiddleware, async (req, res) => {
     console.error(err);
     res.status(400).send(err);
   } finally {
-    await client.close()
+    await req.imap.close()
   }
 });
 
@@ -162,11 +170,11 @@ app.post("/read-mail", authMiddleware, async (req, res) => {
     res.status(400).send("Missing 'uids' parameter");
   }
 
-  let client;
+  // let client;
   try {
-    client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
-    await client.connect();
-    const response = await client.setFlags(
+    // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
+    // await client.connect();
+    const response = await req.imap.setFlags(
       "INBOX",
       uids.join(","),
       {
@@ -179,22 +187,24 @@ app.post("/read-mail", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
   } finally {
-    await client.close()
+    await req.imap.close()
   }
 });
 
 app.get("/unreadUids", authMiddleware, async (req, res) => {
-  let client;
+  // let client;
 
   try {
-    client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets, });
-    await client.connect();
-    const unreadUids = await client.search('INBOX', { or: { unseen: true, seen: true } }, { byUid: true });
+    // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets, });
+    // await client.connect();
+    const unreadUids = await req.imap.search('INBOX', { or: { unseen: true, seen: true } }, { byUid: true });
     const unreadMailCount = unreadUids.length;
     res.status(200).send(unreadUids);
   } catch (err) {
     console.error(err);
     res.status(400).send(err);
+  } finally {
+    await req.imap.close();
   }
 
 });
@@ -205,32 +215,35 @@ app.get("/mail", authMiddleware, async (req, res) => {
     return res.status(200).send(messages);
   }
 
+  const { uids } = req.query;
 
-  let client;
+
+  // let client;
 
   try {
-    client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets, });
-    await client.connect();
+    // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets, });
+    // await client.connect();
 
 
-    console.log("connected!");
+    // console.log("connected!");
 
-    const mailboxes = await client.listMailboxes();
-    console.log(mailboxes);
+    // const mailboxes = await req.imap.listMailboxes();
+    // console.log(mailboxes);
 
-    const inbox = await client.selectMailbox("INBOX");
+    // const inbox = await client.selectMailbox("INBOX");
 
     // OMGTODO:
     // const messageIds = await client.search("INBOX", { unseen: true });
     console.time('fetch');
-    const messages = await client.listMessages(
+    const messages = await req.imap.listMessages(
       "INBOX",
       // `${inbox.exists - 100}:${inbox.exists}`,
-      `1:1000`,
+      // `1:1000`,
+      JSON.parse(uids).join(),
       // `136,137`, // uid numbers
       // ["uid", "flags", "body.peek[]", "X-GM-MSGID", "X-GM-THRID", "envelope"]
       ["uid", "body.peek[]", "X-GM-THRID", "envelope"],
-      // { byUid: true }
+      { byUid: true }
     );
     console.timeEnd('fetch');
 
