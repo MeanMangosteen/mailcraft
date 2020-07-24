@@ -1,6 +1,6 @@
 import React, { useContext, useReducer, useEffect, useCallback } from "react";
 import { api } from "../utils";
-import { UserContext } from "../App";
+import { UserContext, UnreadUidsCtx } from "../App";
 
 type MailAction = "store";
 
@@ -14,6 +14,7 @@ export const MailContext: React.Context<[
 export const useMail = () => {
   const [state, dispatch] = useContext(MailContext);
   const userCtx = useContext(UserContext);
+  const unreadUids = useContext(UnreadUidsCtx);
 
   const setMail = useCallback(
     (mail) => {
@@ -71,7 +72,19 @@ export const useMail = () => {
   useEffect(() => {
     if (!userCtx.loggedIn) return;
     if (state?.mail) return; // We only need to run this if we're fetching for the first time
+    if (!unreadUids.uids) {
+      api
+        .get("/unreadUids")
+        .then((res) => {
+          unreadUids.setUids(res.data);
+          console.log("unread uids", res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
+      return;
+    }
     api
       .get("/mail")
       .then((res) => {
@@ -80,7 +93,7 @@ export const useMail = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [setMail, state]);
+  }, [setMail, state, unreadUids.uids]);
 
   return {
     mail: state?.mail,

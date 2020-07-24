@@ -15,6 +15,11 @@ const StyledAppRouter = styled(AppRouter)`
   grid-area: content;
 `;
 
+export const UnreadUidsCtx: React.Context<{
+  uids: any;
+  setUids: any;
+}> = React.createContext({ uids: [], setUids: () => {} }); // initial value of [state, dispatchFn]
+
 export const UserContext = React.createContext<{
   loggedIn: boolean;
   setLoggedIn: any;
@@ -26,6 +31,7 @@ export const UserContext = React.createContext<{
 const App = styled(({ className }) => {
   const [cookies] = useCookies(["loggedIn"]);
   const [loggedIn, setLoggedIn] = useState<boolean>(!!cookies?.loggedIn);
+  const [unreadUids, setUnreadUids] = useState<any>(null);
 
   setupInterceptors(setLoggedIn);
 
@@ -33,10 +39,14 @@ const App = styled(({ className }) => {
     <div className={className}>
       <BrowserRouter>
         <UserContext.Provider value={{ loggedIn, setLoggedIn }}>
-          <MailProvider>
-            <StyledNavBar />
-            <StyledAppRouter />
-          </MailProvider>
+          <UnreadUidsCtx.Provider
+            value={{ uids: unreadUids, setUids: setUnreadUids }}
+          >
+            <MailProvider>
+              <StyledNavBar />
+              <StyledAppRouter />
+            </MailProvider>
+          </UnreadUidsCtx.Provider>
         </UserContext.Provider>
       </BrowserRouter>
     </div>
