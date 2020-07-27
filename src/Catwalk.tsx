@@ -44,7 +44,11 @@ export const Catwalk = ({
   return (
     <CatwalkContainer className={className}>
       <SwitchTransition>
-        <Transition key={childCount} timeout={200}>
+        <Transition
+          onEnter={children[childCount].props?.onShow}
+          key={childCount}
+          timeout={200}
+        >
           {(state) => <Fade state={state}>{children[childCount]}</Fade>}
         </Transition>
       </SwitchTransition>
@@ -55,6 +59,7 @@ export const Catwalk = ({
 type WalkingCatProps = {
   children: React.ReactNode;
   duration?: number;
+  onShow?: () => void;
   className?: string;
 };
 
@@ -62,7 +67,12 @@ type WalkingCatProps = {
  * Wrap each child/cat of the catwalk with this component
  */
 export const WalkingCat = styled(
-  ({ children, duration, className = "walking-cat" }: WalkingCatProps) => {
+  ({
+    children,
+    duration,
+    onShow,
+    className = "walking-cat",
+  }: WalkingCatProps) => {
     return <span className={className}>{children}</span>;
   }
 )``;

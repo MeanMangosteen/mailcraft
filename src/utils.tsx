@@ -81,8 +81,8 @@ export const setupInterceptors = (setLoggedIn) => {
     return request;
   });
 
-  api.interceptors.response.use((response) => {
-    console.log("Recieved Response: ", response);
-    return response;
-  });
+  // api.interceptors.response.use((response) => {
+  //   console.log("Recieved Response: ", response);
+  //   return response;
+  // });
 };

@@ -27,6 +27,7 @@ type MailHookReturnType = {
   mail?: any[];
   totalUnread?: number;
   userProgress: number;
+  moreToCome: boolean;
   readMail: (
     uids: string[],
     callback?: ((err: Error | null) => void) | undefined
@@ -44,6 +45,9 @@ export const useMail = (): MailHookReturnType => {
   // const [fetchInProgress, setFetchInProgress] = useState<boolean>(false);
   const { state, dispatch } = useContext(MailContext);
   const userCtx = useContext(UserContext);
+  const [moreToCome, setMoreToCome] = useState<boolean>(
+    state.totalUnread ? state.fetchProgress < state.totalUnread : true
+  );
   // const unreadUids = useContext(UnreadUidsCtx);
 
   const setMail = useCallback(
@@ -70,12 +74,12 @@ export const useMail = (): MailHookReturnType => {
         .post("/read-mail", { uids })
         .then(() => {
           // remove mail from state
-          dispatch({ type: "remove", uids });
           callback && callback(null);
         })
         .catch((err) => {
           callback && callback(err);
         });
+      dispatch({ type: "remove", uids });
     },
     [dispatch]
   );
@@ -85,12 +89,12 @@ export const useMail = (): MailHookReturnType => {
       api
         .post("/trash-mail", { uids })
         .then(() => {
-          dispatch({ type: "remove", uids });
           callback && callback(null);
         })
         .catch((err) => {
           callback && callback(err);
         });
+      dispatch({ type: "remove", uids });
     },
     [dispatch]
   );
@@ -100,12 +104,12 @@ export const useMail = (): MailHookReturnType => {
       api
         .post("/spam-mail", { uids })
         .then(() => {
-          dispatch({ type: "remove", uids }); //OMGTODO
           callback && callback(null);
         })
         .catch((err) => {
           callback && callback(err);
         });
+      dispatch({ type: "remove", uids });
     },
     [dispatch]
   );
@@ -130,7 +134,10 @@ export const useMail = (): MailHookReturnType => {
     if (!state.unreadUids) return;
     // if (unreadUids.fetchProgress.isFetching) return;
     if (state.isFetching) return;
-    if (state.fetchProgress === state.totalUnread) return;
+    if (state.fetchProgress === state.totalUnread) {
+      setMoreToCome(false);
+      return;
+    }
 
     // Now fetch those uids in chuncks
     // unreadUids.setFetchProgress({
@@ -145,7 +152,8 @@ export const useMail = (): MailHookReturnType => {
           uids: JSON.stringify(
             state.unreadUids.slice(
               state.fetchProgress,
-              Math.min(state.fetchProgress + 2000, state.totalUnread!)
+              // First fetch is chunk of 2000, with fetches of 500 afterwards.
+              Math.min(state.fetchProgress + 500, state.totalUnread!)
             )
           ),
         },
@@ -168,6 +176,7 @@ export const useMail = (): MailHookReturnType => {
     mail: state?.mail,
     totalUnread: state.totalUnread,
     userProgress: state.userProgress,
+    moreToCome,
     readMail,
     spamMail,
     trashMail,

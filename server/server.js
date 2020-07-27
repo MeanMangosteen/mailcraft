@@ -43,7 +43,7 @@ const authMiddleware = async (req, res, next) => {
 
 const scopes = ["https://mail.google.com/"];
 
-const demo = true;
+const demo = false;
 
 app.get("/OAuthUrl", (req, res) => {
   const loginUrl = auth.oAuth2Client.generateAuthUrl({
@@ -178,7 +178,7 @@ app.post("/read-mail", authMiddleware, async (req, res) => {
       "INBOX",
       uids.join(","),
       {
-        remove: ["\\Seen"], // OMGTODO: change to add.
+        add: ["\\Seen"], // OMGTODO: change to add.
       },
       { byUid: true }
     );
@@ -201,7 +201,7 @@ app.get("/unreadUids", authMiddleware, async (req, res) => {
   try {
     // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets, });
     // await client.connect();
-    const unreadUids = await req.imap.search('INBOX', { or: { unseen: true, seen: true } }, { byUid: true });
+    const unreadUids = await req.imap.search('INBOX', { unseen: true }, { byUid: true });
     const unreadMailCount = unreadUids.length;
     res.status(200).send(unreadUids);
   } catch (err) {
@@ -242,12 +242,12 @@ app.get("/mail", authMiddleware, async (req, res) => {
     const messages = await req.imap.listMessages(
       "INBOX",
       // `${inbox.exists - 100}:${inbox.exists}`,
-      `1:1000`,
-      // JSON.parse(uids).join(),
+      // `1:1000`,
+      JSON.parse(uids).join(),
       // `136,137`, // uid numbers
       // ["uid", "flags", "body.peek[]", "X-GM-MSGID", "X-GM-THRID", "envelope"]
       ["uid", "body.peek[]", "X-GM-THRID", "envelope"],
-      // { byUid: true }
+      { byUid: true }
     );
     console.timeEnd('fetch');
 

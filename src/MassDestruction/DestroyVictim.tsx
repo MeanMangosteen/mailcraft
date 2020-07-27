@@ -8,7 +8,6 @@ import { RiSpam2Line } from "react-icons/ri";
 import { AiOutlineRead } from "react-icons/ai";
 import { FiTrash2 } from "react-icons/fi";
 import { centerContent } from "../utils";
-import { Loading } from "../Loading";
 import { useInView } from "react-intersection-observer";
 
 // TODO: come back to page based scrolling
@@ -33,7 +32,7 @@ export const DestroyVictim = () => {
       setLastPage(lastPage + 1);
     }
   }, [inView]);
-
+  console.log("last page: ", lastPage);
   useEffect(() => {
     /**
      * We have the victim. Filter the mail to get all the mail from that victim only
@@ -155,7 +154,7 @@ export const DestroyVictim = () => {
     });
   };
 
-  if (opInProgress) return <Loading />;
+  // if (opInProgress) return <Loading />;
   // OMGTODO: remove slice
   return (
     <MassDestructionContainer>
@@ -240,6 +239,7 @@ const PageContainer = styled.div<{ ref: any }>`
 `;
 
 const MassDestructionContainer = styled.div`
+  height: 100vh;
   display: grid;
   grid-template-rows: 90% 10%;
 `;

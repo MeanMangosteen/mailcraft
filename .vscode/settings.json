@@ -8,7 +8,7 @@
   // },
   "editor.formatOnSave": true,
   "eslint.format.enable": true,
-  "debug.node.autoAttach": "on"
+  "debug.node.autoAttach": "off"
   // "editor.codeActionsOnSave": {
   //       "source.fixAll": true
   //   }

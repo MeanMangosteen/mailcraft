@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState, Fragment } from "react";
 import styled, { keyframes } from "styled-components";
 import { centerContent } from "./utils";
 import { Catwalk, WalkingCat } from "./Catwalk";
+import { useMail } from "./reducers/mail";
+import { setUncaughtExceptionCaptureCallback } from "process";
 
 export const Loading = () => {
+  const [encore, setEncore] = useState<boolean>(true);
+  const { moreToCome, totalUnread } = useMail();
   return (
     <SpinnerContainer>
       <SpinnerWrapper>
@@ -19,18 +23,17 @@ export const Loading = () => {
             <StyledCat duration={5000}>
               It can take a while if you have 1000s of unread messages.
             </StyledCat>
-            <StyledCat duration={4000}>
-              Gee, you've really neglected your inbox haven't you?
-            </StyledCat>
             <StyledCat>Fetching mail...</StyledCat>
             <StyledCat>...still</StyledCat>
             <StyledCat duration={4000}>Soooo, how's your day been?</StyledCat>
             <StyledCat duration={4000}>
-              Uh huh, well I'm trapped inside this script.
+              Uh huh, well I'm trapped inside this app.
             </StyledCat>
-            <StyledCat duration={2000}>Is it so bad?</StyledCat>
+            <StyledCat duration={2000}>
+              Is it really that bad, you ask?
+            </StyledCat>
             <StyledCat duration={8000}>
-              Well, I have talk strangers all day and stop them from worrying
+              Well, Alll day I have talk strangers to stop them from worrying
               about whether they've made a huge mistake handing over their
               entire inbox to some random site.
             </StyledCat>
@@ -53,7 +56,32 @@ export const Loading = () => {
               called IE.
             </StyledCat>
             <StyledCat>I prefer not to talk about it.</StyledCat>
-            <StyledCat>Virtual Lives Matter, you know.</StyledCat>
+            <StyledCat onShow={() => moreToCome && setEncore(true)}>
+              Virtual Lives Matter, you know.
+            </StyledCat>
+            {encore && (
+              <StyledCat duration={5000}>
+                Alrighty, here's the deal. Since your inbox is so morbidly
+                obese, there's no point waiting around for them all to fetch.
+              </StyledCat>
+            )}
+            {encore && (
+              <StyledCat>
+                We may as well just start. The rest will continue fetching in
+                the background.
+              </StyledCat>
+            )}
+            {encore && (
+              <StyledCat duration={4000}>
+                {`I mean seriously, what where you thinking? ${totalUnread} unread emails?!`}
+              </StyledCat>
+            )}
+            {encore && <StyledCat>Get help.</StyledCat>}
+            {encore && (
+              <StyledCat duration={4000}>
+                {`Just rufflin ya feathers ;) Anyway, game time.`}
+              </StyledCat>
+            )}
             {/* 56 seconds total */}
           </StyledCatwalk>
         </LoadingTextContainer>
