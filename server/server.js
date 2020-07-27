@@ -43,7 +43,7 @@ const authMiddleware = async (req, res, next) => {
 
 const scopes = ["https://mail.google.com/"];
 
-const demo = false;
+const demo = true;
 
 app.get("/OAuthUrl", (req, res) => {
   const loginUrl = auth.oAuth2Client.generateAuthUrl({
@@ -193,6 +193,10 @@ app.post("/read-mail", authMiddleware, async (req, res) => {
 
 app.get("/unreadUids", authMiddleware, async (req, res) => {
   // let client;
+  if (demo) {
+    const dummyUids = new Array(1000);
+    return res.status(200).send(dummyUids.fill(1));
+  }
 
   try {
     // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets, });
@@ -238,12 +242,12 @@ app.get("/mail", authMiddleware, async (req, res) => {
     const messages = await req.imap.listMessages(
       "INBOX",
       // `${inbox.exists - 100}:${inbox.exists}`,
-      // `1:1000`,
-      JSON.parse(uids).join(),
+      `1:1000`,
+      // JSON.parse(uids).join(),
       // `136,137`, // uid numbers
       // ["uid", "flags", "body.peek[]", "X-GM-MSGID", "X-GM-THRID", "envelope"]
       ["uid", "body.peek[]", "X-GM-THRID", "envelope"],
-      { byUid: true }
+      // { byUid: true }
     );
     console.timeEnd('fetch');
 
@@ -264,6 +268,7 @@ app.get("/mail", authMiddleware, async (req, res) => {
 
     // const data = JSON.stringify(messages);
     // fs.writeFileSync('demo.json', data);
+    // console.log('file written')
     res.status(200).send(messages);
   } catch (err) {
     console.error(err);
@@ -271,7 +276,7 @@ app.get("/mail", authMiddleware, async (req, res) => {
       res.status(401).send("Try logging in again m8y");
     }
   } finally {
-    await client.close()
+    await req.imap.close()
   }
 });
 

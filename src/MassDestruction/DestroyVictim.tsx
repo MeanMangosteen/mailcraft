@@ -9,6 +9,7 @@ import { AiOutlineRead } from "react-icons/ai";
 import { FiTrash2 } from "react-icons/fi";
 import { centerContent } from "../utils";
 import { Loading } from "../Loading";
+import { useInView } from "react-intersection-observer";
 
 // TODO: come back to page based scrolling
 export const DestroyVictim = () => {
@@ -20,7 +21,17 @@ export const DestroyVictim = () => {
   const [selected, setSelected] = useState<Object>({});
   const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
   const [opInProgress, setOpInProgress] = useState<boolean>(false);
-  console.log("here");
+  const [lastPage, setLastPage] = useState<number>(3);
+  const [ref, inView, entry] = useInView({
+    threshold: 0,
+  });
+
+  useEffect(() => {
+    if (inView) {
+      console.log("We're in View!", entry);
+      setLastPage(lastPage + 1);
+    }
+  }, [inView]);
 
   useEffect(() => {
     /**
@@ -58,7 +69,13 @@ export const DestroyVictim = () => {
             />
           );
         });
-      const page = <PageContainer>{mailCards}</PageContainer>;
+      const page = (
+        <PageContainer
+          ref={i >= lastPage * numMailPerPage - numMailPerPage ? ref : null}
+        >
+          {mailCards}
+        </PageContainer>
+      );
       newMailPages.push(page);
     }
 
@@ -141,7 +158,7 @@ export const DestroyVictim = () => {
   // OMGTODO: remove slice
   return (
     <MassDestructionContainer>
-      <CardsContainer>{mailPages.slice(0, 3)}</CardsContainer>
+      <CardsContainer ref={ref}>{mailPages.slice(0, lastPage)}</CardsContainer>
       <ControlsContainer>
         <Button
           onClick={handleSpam}
@@ -211,7 +228,7 @@ const TrashIcon = styled(FiTrash2)`
   font-size: 2.5rem;
 `;
 
-const PageContainer = styled.div`
+const PageContainer = styled.div<{ ref: any }>`
   display: grid;
   grid-gap: 2rem 6rem;
   grid-template-columns: repeat(3, 1fr);
