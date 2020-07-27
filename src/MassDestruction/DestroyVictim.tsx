@@ -29,6 +29,7 @@ export const DestroyVictim = () => {
   useEffect(() => {
     if (inView) {
       console.log("We're in View!", entry);
+      console.log(lastPage, lastPage * 9);
       setLastPage(lastPage + 1);
     }
   }, [inView]);
@@ -71,7 +72,7 @@ export const DestroyVictim = () => {
         });
       const page = (
         <PageContainer
-          ref={i >= lastPage * numMailPerPage - numMailPerPage ? ref : null}
+          ref={i >= lastPage * numMailPerPage - 2 * numMailPerPage ? ref : null}
         >
           {mailCards}
         </PageContainer>
@@ -240,7 +241,7 @@ const PageContainer = styled.div<{ ref: any }>`
 
 const MassDestructionContainer = styled.div`
   display: grid;
-  grid-template-rows: auto 10%;
+  grid-template-rows: 90% 10%;
 `;
 
 const CardsContainer = styled.div`
