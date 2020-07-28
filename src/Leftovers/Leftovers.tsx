@@ -65,7 +65,7 @@ export const Leftovers = ({}) => {
                 }}
               >
                 <Email
-                  parentH={size?.height && size.height * 0.85}
+                  parentH={size?.height && size.height}
                   parentW={size.width}
                   html={mail["body[]"].html || mail["body[]"].textAsHtml}
                   className="email"
@@ -173,11 +173,6 @@ const EmailBodyContainer = styled.div`
 
 const StyledWebUILink = styled(WebUILink)`
   z-index: 2;
-  transition: opacity 0.2s ease-in-out;
-  opacity: 0;
-  ${EmailBodyContainer}:hover & {
-    opacity: 1;
-  }
 `;
 
 const EmailContainer = styled.div`
