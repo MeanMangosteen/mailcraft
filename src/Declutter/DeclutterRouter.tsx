@@ -6,7 +6,7 @@ import { Leftovers } from "../Leftovers/Leftovers";
 import { UserContext } from "../App";
 import styled, { keyframes } from "styled-components";
 import { ShowTextWithStyle, StylishItem } from "../ShowTextWithStyle";
-import { centerContent } from "../utils";
+import { centerContent, cb } from "../utils";
 import { Loading } from "../Loading";
 import { useMail } from "../reducers/mail";
 import { GrSend } from "react-icons/gr";
@@ -16,9 +16,11 @@ export const DeclutterRouter = () => {
   const [currStage, setCurrStage] = useState<"stage1" | "stage2" | "success!">(
     "stage1"
   );
+  const [gameTime, setGameTime] = useState<boolean>(false);
   const location = useLocation();
   const userCtx = useContext(UserContext);
   const { mail } = useMail();
+  const handleGameTime = cb(() => setGameTime(true), []);
 
   useEffect(() => {
     if (!mail) return; // wait for mail fetch
@@ -56,8 +58,8 @@ export const DeclutterRouter = () => {
         to={{ pathname: "/login", state: { referrer: location.pathname } }}
       />
     );
-  } else if (!mail) {
-    stageToDisplay = <Loading />;
+  } else if (!gameTime) {
+    stageToDisplay = <Loading onGameTime={handleGameTime} />;
   } else {
     switch (currStage) {
       case "stage1":

@@ -1,13 +1,25 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
-import { centerContent } from "./utils";
+import { centerContent, useEffectDebugger } from "./utils";
 import { Catwalk, WalkingCat } from "./Catwalk";
 import { useMail } from "./reducers/mail";
 import { setUncaughtExceptionCaptureCallback } from "process";
 
-export const Loading = () => {
+export const Loading = ({ onGameTime }) => {
   const [encore, setEncore] = useState<boolean>(true);
+  const [letsJustStart, setLetsJustStart] = useState<boolean>(false);
   const { moreToCome, totalUnread } = useMail();
+
+  useEffectDebugger(
+    () => {
+      if (!moreToCome || letsJustStart) {
+        onGameTime();
+      }
+    },
+    [letsJustStart, moreToCome, onGameTime],
+    ["letjuststart, moretocome, ongametime"] as any
+  );
+
   return (
     <SpinnerContainer>
       <SpinnerWrapper>
@@ -81,6 +93,10 @@ export const Loading = () => {
               <StyledCat duration={4000}>
                 {`Just rufflin ya feathers ;) Anyway, game time.`}
               </StyledCat>
+            )}
+            {/* Dummy empty cat, to signal end of show */}
+            {encore && (
+              <StyledCat onShow={() => setLetsJustStart(true)}>{""}</StyledCat>
             )}
             {/* 56 seconds total */}
           </StyledCatwalk>

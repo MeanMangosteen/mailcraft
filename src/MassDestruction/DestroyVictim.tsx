@@ -70,8 +70,9 @@ export const DestroyVictim = () => {
           );
         });
       const page = (
+        // Put intersection observer on the last page
         <PageContainer
-          ref={i >= lastPage * numMailPerPage - 2 * numMailPerPage ? ref : null}
+          ref={i >= lastPage * numMailPerPage - numMailPerPage ? ref : null}
         >
           {mailCards}
         </PageContainer>

@@ -1,5 +1,6 @@
 import { css } from "styled-components";
 import Axios from "axios";
+import { useRef, useEffect, useCallback } from "react";
 
 export const CSSDividerTop = ({ width, IHaveSetRelativePosition = false }) => {
   if (!IHaveSetRelativePosition) return;
@@ -86,3 +87,43 @@ export const setupInterceptors = (setLoggedIn) => {
   //   return response;
   // });
 };
+
+// Kindly provided by:
+// https://stackoverflow.com/questions/55187563/determine-which-dependency-array-variable-caused-useeffect-hook-to-fire
+const usePrevious = (value, initialValue) => {
+  const ref = useRef(initialValue);
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+};
+export const useEffectDebugger = (
+  effectHook,
+  dependencies,
+  dependencyNames = []
+) => {
+  const previousDeps = usePrevious(dependencies, []);
+
+  const changedDeps = dependencies.reduce((accum, dependency, index) => {
+    if (dependency !== previousDeps[index]) {
+      const keyName = dependencyNames[index] || index;
+      return {
+        ...accum,
+        [keyName]: {
+          before: previousDeps[index],
+          after: dependency,
+        },
+      };
+    }
+
+    return accum;
+  }, {});
+
+  if (Object.keys(changedDeps).length) {
+    console.log("[use-effect-debugger] ", changedDeps);
+  }
+
+  useEffect(effectHook, dependencies);
+};
+
+export const cb = useCallback;

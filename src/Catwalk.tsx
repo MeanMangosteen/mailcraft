@@ -30,7 +30,7 @@ export const Catwalk = ({
       setIsFinished(true);
       return;
     }
-    setTimeout(
+    const timer = setTimeout(
       () => {
         visibleChildren[childCount] = true;
         setVisibleChildren([...visibleChildren]);
@@ -39,7 +39,9 @@ export const Catwalk = ({
       // timings ? timings[childCount] || 2000 : 2000
       children[childCount].props?.duration || 3000
     );
-  }, [childCount, children]);
+
+    return () => clearTimeout(timer);
+  }, [childCount]);
 
   return (
     <CatwalkContainer className={className}>

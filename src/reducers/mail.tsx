@@ -152,7 +152,6 @@ export const useMail = (): MailHookReturnType => {
           uids: JSON.stringify(
             state.unreadUids.slice(
               state.fetchProgress,
-              // First fetch is chunk of 2000, with fetches of 500 afterwards.
               Math.min(state.fetchProgress + 500, state.totalUnread!)
             )
           ),
