@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useMemo } from "react";
 import { ChooseVictim } from "./ChooseVictim";
 import { Redirect, Route, useLocation, Switch } from "react-router-dom";
 import { DestroyVictim } from "../MassDestruction/DestroyVictim";
@@ -6,7 +6,7 @@ import { Leftovers } from "../Leftovers/Leftovers";
 import { UserContext } from "../App";
 import styled, { keyframes } from "styled-components";
 import { ShowTextWithStyle, StylishItem } from "../ShowTextWithStyle";
-import { centerContent, cb } from "../utils";
+import { centerContent, cb, useEffectDebugger } from "../utils";
 import { Loading } from "../Loading";
 import { useMail } from "../reducers/mail";
 import { GrSend } from "react-icons/gr";
@@ -19,8 +19,12 @@ export const DeclutterRouter = () => {
   const [gameTime, setGameTime] = useState<boolean>(false);
   const location = useLocation();
   const userCtx = useContext(UserContext);
-  const { mail } = useMail();
+  const { mail, fetchMail } = useMail();
   const handleGameTime = cb(() => setGameTime(true), []);
+
+  useEffect(() => {
+    fetchMail();
+  }, []);
 
   useEffect(() => {
     if (!mail) return; // wait for mail fetch
@@ -51,25 +55,28 @@ export const DeclutterRouter = () => {
   }, [mail]);
 
   // Let's start of which just direct towards MD or leftovers
-  let stageToDisplay;
-  if (!userCtx.loggedIn) {
-    stageToDisplay = (
-      <Redirect
-        to={{ pathname: "/login", state: { referrer: location.pathname } }}
-      />
-    );
-  } else if (!gameTime) {
-    stageToDisplay = <Loading onGameTime={handleGameTime} />;
-  } else {
-    switch (currStage) {
-      case "stage1":
-        /**
-         * location.pathname = /declutter/mass-destruction
-         * urlPieces = ["", "declutter", "mass-destruction"]
-         */
-        const urlPieces = location.pathname.split("/");
-        stageToDisplay =
-          urlPieces.length > 3 && urlPieces[2] === "mass-destruction" ? ( // Pre-existing path in the address bar. Use it.
+  useEffectDebugger(() => {
+    console.log("Just being useless");
+  }, [currStage, gameTime, location, userCtx.loggedIn]);
+
+  const stageToDisplay = useMemo(() => {
+    if (!userCtx.loggedIn) {
+      return (
+        <Redirect
+          to={{ pathname: "/login", state: { referrer: location.pathname } }}
+        />
+      );
+    } else if (!gameTime) {
+      return <Loading onGameTime={handleGameTime} />;
+    } else {
+      switch (currStage) {
+        case "stage1":
+          /**
+           * location.pathname = /declutter/mass-destruction
+           * urlPieces = ["", "declutter", "mass-destruction"]
+           */
+          const urlPieces = location.pathname.split("/");
+          return urlPieces.length > 3 && urlPieces[2] === "mass-destruction" ? ( // Pre-existing path in the address bar. Use it.
             <Redirect to={location} />
           ) : (
             <Redirect
@@ -77,36 +84,33 @@ export const DeclutterRouter = () => {
               to="/declutter/mass-destruction"
             />
           );
-        break;
-      case "stage2":
-        stageToDisplay = (
-          <Redirect key={location.pathname} to="/declutter/leftovers" />
-        );
-        break;
-      case "success!":
-        stageToDisplay = (
-          <Redirect key={location.pathname} to="/declutter/success" />
-        );
-        break;
+        case "stage2":
+          return <Redirect key={location.pathname} to="/declutter/leftovers" />;
+        case "success!":
+          return <Redirect key={location.pathname} to="/declutter/success" />;
+      }
     }
-  }
+  }, [currStage, gameTime, location, userCtx.loggedIn]);
 
-  const routes = (
-    <Switch>
-      <Route
-        path="/declutter/mass-destruction/destroy"
-        component={DestroyVictim}
-      />
-      <Route path="/declutter/mass-destruction">
-        <Stage1 />
-      </Route>
-      <Route path="/declutter/leftovers">
-        <Stage2 />
-      </Route>
-      <Route path="/declutter/success">
-        <Success />
-      </Route>
-    </Switch>
+  const routes = useMemo(
+    () => (
+      <Switch>
+        <Route
+          path="/declutter/mass-destruction/destroy"
+          component={DestroyVictim}
+        />
+        <Route path="/declutter/mass-destruction">
+          <Stage1 />
+        </Route>
+        <Route path="/declutter/leftovers">
+          <Stage2 />
+        </Route>
+        <Route path="/declutter/success">
+          <Success />
+        </Route>
+      </Switch>
+    ),
+    []
   );
 
   return (

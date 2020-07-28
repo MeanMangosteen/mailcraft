@@ -43,7 +43,7 @@ const authMiddleware = async (req, res, next) => {
 
 const scopes = ["https://mail.google.com/"];
 
-const demo = false;
+const demo = true;
 
 app.get("/OAuthUrl", (req, res) => {
   const loginUrl = auth.oAuth2Client.generateAuthUrl({

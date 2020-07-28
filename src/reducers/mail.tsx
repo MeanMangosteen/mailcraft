@@ -27,7 +27,6 @@ type MailHookReturnType = {
   mail?: any[];
   totalUnread?: number;
   userProgress: number;
-  moreToCome: boolean;
   readMail: (
     uids: string[],
     callback?: ((err: Error | null) => void) | undefined
@@ -40,6 +39,7 @@ type MailHookReturnType = {
     uids: string[],
     callback?: ((err: Error | null) => void) | undefined
   ) => void;
+  fetchMail: () => void;
 };
 export const useMail = (): MailHookReturnType => {
   // const [fetchInProgress, setFetchInProgress] = useState<boolean>(false);
@@ -48,14 +48,12 @@ export const useMail = (): MailHookReturnType => {
   const [moreToCome, setMoreToCome] = useState<boolean>(
     state.totalUnread ? state.fetchProgress < state.totalUnread : true
   );
+  const [startFetch, setStartFetch] = useState<boolean>(false);
   // const unreadUids = useContext(UnreadUidsCtx);
 
-  const setMail = useCallback(
-    (mail) => {
-      dispatch({ type: "store", mail });
-    },
-    [dispatch]
-  );
+  const fetchMail = useCallback(() => {
+    setStartFetch(true);
+  }, []);
 
   // const setup = useCallback(
   //   (totalUnread) => {
@@ -115,6 +113,7 @@ export const useMail = (): MailHookReturnType => {
   );
 
   useEffect(() => {
+    if (!startFetch) return;
     if (!userCtx.loggedIn) return;
     if (state.unreadUids) return;
 
@@ -128,9 +127,10 @@ export const useMail = (): MailHookReturnType => {
       .catch((err) => {
         console.log(err);
       });
-  }, [userCtx.loggedIn]);
+  }, [userCtx.loggedIn, startFetch, state.unreadUids]);
 
   useEffect(() => {
+    if (!startFetch) return;
     if (!state.unreadUids) return;
     // if (unreadUids.fetchProgress.isFetching) return;
     if (state.isFetching) return;
@@ -169,13 +169,13 @@ export const useMail = (): MailHookReturnType => {
       .catch((err) => {
         console.log(err);
       });
-  }, [state]);
+  }, [state, startFetch]);
 
   return {
     mail: state?.mail,
     totalUnread: state.totalUnread,
     userProgress: state.userProgress,
-    moreToCome,
+    fetchMail,
     readMail,
     spamMail,
     trashMail,

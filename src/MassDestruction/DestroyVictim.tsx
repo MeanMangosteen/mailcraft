@@ -19,7 +19,6 @@ export const DestroyVictim = () => {
   const [mailPages, setMailPages] = useState<any[]>([]);
   const [selected, setSelected] = useState<Object>({});
   const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
-  const [opInProgress, setOpInProgress] = useState<boolean>(false);
   const [lastPage, setLastPage] = useState<number>(3);
   const [ref, inView, entry] = useInView({
     threshold: 0,
@@ -29,7 +28,7 @@ export const DestroyVictim = () => {
     if (inView) {
       console.log("We're in View!", entry);
       console.log(lastPage, lastPage * 9);
-      setLastPage(lastPage + 1);
+      setTimeout(() => setLastPage(lastPage + 1), 500);
     }
   }, [inView]);
   console.log("last page: ", lastPage);
@@ -71,11 +70,7 @@ export const DestroyVictim = () => {
         });
       const page = (
         // Put intersection observer on the last page
-        <PageContainer
-          ref={i >= lastPage * numMailPerPage - numMailPerPage ? ref : null}
-        >
-          {mailCards}
-        </PageContainer>
+        <PageContainer ref={null}>{mailCards}</PageContainer>
       );
       newMailPages.push(page);
     }
@@ -105,7 +100,6 @@ export const DestroyVictim = () => {
 
   const handleRead = () => {
     /** All selected emails will be marked as 'read' */
-    setOpInProgress(true);
     const uids = Object.keys(selected)
       .filter((cardIdx) => selected[cardIdx])
       .map((cardIdx) => {
@@ -117,7 +111,6 @@ export const DestroyVictim = () => {
         console.error(err);
         return;
       }
-      setOpInProgress(false);
     });
   };
 
@@ -134,7 +127,6 @@ export const DestroyVictim = () => {
         console.error(err);
         return;
       }
-      setOpInProgress(false);
     });
   };
 
@@ -151,7 +143,6 @@ export const DestroyVictim = () => {
         console.error(err);
         return;
       }
-      setOpInProgress(false);
     });
   };
 
@@ -159,7 +150,10 @@ export const DestroyVictim = () => {
   // OMGTODO: remove slice
   return (
     <MassDestructionContainer>
-      <CardsContainer ref={ref}>{mailPages.slice(0, lastPage)}</CardsContainer>
+      <CardsContainer>
+        {mailPages.slice(0, lastPage)}
+        <ScrollWatcher ref={ref} />
+      </CardsContainer>
       <ControlsContainer>
         <Button
           onClick={handleSpam}
@@ -202,6 +196,9 @@ export const DestroyVictim = () => {
   );
 };
 
+const ScrollWatcher = styled.div`
+  height: 1px;
+`;
 const SelectedInfo = ({ selected, total }) => {
   return (
     <SelectedInfoContainer>{`${selected}/${total} selected`}</SelectedInfoContainer>

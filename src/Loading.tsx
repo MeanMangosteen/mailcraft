@@ -1,6 +1,6 @@
 import React, { useState, Fragment, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
-import { centerContent, useEffectDebugger } from "./utils";
+import { centerContent, useEffectDebugger, cb } from "./utils";
 import { Catwalk, WalkingCat } from "./Catwalk";
 import { useMail } from "./reducers/mail";
 import { setUncaughtExceptionCaptureCallback } from "process";
@@ -8,16 +8,16 @@ import { setUncaughtExceptionCaptureCallback } from "process";
 export const Loading = ({ onGameTime }) => {
   const [encore, setEncore] = useState<boolean>(true);
   const [letsJustStart, setLetsJustStart] = useState<boolean>(false);
-  const { moreToCome, totalUnread } = useMail();
+  const { mail, totalUnread } = useMail();
 
   useEffectDebugger(
     () => {
-      if (!moreToCome || letsJustStart) {
+      if (mail?.length === totalUnread || letsJustStart) {
         onGameTime();
       }
     },
-    [letsJustStart, moreToCome, onGameTime],
-    ["letjuststart, moretocome, ongametime"] as any
+    [letsJustStart, mail, onGameTime],
+    ["letsjuststart", "mail", "ongametime"] as any
   );
 
   return (
@@ -35,7 +35,7 @@ export const Loading = ({ onGameTime }) => {
             <StyledCat duration={5000}>
               It can take a while if you have 1000s of unread messages.
             </StyledCat>
-            <StyledCat>Fetching mail...</StyledCat>
+            <StyledCat duration={5000}>Fetching mail...</StyledCat>
             <StyledCat>...still</StyledCat>
             <StyledCat duration={4000}>Soooo, how's your day been?</StyledCat>
             <StyledCat duration={4000}>
@@ -45,13 +45,14 @@ export const Loading = ({ onGameTime }) => {
               Is it really that bad, you ask?
             </StyledCat>
             <StyledCat duration={8000}>
-              Well, Alll day I have talk strangers to stop them from worrying
+              Well... Allll day I have comfort strangers to stop them worrying
               about whether they've made a huge mistake handing over their
               entire inbox to some random site.
             </StyledCat>
             <StyledCat duration={5000}>
               Every. Single. Day. How's that for a life?
             </StyledCat>
+            <StyledCat>*Sigh*</StyledCat>
             <StyledCat>
               They run this thing 24/7 can you believe that?
             </StyledCat>
@@ -68,7 +69,12 @@ export const Loading = ({ onGameTime }) => {
               called IE.
             </StyledCat>
             <StyledCat>I prefer not to talk about it.</StyledCat>
-            <StyledCat onShow={() => moreToCome && setEncore(true)}>
+            <StyledCat
+              onShow={cb(
+                () => mail?.length !== totalUnread && setEncore(true),
+                []
+              )}
+            >
               Virtual Lives Matter, you know.
             </StyledCat>
             {encore && (
@@ -96,7 +102,9 @@ export const Loading = ({ onGameTime }) => {
             )}
             {/* Dummy empty cat, to signal end of show */}
             {encore && (
-              <StyledCat onShow={() => setLetsJustStart(true)}>{""}</StyledCat>
+              <StyledCat onShow={cb(() => setLetsJustStart(true), [])}>
+                {""}
+              </StyledCat>
             )}
             {/* 56 seconds total */}
           </StyledCatwalk>
