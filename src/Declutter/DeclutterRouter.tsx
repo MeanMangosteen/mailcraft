@@ -177,7 +177,7 @@ const Stage2 = ({}) => {
 
 const Success = () => {
   return (
-    <StageIntroContainer>
+    <StageIntroContainer style={{ color: "white" }}>
       <ShowTextWithStyle>
         <StylishItem>
           <Smiley>: )</Smiley>
@@ -275,7 +275,6 @@ const Text = styled.div`
   /* background-attachment: fixed;
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text; */
-  color: white;
 `;
 
 const Smiley = styled(Text)`

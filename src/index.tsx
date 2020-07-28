@@ -7,11 +7,11 @@ import { CookiesProvider } from "react-cookie";
 
 // Used by axios interceptors
 ReactDOM.render(
-  <React.StrictMode>
+  <>
     <CookiesProvider>
       <App className="App" />
     </CookiesProvider>
-  </React.StrictMode>,
+  </>,
   document.getElementById("root")
 );
 

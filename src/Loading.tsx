@@ -12,7 +12,10 @@ export const Loading = ({ onGameTime }) => {
 
   useEffectDebugger(
     () => {
-      if (mail?.length === totalUnread || letsJustStart) {
+      if (
+        (mail && totalUnread && mail?.length === totalUnread) ||
+        letsJustStart
+      ) {
         onGameTime();
       }
     },

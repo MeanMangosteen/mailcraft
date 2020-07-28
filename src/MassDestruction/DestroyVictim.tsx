@@ -70,7 +70,7 @@ export const DestroyVictim = () => {
         });
       const page = (
         // Put intersection observer on the last page
-        <PageContainer ref={null}>{mailCards}</PageContainer>
+        <PageContainer key={i / numMailPerPage}>{mailCards}</PageContainer>
       );
       newMailPages.push(page);
     }
@@ -226,7 +226,7 @@ const TrashIcon = styled(FiTrash2)`
   font-size: 2.5rem;
 `;
 
-const PageContainer = styled.div<{ ref: any }>`
+const PageContainer = styled.div`
   display: grid;
   grid-gap: 2rem 6rem;
   grid-template-columns: repeat(3, 1fr);
