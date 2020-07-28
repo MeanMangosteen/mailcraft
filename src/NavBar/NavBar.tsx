@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styled, { keyframes, css } from "styled-components";
 import { NavLink, Link } from "react-router-dom";
 import Emoji from "react-emoji-render";
+import { UserContext } from "../App";
+import { cb } from "../utils";
+import { useCookies } from "react-cookie";
 
 interface NavBarProps {}
 const logoSrc =
@@ -51,6 +54,9 @@ const slideFromLeft = keyframes`
 
 const NavBarContainer = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   /* when you play the game of z-indexes you either lose or you die */
   z-index: 100;
   &::before,
@@ -69,6 +75,11 @@ const NavBarContainer = styled.div`
   }
 `;
 
+const OtherLinks = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -78,7 +89,7 @@ const ContentWrapper = styled.div`
   height: 50vh;
 `;
 
-const NavLinkWrapper = styled.div`
+const IconWrapper = styled.div`
   display: flex;
   align-items: center;
 
@@ -92,7 +103,7 @@ const iconStyles = css`
   font-size: 4rem;
 
   will-change: transform;
-  ${NavLinkWrapper}:hover & {
+  ${IconWrapper}:hover & {
     animation: ${grow} 0.5s ease-in-out 1;
   }
   text-align: center;
@@ -107,6 +118,10 @@ const AnalyseIcon = styled(Emoji)`
   ${iconStyles}
 `;
 
+const LogoutIcon = styled(Emoji)`
+  ${iconStyles}
+`;
+
 const NavLinkText = styled.h1`
   position: absolute;
   z-index: 5;
@@ -115,7 +130,7 @@ const NavLinkText = styled.h1`
   opacity: 0;
   transform: translate3d(-100%, 0, 0);
   opacity: 0;
-  ${NavLinkWrapper}:hover & {
+  ${IconWrapper}:hover & {
     animation: ${slideFromLeft} 0.5s ease-in-out 1;
     transform: translate3d(100%, 0, 0);
     opacity: 1;
@@ -153,28 +168,45 @@ const HomeIcon = styled.img`
 `;
 
 const NavBar = styled(({}: NavBarProps) => {
+  const userCtx = useContext(UserContext);
+  const [_, __, removeCookie] = useCookies([]);
   return (
     <NavBarContainer>
       <ContentWrapper>
         <BaseNavLink to="/" exact activeStyle={{ color: "red" }}>
-          <NavLinkWrapper>
+          <IconWrapper>
             <HomeIcon src={logoSrc} />
             <NavLinkText>Home</NavLinkText>
-          </NavLinkWrapper>
+          </IconWrapper>
         </BaseNavLink>
         <BaseNavLink to="/declutter" activeStyle={{ color: "red" }}>
-          <NavLinkWrapper>
+          <IconWrapper>
             <DeclutterIcon text=":bowling:" />
             <NavLinkText>Declutter</NavLinkText>
-          </NavLinkWrapper>
+          </IconWrapper>
         </BaseNavLink>
         <BaseNavLink to="/insights" activeStyle={{}}>
-          <NavLinkWrapper>
+          <IconWrapper>
             <AnalyseIcon text=":microscope:" />
             <NavLinkText>Insights</NavLinkText>
-          </NavLinkWrapper>
+          </IconWrapper>
         </BaseNavLink>
       </ContentWrapper>
+      <OtherLinks>
+        <IconWrapper
+          onClick={cb(() => {
+            userCtx.setLoggedIn(false);
+            removeCookie("loggedIn");
+          }, [])}
+        >
+          <LogoutIcon text=":door:" />
+          <NavLinkText>Logout</NavLinkText>
+        </IconWrapper>
+        <IconWrapper>
+          <LogoutIcon text=":boy:" />
+          <NavLinkText>Author</NavLinkText>
+        </IconWrapper>
+      </OtherLinks>
     </NavBarContainer>
   );
 })``;
