@@ -57,6 +57,34 @@ export const CSSDividerBottom = ({
   `;
 };
 
+export const CSSDividerRight = ({
+  height,
+  IHaveSetRelativePosition = false,
+}) => {
+  if (!IHaveSetRelativePosition) return;
+  return css`
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      display: block;
+      right: -0px;
+      width: 1px;
+      height: ${height};
+    }
+
+    &::before {
+      top: 0;
+      background: linear-gradient(to top, #333 0%, transparent 100%);
+    }
+
+    &::after {
+      bottom: 0;
+      background: linear-gradient(to bottom, #333 0%, transparent 100%);
+    }
+  `;
+};
+
 export const centerContent = css`
   display: flex;
   justify-content: center;
