@@ -1,7 +1,6 @@
-import React, { useState, useEffect, Fragment, useCallback as cb } from "react";
+import React, { useState, useEffect } from "react";
 import { Transition, SwitchTransition } from "react-transition-group";
 import styled from "styled-components";
-import { centerContent } from "./utils";
 
 type ShowTextWithStyleProps = {
   children: React.ReactElement<WalkingCatProps>[];

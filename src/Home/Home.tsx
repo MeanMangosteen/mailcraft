@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { SwitchTransition, Transition } from "react-transition-group";
 import { Episode1, Episode2, Episode3 } from "./Episodes";
@@ -11,7 +11,6 @@ export const Home = () => {
   );
   return (
     <HomeContainer>
-      {/* <TextContainer> */}
       <SwitchTransition mode={"out-in"}>
         <Transition key={currEpisode} timeout={200}>
           {(state) =>

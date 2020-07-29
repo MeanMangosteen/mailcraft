@@ -7,16 +7,11 @@ import React, {
 } from "react";
 import { SizeMe } from "react-sizeme";
 import { useMail } from "../reducers/mail";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { Email } from "./Email";
-import {
-  FaArrowUp,
-  FaArrowLeft,
-  FaArrowRight,
-  FaArrowDown,
-} from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight, FaArrowDown } from "react-icons/fa";
 import { CSSDividerTop, centerContent, CSSDividerBottom } from "../utils";
-import { ProgressBar } from "../Declutter/ChooseVictim";
+import { ProgressBar } from "../Declutter/ProgressBar";
 import { WebUILink } from "../WebUILink";
 
 export const Leftovers = ({}) => {

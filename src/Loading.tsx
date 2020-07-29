@@ -1,9 +1,8 @@
-import React, { useState, Fragment, useEffect } from "react";
+import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { centerContent, useEffectDebugger, cb } from "./utils";
 import { Catwalk, WalkingCat } from "./Catwalk";
 import { useMail } from "./reducers/mail";
-import { setUncaughtExceptionCaptureCallback } from "process";
 
 export const Loading = ({ onGameTime }) => {
   const [encore, setEncore] = useState<boolean>(true);
