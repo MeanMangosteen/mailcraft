@@ -6,6 +6,8 @@ import styled, { keyframes } from "styled-components";
 import { FiSend } from "react-icons/fi";
 import { centerContent, api, cb } from "../utils";
 import { SwitchTransition, Transition } from "react-transition-group";
+import { LoadingFeatJohnty } from "../LoadingFeatJohnty";
+import { Loading } from "../Loading";
 
 export const Stage1 = () => {
   const [introComplete, setIntroComplete] = useState<boolean>(
@@ -62,8 +64,11 @@ export const Stage2 = () => {
 };
 
 export const Success = () => {
-  const [sayThanks, setSayThanks] = useState<boolean>(false);
+  const [stage, setStage] = useState<"waiting" | "sending" | "thanking">(
+    "waiting"
+  );
   const handleSend = (message) => {
+    setStage("sending");
     api
       .post("/sendMessage", { message })
       .then((res) => {
@@ -73,7 +78,7 @@ export const Success = () => {
         console.error(err);
       })
       .finally(() => {
-        setSayThanks(true);
+        setStage("thanking");
       });
   };
 
@@ -93,13 +98,15 @@ export const Success = () => {
           <Text>The author wants to hear from you. Leave a message.</Text>
         </StylishItem>
         {/* <MessageBox onSend={handleSend} /> */}
-        <SwitchTransition mode={"out-in"}>
-          <Transition key={sayThanks ? 1 : 0} timeout={200}>
+        <SwitchTransition>
+          <Transition key={stage} timeout={200}>
             {(state) =>
-              sayThanks ? (
+              stage === "thanking" ? (
                 <Fade state={state}>
                   <Text>Thank you.</Text>
                 </Fade>
+              ) : stage === "sending" ? (
+                <Loading color="white" />
               ) : (
                 <Fade state={state}>
                   <MessageBox onSend={handleSend} />

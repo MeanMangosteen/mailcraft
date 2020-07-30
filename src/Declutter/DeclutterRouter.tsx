@@ -3,7 +3,7 @@ import { Redirect, Route, useLocation, Switch } from "react-router-dom";
 import { DestroyVictim } from "../MassDestruction/DestroyVictim";
 import { UserContext } from "../App";
 import { cb, useEffectDebugger } from "../utils";
-import { Loading } from "../Loading";
+import { LoadingFeatJohnty } from "../LoadingFeatJohnty";
 import { useMail } from "../reducers/mail";
 import { Stage1, Stage2, Success } from "./Stages";
 
@@ -62,7 +62,7 @@ export const DeclutterRouter = () => {
         />
       );
     } else if (!gameTime) {
-      return <Loading onGameTime={handleGameTime} />;
+      return <LoadingFeatJohnty onGameTime={handleGameTime} />;
     } else {
       switch (currStage) {
         case "stage1":
