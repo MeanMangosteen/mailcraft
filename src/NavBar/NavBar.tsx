@@ -193,16 +193,22 @@ const NavBar = styled(({}: NavBarProps) => {
         </BaseNavLink>
       </ContentWrapper>
       <OtherLinks>
+        {userCtx.loggedIn && (
+          <IconWrapper
+            onClick={() => {
+              userCtx.setLoggedIn(false);
+              removeCookie("loggedIn");
+            }}
+          >
+            <LogoutIcon text=":door:" />
+            <NavLinkText>Logout</NavLinkText>
+          </IconWrapper>
+        )}
         <IconWrapper
-          onClick={cb(() => {
-            userCtx.setLoggedIn(false);
-            removeCookie("loggedIn");
-          }, [])}
+          onClick={() =>
+            window.open("https://github.com/MeanMangosteen", "_blank")
+          }
         >
-          <LogoutIcon text=":door:" />
-          <NavLinkText>Logout</NavLinkText>
-        </IconWrapper>
-        <IconWrapper>
           <LogoutIcon text=":boy:" />
           <NavLinkText>Author</NavLinkText>
         </IconWrapper>

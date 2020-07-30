@@ -11,6 +11,7 @@ const ImapClient = require("emailjs-imap-client").default;
 const simpleParser = require("mailparser").simpleParser;
 const cookieParser = require('cookie-parser')
 const nodemailer = require("nodemailer");
+const path = require("path");
 
 
 const port = 4000;
@@ -19,6 +20,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, '../build')));
+
 
 const authMiddleware = async (req, res, next) => {
   const authDeets = {
@@ -46,7 +49,7 @@ const authMiddleware = async (req, res, next) => {
 
 const scopes = ["https://mail.google.com/"];
 
-const demo = true;
+const demo = false;
 
 app.get("/OAuthUrl", (req, res) => {
   const loginUrl = auth.oAuth2Client.generateAuthUrl({
@@ -311,6 +314,12 @@ app.post("/sendMessage", async (req, res) => {
     console.error(err);
     res.status(400).send(err);
   }
+});
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/../build/index.html'));
 });
 
 app.listen(port, () =>

@@ -9,7 +9,7 @@ import { Stage1, Stage2, Success } from "./Stages";
 
 export const DeclutterRouter = () => {
   const [currStage, setCurrStage] = useState<"stage1" | "stage2" | "success!">(
-    "success!"
+    "stage1"
   );
   const [gameTime, setGameTime] = useState<boolean>(false);
   const location = useLocation();

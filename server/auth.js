@@ -46,14 +46,6 @@ class SampleClient {
     }
     const redirectUri = process.env.OAUTH2_REDIRECT_URI;
     const parts = new url.URL(redirectUri);
-    if (
-      redirectUri.length === 0 ||
-      parts.port !== "3000" ||
-      parts.hostname !== "localhost" ||
-      parts.pathname !== "/OAuthSuccess"
-    ) {
-      throw new Error(invalidRedirectUri);
-    }
 
     // create an oAuth client to authorize the API call
     this.oAuth2Client = new google.auth.OAuth2(
