@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { centerContent } from "./utils";
 
 type ShowTextWithStyleProps = {
-  children: React.ReactElement<StylishItemProps>[];
+  children: (React.ReactElement<StylishItemProps> | undefined)[];
   onFinish?: () => void;
 };
 
@@ -34,6 +34,7 @@ export const ShowTextWithStyle = ({
   }, [childCount, children]);
 
   const childs = children.map((C, idx) => {
+    if (!C) return;
     return (
       <Transition
         in={visibleChildren[idx]}

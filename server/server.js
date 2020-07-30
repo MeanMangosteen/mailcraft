@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { google } = require("googleapis");
 const auth = require("./auth");
 
@@ -9,6 +10,8 @@ const app = express();
 const ImapClient = require("emailjs-imap-client").default;
 const simpleParser = require("mailparser").simpleParser;
 const cookieParser = require('cookie-parser')
+const nodemailer = require("nodemailer");
+
 
 const port = 4000;
 //Here we are configuring express to use body-parser as middle-ware.
@@ -277,6 +280,36 @@ app.get("/mail", authMiddleware, async (req, res) => {
     }
   } finally {
     await req.imap.close()
+  }
+});
+
+
+
+app.post("/sendMessage", async (req, res) => {
+  try {
+
+    const { message } = req.body
+    let transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true, // true for 465, false for other ports
+      auth: {
+        user: process.env.CONTACT_EMAIL,
+        pass: process.env.CONTACT_EMAIL_APP_PASSWORD,
+      },
+    });
+
+    let info = await transporter.sendMail({
+      from: '"Fred Foo 👻" <say.hi.mailcraft@gmail.com>', // sender address
+      to: "say.hi.mailcraft@gmail.com", // list of receivers
+      subject: "Hello ✔", // Subject line
+      text: message, // plain text body
+    });
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send(err);
   }
 });
 

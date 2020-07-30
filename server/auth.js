@@ -25,7 +25,6 @@ const opn = require("open");
 const destroyer = require("server-destroy");
 const fs = require("fs");
 const path = require("path");
-require("dotenv").config();
 
 const invalidRedirectUri = `The provided keyfile does not define a valid
 redirect URI. There must be at least one redirect URI defined, and this sample

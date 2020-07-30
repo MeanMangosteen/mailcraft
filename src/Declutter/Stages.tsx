@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { ChooseVictim } from "./ChooseVictim";
 import { ShowTextWithStyle, StylishItem } from "../ShowTextWithStyle";
 import { Leftovers } from "../Leftovers/Leftovers";
 import styled, { keyframes } from "styled-components";
 import { FiSend } from "react-icons/fi";
-import { centerContent } from "../utils";
+import { centerContent, api, cb } from "../utils";
+import { SwitchTransition, Transition } from "react-transition-group";
 
 export const Stage1 = () => {
   const [introComplete, setIntroComplete] = useState<boolean>(
@@ -61,6 +62,21 @@ export const Stage2 = () => {
 };
 
 export const Success = () => {
+  const [sayThanks, setSayThanks] = useState<boolean>(false);
+  const handleSend = (message) => {
+    api
+      .post("/sendMessage", { message })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setSayThanks(true);
+      });
+  };
+
   return (
     <StageIntroContainer style={{ color: "white" }}>
       <ShowTextWithStyle>
@@ -76,18 +92,55 @@ export const Success = () => {
         <StylishItem>
           <Text>The author wants to hear from you. Leave a message.</Text>
         </StylishItem>
-        <MessageBox />
+        {/* <MessageBox onSend={handleSend} /> */}
+        <SwitchTransition mode={"out-in"}>
+          <Transition key={sayThanks ? 1 : 0} timeout={200}>
+            {(state) =>
+              sayThanks ? (
+                <Fade state={state}>
+                  <Text>Thank you.</Text>
+                </Fade>
+              ) : (
+                <Fade state={state}>
+                  <MessageBox onSend={handleSend} />
+                </Fade>
+              )
+            }
+          </Transition>
+        </SwitchTransition>
       </ShowTextWithStyle>
       <Background />
     </StageIntroContainer>
   );
 };
 
-const MessageBox = () => {
+const Fade = styled.div`
+  transition: 0.5s;
+  opacity: ${(props: { state?: any }) => (props.state === "entered" ? 1 : 0)};
+  will-change: opacity;
+`;
+
+const MessageBox = ({ onSend }) => {
+  const [input, setInput] = useState<string>("");
+
+  const handleChange = (e) => {
+    setInput(e.target.value);
+    console.log("here", e.target.value);
+  };
+
+  const handleClick = useCallback(() => {
+    if (input === "") return;
+    onSend(input);
+  }, [input]);
+
   return (
     <MessageBoxContainer>
-      <MessageBoxInput placeholder="Anything at all..." />
-      <SendIcon />
+      <MessageBoxInput
+        placeholder="Anything at all..."
+        value={input}
+        onChange={handleChange}
+      />
+      <SendIcon onClick={handleClick} />
     </MessageBoxContainer>
   );
 };
