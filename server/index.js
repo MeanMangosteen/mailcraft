@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../build')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 
 const authMiddleware = async (req, res, next) => {
@@ -28,6 +28,7 @@ const authMiddleware = async (req, res, next) => {
     user: req.cookies.profile,
     xoauth2: req.cookies.access_token,
     requireTLS: true,
+    useSecureTransport: true
   };
 
   let client;
@@ -319,7 +320,7 @@ app.post("/sendMessage", async (req, res) => {
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/../build/index.html'));
+  res.sendFile(path.join(__dirname + '/../client/build/index.html'));
 });
 
 app.listen(port, () =>
