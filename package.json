@@ -2,6 +2,9 @@
     "name": "mailcraft",
     "version": "1.0.0",
     "description": "Mailcraft",
+    "engines": {
+        "node": "10.x"
+    },
     "scripts": {
         "start": "node server",
         "build": "npm install && cd client/ && npm install && npm run build"
