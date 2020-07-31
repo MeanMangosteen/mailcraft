@@ -7,6 +7,7 @@ export const WebUILink = styled(({ threadId, className = "web-ui-link" }) => {
   const [cookies] = useCookies(["profile"]);
   const [link, setLink] = useState<string>();
   useEffect(() => {
+    if (!threadId) return;
     const threadIDHex = BigInt(threadId.toString()).toString(16);
     const webUILink = `https://mail.google.com/mail?authuser=${cookies?.profile}#all/${threadIDHex}`;
     setLink(webUILink);
@@ -27,9 +28,9 @@ const OpenIcon = styled(MdOpenInNew)`
   font-size: 3.5rem;
 `;
 const WebUILinkContainer = styled.div`
-  position: fixed;
+  /* position: fixed;
   top: 15%;
-  right: 10%;
+  right: 10%; */
   display: flex;
   flex-direction: column;
   align-items: center;

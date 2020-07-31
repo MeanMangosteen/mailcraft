@@ -126,7 +126,7 @@ app.post("/trash-mail", authMiddleware, async (req, res) => {
     // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
     // await client.connect();
     const response = await req.imap.moveMessages(
-      "INBOX",
+      "INBOX [Gmail]/Spam",
       uids.join(","),
       "[Gmail]/Trash",
       { byUid: true }
@@ -152,7 +152,7 @@ app.post("/spam-mail", authMiddleware, async (req, res) => {
     // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
     // await client.connect();
     const response = await req.imap.moveMessages(
-      "INBOX",
+      "INBOX [Gmail]/Trash",
       uids.join(","),
       "[Gmail]/Spam",
       { byUid: true }
@@ -185,7 +185,7 @@ app.post("/read-mail", authMiddleware, async (req, res) => {
       "INBOX",
       uids.join(","),
       {
-        add: ["\\Seen"], // OMGTODO: change to add.
+        set: ["\\Seen"], // OMGTODO: change to add.
       },
       { byUid: true }
     );

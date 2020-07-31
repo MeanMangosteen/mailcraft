@@ -22,9 +22,12 @@ export const Leftovers = ({}) => {
     trashMail,
     userProgress,
     totalUnread,
+    undoLastOp,
   } = useMail();
   const containerRef = useRef<any>();
-  const [activeButton, setActiveButton] = useState<any>(null);
+  const [activeButton, setActiveButton] = useState<
+    "spam" | "read" | "trash" | "back" | null
+  >(null);
   const [mailCopy, setMailCopy] = useState<any>(null);
   const [offset, setOffset] = useState<number>(0);
 
@@ -46,7 +49,9 @@ export const Leftovers = ({}) => {
       mailCopy &&
       mailCopy.slice(offset, offset + 5).map((mail) => (
         <EmailContainer key={mail.uid}>
-          <SubjectContainer>{mail.envelope.subject}</SubjectContainer>
+          <SubjectContainer>
+            <SubjectText>{mail.envelope.subject}</SubjectText>
+          </SubjectContainer>
           <SenderContainer>
             {mail.envelope.from[0].address.split("@")[1]}
           </SenderContainer>
@@ -69,7 +74,6 @@ export const Leftovers = ({}) => {
                     e.preventDefault();
                   }}
                 />
-                <StyledWebUILink threadId={mail["x-gm-thrid"]} />
               </EmailBodyContainer>
             )}
           </SizeMe>
@@ -80,7 +84,7 @@ export const Leftovers = ({}) => {
   const handleKeyPress = useCallback(
     (event) => {
       if (activeButton) return; // You gotta let go of key before we deal with the next email
-      const [left, down, right] = [37, 40, 39]; // Keycodes
+      const [left, down, right, z] = [37, 40, 39, 90]; // Keycodes
       console.log(event.keyCode);
       if (event.keyCode === down) {
         readMail([mailCopy[offset].uid], (err) => err && console.error(err));
@@ -94,6 +98,11 @@ export const Leftovers = ({}) => {
         trashMail([mailCopy[offset].uid], (err) => err && console.error(err));
         setActiveButton("trash");
         setOffset(offset + 1);
+      } else if (event.keyCode === z) {
+        if (offset === 0) return;
+        setActiveButton("back");
+        setOffset(offset - 1);
+        undoLastOp();
       }
     },
     [activeButton, offset, mailCopy]
@@ -101,7 +110,7 @@ export const Leftovers = ({}) => {
 
   const handleKeyLift = useCallback(
     (event) => {
-      const keysToButton = { 37: "spam", 40: "read", 39: "trash" };
+      const keysToButton = { 37: "spam", 40: "read", 39: "trash", 90: "back" };
       if (keysToButton[event.keyCode] === activeButton) setActiveButton(null);
     },
     [activeButton]
@@ -118,6 +127,10 @@ export const Leftovers = ({}) => {
       >
         <EmailBuffer>{buffer}</EmailBuffer>
         <ControlsContainer>
+          <Control id="back" activeButton={activeButton}>
+            <KBD>Z</KBD>
+            <ControlText>Oops</ControlText>
+          </Control>
           <Control id="spam" activeButton={activeButton}>
             <KBD>
               <LeftArrow />
@@ -130,11 +143,18 @@ export const Leftovers = ({}) => {
             </KBD>
             <ControlText>Read</ControlText>
           </Control>
-          <Control id="trash" activeButton={activeButton}>
+          <Control
+            id="trash"
+            activeButton={activeButton}
+            style={{ position: "relative" }}
+          >
             <KBD>
               <RightArrow />
             </KBD>
             <ControlText>Trash</ControlText>
+            <StyledWebUILink
+              threadId={mailCopy && mailCopy[offset]["x-gm-thrid"]}
+            />
           </Control>
         </ControlsContainer>
       </UsefulThings>
@@ -155,6 +175,14 @@ const SubjectContainer = styled.div`
   position: relative;
   ${CSSDividerBottom({ width: "30%", IHaveSetRelativePosition: true })}
 `;
+
+const SubjectText = styled.div`
+  max-width: 80vw;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+`;
 const SenderContainer = styled.div`
   ${centerContent}
   font-size: 2rem;
@@ -168,6 +196,15 @@ const EmailBodyContainer = styled.div`
 
 const StyledWebUILink = styled(WebUILink)`
   z-index: 2;
+  position: absolute;
+  right: -50%;
+  top: 50%;
+  transform: translate(100%, -50%);
+
+  transition: transform 0.2s ease-in;
+  &:hover {
+    transform: translate(100%, -50%) scale(1.15);
+  }
 `;
 
 const EmailContainer = styled.div`
@@ -212,7 +249,7 @@ const StyledProgressBar = styled(ProgressBar)`
   z-index: -1;
 `;
 
-const Control = styled.div<{ id: string; activeButton: string }>`
+const Control = styled.div<{ id: string; activeButton: string | null }>`
   ${centerContent}
   margin-right: 2rem;
   border: 1px solid #ccc;

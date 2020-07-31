@@ -27,6 +27,7 @@ type MailHookReturnType = {
   mail?: any[];
   totalUnread?: number;
   userProgress: number;
+  stage: "mass destruction" | "leftovers" | "success!";
   readMail: (
     uids: string[],
     callback?: ((err: Error | null) => void) | undefined
@@ -40,30 +41,53 @@ type MailHookReturnType = {
     callback?: ((err: Error | null) => void) | undefined
   ) => void;
   fetchMail: () => void;
+  undoLastOp: () => void;
 };
 export const useMail = (): MailHookReturnType => {
-  // const [fetchInProgress, setFetchInProgress] = useState<boolean>(false);
   const { state, dispatch } = useContext(MailContext);
   const userCtx = useContext(UserContext);
-  const [moreToCome, setMoreToCome] = useState<boolean>(
-    state.totalUnread ? state.fetchProgress < state.totalUnread : true
-  );
   const [startFetch, setStartFetch] = useState<boolean>(false);
-  // const unreadUids = useContext(UnreadUidsCtx);
+  const [currStage, setCurrStage] = useState<MailHookReturnType["stage"]>(
+    "mass destruction"
+  );
 
   const fetchMail = useCallback(() => {
     setStartFetch(true);
   }, []);
 
-  // const setup = useCallback(
-  //   (totalUnread) => {
-  //     dispatch({ type: "setup", totalUnread });
-  //   },
-  //   [dispatch]
-  // );
+  useEffect(() => {
+    if (!state.totalUnread) return; // We need this. We shall be patient.
+    if (state.fetchProgress < state?.totalUnread) return; // Wait for all mail to fetch. We shall be patient
 
-  const fetch = useCallback(() => {
-    dispatch({ type: "fetch" });
+    const mail = state.mail!;
+    // Get all the email senders
+    const senders = mail.map((m) => m.envelope.from[0].address.split("@")[1]);
+    // Tally the no. emails sent by each sender
+    const count = {};
+    senders.map((m) => {
+      if (count[m]) {
+        count[m]++;
+      } else {
+        count[m] = 1;
+      }
+    });
+
+    // if all senders have a count of 3 or less move to the leftovers stage
+    let massDestructionComplete = true;
+    Object.values(count).forEach((count: any) => {
+      if (count > 3) massDestructionComplete = false;
+    });
+
+    if (!mail.length) {
+      // We've addressed all the mail
+      setCurrStage("success!");
+    } else if (massDestructionComplete) {
+      setCurrStage("leftovers");
+    }
+  }, [state.mail]);
+
+  const undoLastOp = useCallback(() => {
+    dispatch({ type: "userScrewedUp" });
   }, [dispatch]);
 
   const readMail = useCallback(
@@ -77,9 +101,13 @@ export const useMail = (): MailHookReturnType => {
         .catch((err) => {
           callback && callback(err);
         });
-      dispatch({ type: "remove", uids });
+      dispatch({
+        type: "remove",
+        uids,
+        preserveCorpse: currStage === "leftovers",
+      });
     },
-    [dispatch]
+    [dispatch, currStage]
   );
 
   const trashMail = useCallback(
@@ -92,9 +120,13 @@ export const useMail = (): MailHookReturnType => {
         .catch((err) => {
           callback && callback(err);
         });
-      dispatch({ type: "remove", uids });
+      dispatch({
+        type: "remove",
+        uids,
+        preserveCorpse: currStage === "leftovers",
+      });
     },
-    [dispatch]
+    [dispatch, currStage]
   );
 
   const spamMail = useCallback(
@@ -107,9 +139,13 @@ export const useMail = (): MailHookReturnType => {
         .catch((err) => {
           callback && callback(err);
         });
-      dispatch({ type: "remove", uids });
+      dispatch({
+        type: "remove",
+        uids,
+        preserveCorpse: currStage === "leftovers",
+      });
     },
-    [dispatch]
+    [dispatch, currStage]
   );
 
   useEffect(() => {
@@ -132,19 +168,10 @@ export const useMail = (): MailHookReturnType => {
   useEffect(() => {
     if (!startFetch) return;
     if (!state.unreadUids) return;
-    // if (unreadUids.fetchProgress.isFetching) return;
     if (state.isFetching) return;
-    if (state.fetchProgress === state.totalUnread) {
-      setMoreToCome(false);
-      return;
-    }
+    if (state.fetchProgress === state.totalUnread) return; // We've fetched all there is to fetch
 
     // Now fetch those uids in chuncks
-    // unreadUids.setFetchProgress({
-    //   fetched: unreadUids.fetchProgress.fetched,
-    //   isFetching: true,
-    // });
-    // isFetching.current = true;
     dispatch({ type: "fetch" });
     api
       .get("/mail", {
@@ -158,12 +185,6 @@ export const useMail = (): MailHookReturnType => {
         },
       })
       .then((res) => {
-        // setMail(res.data);
-        // unreadUids.setFetchProgress({
-        //   fetched: unreadUids.fetchProgress.fetched + res.data.length,
-        //   isFetching: false,
-        // });
-        // isFetching.current = false;
         dispatch({ type: "store", mail: res.data });
       })
       .catch((err) => {
@@ -175,15 +196,18 @@ export const useMail = (): MailHookReturnType => {
     mail: state?.mail,
     totalUnread: state.totalUnread,
     userProgress: state.userProgress,
+    stage: currStage,
     fetchMail,
     readMail,
     spamMail,
     trashMail,
+    undoLastOp,
   };
 };
 
 type MailState = {
   mail?: any[];
+  mailMorgue: any[];
   totalUnread?: number;
   userProgress: number;
   fetchProgress: number;
@@ -198,7 +222,8 @@ type MailAction =
     }
   | { type: "fetch" }
   | { type: "store"; mail: any[] }
-  | { type: "remove"; uids: string[] };
+  | { type: "remove"; uids: string[]; preserveCorpse?: boolean }
+  | { type: "userScrewedUp" };
 
 export const MailProvider = ({ children }) => {
   const unreadUids = useContext(UnreadUidsCtx);
@@ -222,8 +247,11 @@ export const MailProvider = ({ children }) => {
           isFetching: false,
         };
       case "remove":
+        let ohThePoorThings: any[] = [];
         const filtered = state.mail!.filter((mail) => {
-          return !action.uids.includes(mail.uid);
+          const bitesDust = action.uids.includes(mail.uid);
+          if (bitesDust) ohThePoorThings.push(mail);
+          return !bitesDust; // We only want the good crop
         });
 
         return {
@@ -231,6 +259,19 @@ export const MailProvider = ({ children }) => {
           mail: filtered,
           userProgress:
             state.userProgress + (state.mail!.length - filtered.length),
+          mailMorgue: action.preserveCorpse
+            ? [...ohThePoorThings, ...state.mailMorgue]
+            : state.mailMorgue,
+        };
+      case "userScrewedUp":
+        const luckyBastard = state.mailMorgue[0];
+        return {
+          ...state,
+          mail: [luckyBastard, ...state.mail!],
+          mailMorgue: [
+            ...state.mailMorgue.slice(1),
+          ],
+          userProgress: state.userProgress - 1,
         };
       default:
         throw Error(
@@ -243,6 +284,7 @@ export const MailProvider = ({ children }) => {
     userProgress: 0,
     fetchProgress: 0,
     isFetching: false,
+    mailMorgue: [],
   });
 
   return (

@@ -1,6 +1,7 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
 
+// OMGTODO: lazy boi can get progress and total itself using hook
 export const ProgressBar = ({ progress, total, className = "" }) => {
   return (
     <ProgressBarContainer className={className}>
