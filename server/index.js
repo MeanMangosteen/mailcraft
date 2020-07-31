@@ -14,11 +14,11 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 
 
-const port = 4000;
-//Here we are configuring express to use body-parser as middle-ware.
+const port = process.env.PORT || 4000;
+
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../client/build')));
 
