@@ -22,14 +22,14 @@ export const Leftovers = ({}) => {
     trashMail,
     userProgress,
     totalUnread,
-    leftovers,
+    undoLastOp,
   } = useMail();
   const containerRef = useRef<any>();
   const [activeButton, setActiveButton] = useState<
     "spam" | "read" | "trash" | "back" | null
   >(null);
-  // const [mailCopy, setMailCopy] = useState<any>(null);
-  // const [offset, setOffset] = useState<number>(0);
+  const [mailCopy, setMailCopy] = useState<any>(null);
+  const [offset, setOffset] = useState<number>(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -38,16 +38,16 @@ export const Leftovers = ({}) => {
     return () => clearInterval(interval);
   }, []);
 
-  // useEffect(() => {
-  //   if (mail && !mailCopy) {
-  //     setMailCopy(mail);
-  //   }
-  // }, [mail, mailCopy]);
+  useEffect(() => {
+    if (mail && !mailCopy) {
+      setMailCopy(mail);
+    }
+  }, [mail, mailCopy]);
 
   const buffer = useMemo(
     () =>
-      mail &&
-      mail.slice(0, 5).map((mail) => (
+      mailCopy &&
+      mailCopy.slice(offset, offset + 5).map((mail) => (
         <EmailContainer key={mail.uid}>
           <SubjectContainer>
             <SubjectText>{mail.envelope.subject}</SubjectText>
@@ -79,41 +79,33 @@ export const Leftovers = ({}) => {
           </SizeMe>
         </EmailContainer>
       )),
-    [mail]
+    [mailCopy, offset]
   );
   const handleKeyPress = useCallback(
     (event) => {
-      if (!mail) return;
       if (activeButton) return; // You gotta let go of key before we deal with the next email
       const [left, down, right, z] = [37, 40, 39, 90]; // Keycodes
+      console.log(event.keyCode);
       if (event.keyCode === down) {
-        readMail([mail[0].uid], (err) => err && console.error(err));
+        readMail([mailCopy[offset].uid], (err) => err && console.error(err));
         setActiveButton("read");
-        // setOffset(offset + 1);
+        setOffset(offset + 1);
       } else if (event.keyCode === left) {
-        spamMail(
-          [mail[0].uid],
-          mail[0]?.causeOfDeath,
-          (err) => err && console.error(err)
-        );
+        spamMail([mailCopy[offset].uid], (err) => err && console.error(err));
         setActiveButton("spam");
-        // setOffset(offset + 1);
+        setOffset(offset + 1);
       } else if (event.keyCode === right) {
-        trashMail(
-          [mail[0].uid],
-          mail[0].causeOfDeath,
-          (err) => err && console.error(err)
-        );
+        trashMail([mailCopy[offset].uid], (err) => err && console.error(err));
         setActiveButton("trash");
-        // setOffset(offset + 1);
+        setOffset(offset + 1);
       } else if (event.keyCode === z) {
-        if (leftovers.deathToll === 0) return;
+        if (offset === 0) return;
         setActiveButton("back");
-        // setOffset(offset - 1);
-        leftovers.undoLastOp();
+        setOffset(offset - 1);
+        undoLastOp();
       }
     },
-    [activeButton, leftovers, mail]
+    [activeButton, offset, mailCopy]
   );
 
   const handleKeyLift = useCallback(
@@ -160,7 +152,9 @@ export const Leftovers = ({}) => {
               <RightArrow />
             </KBD>
             <ControlText>Trash</ControlText>
-            <StyledWebUILink threadId={mail && mail[0]["x-gm-thrid"]} />
+            <StyledWebUILink
+              threadId={mailCopy && mailCopy[offset]["x-gm-thrid"]}
+            />
           </Control>
         </ControlsContainer>
       </UsefulThings>
