@@ -50,7 +50,7 @@ const authMiddleware = async (req, res, next) => {
 
 const scopes = ["https://mail.google.com/"];
 
-const demo = false;
+const demo = true;
 
 app.get("/OAuthUrl", (req, res) => {
   const loginUrl = auth.oAuth2Client.generateAuthUrl({
@@ -215,7 +215,7 @@ app.get("/unreadUids", authMiddleware, async (req, res) => {
 
 app.get("/mail", authMiddleware, async (req, res) => {
   if (demo) {
-    const messages = fs.readFileSync('demo.json');
+    const messages = fs.readFileSync('server/demo.json');
     return res.status(200).send(messages);
   }
 

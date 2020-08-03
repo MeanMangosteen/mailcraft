@@ -10,6 +10,8 @@ import { FiTrash2 } from "react-icons/fi";
 import { centerContent } from "../utils";
 import { useInView } from "react-intersection-observer";
 import { ToggleViewIcon } from "./ToggleViewIcon";
+import { GridView } from "./GridView";
+import { ListView } from "./ListView";
 
 // OMGTODO: clean this file
 export const DestroyVictim = () => {
@@ -17,22 +19,9 @@ export const DestroyVictim = () => {
   const qParams = queryString.parse(location.search);
   const { mail, readMail, spamMail, trashMail } = useMail();
   const [victimEmails, setVictimEmails] = useState<any[]>([]);
-  const [mailPages, setMailPages] = useState<any[]>([]);
   const [selected, setSelected] = useState<Object>({});
   const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
-  const [lastPage, setLastPage] = useState<number>(3);
-  const [view, setView] = useState<"grid" | "list">("grid");
-  const [ref, inView, entry] = useInView({
-    threshold: 0,
-  });
-
-  useEffect(() => {
-    if (inView) {
-      console.log("We're in View!", entry);
-      console.log(lastPage, lastPage * 9);
-      setTimeout(() => setLastPage(lastPage + 1), 500);
-    }
-  }, [inView]);
+  const [view, setView] = useState<"grid" | "list">("list");
 
   useEffect(() => {
     /**
@@ -52,45 +41,6 @@ export const DestroyVictim = () => {
   }, [mail]);
 
   useEffect(() => {
-    /**
-     * Go from victim's emails' html to actual components.
-     *
-     * We were going to implement page based scrolling
-     * once upon a time. The assorting of mailcard into pages
-     * is a artefact of that.
-     */
-    if (view !== "grid") return;
-    const newMailPages: any[] = [];
-    const numMailPerPage = 9;
-    for (let i = 0; i <= (victimEmails?.length || -1); i += numMailPerPage) {
-      const mailCards = victimEmails
-        ?.slice(i, i + numMailPerPage)
-        .map((mail, idx) => {
-          return (
-            <MailCard
-              selected={selected[i + idx]}
-              index={i + idx}
-              key={idx}
-              mail={mail}
-              onClick={handleCardClick}
-            />
-          );
-        });
-      const page = (
-        // Put intersection observer on the last page
-        <PageContainer key={i / numMailPerPage}>{mailCards}</PageContainer>
-      );
-      newMailPages.push(page);
-    }
-
-    setMailPages([...newMailPages]);
-  }, [victimEmails, selected]);
-
-  useEffect(() => {
-    if (view !== "list") return;
-  }, []);
-
-  useEffect(() => {
     // Set all card to be initially selected
     const newSelected = {};
     for (let i = 0; i < victimEmails.length; i++) {
@@ -99,7 +49,7 @@ export const DestroyVictim = () => {
     setSelected({ ...newSelected });
   }, [victimEmails]);
 
-  const handleCardClick = (index) => (event) => {
+  const handleCardClick = (index) => () => {
     // Toggle card selected state
     selected[index] = !selected[index];
     setSelected({ ...selected });
@@ -155,10 +105,23 @@ export const DestroyVictim = () => {
 
   return (
     <MassDestructionContainer>
-      <CardsContainer>
+      {/* <CardsContainer>
         {mailPages.slice(0, lastPage)}
         <ScrollWatcher ref={ref} />
-      </CardsContainer>
+      </CardsContainer> */}
+      {view === "list" ? (
+        <ListView
+          victimEmails={victimEmails}
+          onItemClick={handleCardClick}
+          selected={selected}
+        />
+      ) : (
+        <GridView
+          victimEmails={victimEmails}
+          onCardClick={handleCardClick}
+          selected={selected}
+        />
+      )}
       <ControlsContainer>
         <Button
           onClick={handleSpam}
