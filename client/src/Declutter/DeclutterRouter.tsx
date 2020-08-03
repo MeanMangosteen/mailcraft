@@ -14,40 +14,18 @@ export const DeclutterRouter = () => {
   const [gameTime, setGameTime] = useState<boolean>(false);
   const location = useLocation();
   const userCtx = useContext(UserContext);
-  const { mail, fetchMail, stage } = useMail();
+  const { mail, fetchMail, stage, commitOps } = useMail();
   const handleGameTime = cb(() => setGameTime(true), []);
 
   useEffect(() => {
     fetchMail();
   }, [userCtx.loggedIn]);
 
-  // useEffect(() => {
-  //   if (!mail) return; // wait for mail fetch
-  //   // get all the email senders
-  //   const senders = mail.map((m) => m.envelope.from[0].address.split("@")[1]);
-  //   // Tally the no. emails sent by each sender
-  //   const count = {};
-  //   senders.map((m) => {
-  //     if (count[m]) {
-  //       count[m]++;
-  //     } else {
-  //       count[m] = 1;
-  //     }
-  //   });
+  useEffect(() => {
+    if (stage !== "success!") return;
 
-  //   // if all senders have a count of 3 or less move to the leftovers stage
-  //   let massDestructionComplete = true;
-  //   Object.values(count).forEach((count: any) => {
-  //     if (count > 3) massDestructionComplete = false;
-  //   });
-
-  //   if (!mail.length) {
-  //     // We've addressed all the mail
-  //     setCurrStage("success!");
-  //   } else if (massDestructionComplete) {
-  //     setCurrStage("stage2");
-  //   }
-  // }, [mail]);
+    commitOps();
+  }, [stage]);
 
   const stageToDisplay = useMemo(() => {
     if (!userCtx.loggedIn)

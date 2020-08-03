@@ -113,7 +113,7 @@ export const DestroyVictim = () => {
         return victimEmails[cardIdx].uid;
       });
 
-    readMail(uids, (err) => {
+    readMail(uids, false, (err) => {
       if (err) {
         console.error(err);
         return;
@@ -129,7 +129,7 @@ export const DestroyVictim = () => {
         return victimEmails[cardIdx].uid;
       });
 
-    spamMail(uids, undefined, (err) => {
+    spamMail(uids, false, (err) => {
       if (err) {
         console.error(err);
         return;
@@ -145,7 +145,7 @@ export const DestroyVictim = () => {
         return victimEmails[cardIdx].uid;
       });
 
-    trashMail(uids, undefined, (err) => {
+    trashMail(uids, false, (err) => {
       if (err) {
         console.error(err);
         return;

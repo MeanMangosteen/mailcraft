@@ -21,6 +21,7 @@ export const MailContext: React.Context<{
   dispatch: ((action) => {}) as React.Dispatch<MailAction>,
 });
 
+type MailOperation = "read" | "trash" | "spam";
 // TODO: setMail may be redundant
 // TODO: rename folder to utils
 type MailHookReturnType = {
@@ -30,23 +31,21 @@ type MailHookReturnType = {
   stage: "mass destruction" | "leftovers" | "success!";
   readMail: (
     uids: string[],
+    stageOp?: boolean,
     callback?: ((err: Error | null) => void) | undefined
   ) => void;
   spamMail: (
     uids: string[],
-    mailbox?: string,
+    stageOp?: boolean,
     callback?: ((err: Error | null) => void) | undefined
   ) => void;
   trashMail: (
     uids: string[],
-    mailbox?: string,
+    stageOp?: boolean,
     callback?: ((err: Error | null) => void) | undefined
   ) => void;
   fetchMail: () => void;
-  leftovers: {
-    undoLastOp: () => void;
-    deathToll: number;
-  };
+  commitOps: () => void;
 };
 export const useMail = (): MailHookReturnType => {
   const { state, dispatch } = useContext(MailContext);
@@ -91,26 +90,26 @@ export const useMail = (): MailHookReturnType => {
     }
   }, [state.mail]);
 
-  const undoLastOp = useCallback(() => {
-    dispatch({ type: "userScrewedUp" });
-  }, [dispatch]);
-
   const readMail = useCallback(
-    (uids: string[], callback?: (err: Error | null) => void) => {
-      api
-        .post("/read-mail", { uids })
-        .then(() => {
-          // remove mail from state
-          callback && callback(null);
-        })
-        .catch((err) => {
-          callback && callback(err);
-        });
+    (
+      uids: string[],
+      stageOp?: boolean,
+      callback?: (err: Error | null) => void
+    ) => {
+      !stageOp &&
+        api
+          .post("/read-mail", { uids })
+          .then(() => {
+            // remove mail from state
+            callback && callback(null);
+          })
+          .catch((err) => {
+            callback && callback(err);
+          });
       dispatch({
         type: "remove",
         uids,
-        preserveCorpse: currStage === "leftovers",
-        causeOfDeath: "read",
+        stageOp: stageOp ? "read" : undefined,
       });
     },
     [dispatch, currStage]
@@ -119,22 +118,22 @@ export const useMail = (): MailHookReturnType => {
   const trashMail = useCallback(
     (
       uids: string[],
-      mailbox?: string,
+      stageOp?: boolean,
       callback?: (err: Error | null) => void
     ) => {
-      api
-        .post("/trash-mail", { uids, mailbox })
-        .then(() => {
-          callback && callback(null);
-        })
-        .catch((err) => {
-          callback && callback(err);
-        });
+      !stageOp &&
+        api
+          .post("/trash-mail", { uids })
+          .then(() => {
+            callback && callback(null);
+          })
+          .catch((err) => {
+            callback && callback(err);
+          });
       dispatch({
         type: "remove",
         uids,
-        preserveCorpse: currStage === "leftovers",
-        causeOfDeath: "trash",
+        stageOp: stageOp ? "trash" : undefined,
       });
     },
     [dispatch, currStage]
@@ -143,26 +142,39 @@ export const useMail = (): MailHookReturnType => {
   const spamMail = useCallback(
     (
       uids: string[],
-      mailbox?: string,
+      stageOp?: boolean,
       callback?: (err: Error | null) => void
     ) => {
-      api
-        .post("/spam-mail", { uids, mailbox })
-        .then(() => {
-          callback && callback(null);
-        })
-        .catch((err) => {
-          callback && callback(err);
-        });
+      !stageOp &&
+        api
+          .post("/spam-mail", { uids })
+          .then(() => {
+            callback && callback(null);
+          })
+          .catch((err) => {
+            callback && callback(err);
+          });
       dispatch({
         type: "remove",
         uids,
-        preserveCorpse: currStage === "leftovers",
-        causeOfDeath: "spam",
+        stageOp: stageOp ? "spam" : undefined,
       });
     },
     [dispatch, currStage]
   );
+
+  const commitOps = useCallback(() => {
+    Object.entries(state.stagedOps).forEach(([uid, op]) => {
+      switch (op) {
+        case "read":
+          return api.post("/read-mail", { uids: [uid] });
+        case "spam":
+          return api.post("/spam-mail", { uids: [uid] });
+        case "trash":
+          return api.post("/trash-mail", { uids: [uid] });
+      }
+    });
+  }, [state.stagedOps]);
 
   useEffect(() => {
     if (!startFetch) return;
@@ -217,16 +229,13 @@ export const useMail = (): MailHookReturnType => {
     readMail,
     spamMail,
     trashMail,
-    leftovers: {
-      undoLastOp,
-      deathToll: state.mailMorgue.length,
-    },
+    commitOps,
   };
 };
 
 type MailState = {
   mail?: any[];
-  mailMorgue: any[];
+  stagedOps: Record<string, "read" | "trash" | "spam">;
   totalUnread?: number;
   userProgress: number;
   fetchProgress: number;
@@ -244,17 +253,15 @@ type MailAction =
   | {
       type: "remove";
       uids: string[];
-      preserveCorpse?: boolean;
-      causeOfDeath: "read" | "spam" | "trash";
-    }
-  | { type: "userScrewedUp" };
+      stageOp?: MailOperation;
+    };
 
 export const MailProvider = ({ children }) => {
   const [mailState, dispatch] = useReducer(reducer, {
     userProgress: 0,
     fetchProgress: 0,
     isFetching: false,
-    mailMorgue: [],
+    stagedOps: {},
   });
 
   return (
@@ -283,14 +290,8 @@ const reducer = (state: MailState, action: MailAction): MailState => {
         isFetching: false,
       };
     case "remove":
-      let ohThePoorThings: any[] = [];
       const filtered = state.mail!.filter((mail) => {
-        const bitesDust = action.uids.includes(mail.uid);
-        if (bitesDust) {
-          mail.causeOfDeath = action.causeOfDeath;
-          ohThePoorThings.push(mail);
-        }
-        return !bitesDust; // We only want the good crop
+        return !action.uids.includes(mail.uid);
       });
 
       return {
@@ -298,17 +299,9 @@ const reducer = (state: MailState, action: MailAction): MailState => {
         mail: filtered,
         userProgress:
           state.userProgress + (state.mail!.length - filtered.length),
-        mailMorgue: action.preserveCorpse
-          ? [...ohThePoorThings, ...state.mailMorgue]
-          : state.mailMorgue,
-      };
-    case "userScrewedUp":
-      const luckyBastard = state.mailMorgue[0];
-      return {
-        ...state,
-        mail: [luckyBastard, ...state.mail!],
-        mailMorgue: [...state.mailMorgue.slice(1)],
-        userProgress: state.userProgress - 1,
+        stagedOps: action.stageOp
+          ? { ...state.stagedOps, [action.uids[0]]: action.stageOp }
+          : state.stagedOps,
       };
     default:
       throw Error("Something bad has happend, I have no idea why...Good luck!");

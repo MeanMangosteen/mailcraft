@@ -22,7 +22,6 @@ export const Leftovers = ({}) => {
     trashMail,
     userProgress,
     totalUnread,
-    undoLastOp,
   } = useMail();
   const containerRef = useRef<any>();
   const [activeButton, setActiveButton] = useState<
@@ -87,22 +86,33 @@ export const Leftovers = ({}) => {
       const [left, down, right, z] = [37, 40, 39, 90]; // Keycodes
       console.log(event.keyCode);
       if (event.keyCode === down) {
-        readMail([mailCopy[offset].uid], (err) => err && console.error(err));
+        readMail(
+          [mailCopy[offset].uid],
+          true,
+          (err) => err && console.error(err)
+        );
         setActiveButton("read");
         setOffset(offset + 1);
       } else if (event.keyCode === left) {
-        spamMail([mailCopy[offset].uid], (err) => err && console.error(err));
+        spamMail(
+          [mailCopy[offset].uid],
+          true,
+          (err) => err && console.error(err)
+        );
         setActiveButton("spam");
         setOffset(offset + 1);
       } else if (event.keyCode === right) {
-        trashMail([mailCopy[offset].uid], (err) => err && console.error(err));
+        trashMail(
+          [mailCopy[offset].uid],
+          true,
+          (err) => err && console.error(err)
+        );
         setActiveButton("trash");
         setOffset(offset + 1);
       } else if (event.keyCode === z) {
         if (offset === 0) return;
         setActiveButton("back");
         setOffset(offset - 1);
-        undoLastOp();
       }
     },
     [activeButton, offset, mailCopy]
