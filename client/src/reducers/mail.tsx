@@ -34,14 +34,19 @@ type MailHookReturnType = {
   ) => void;
   spamMail: (
     uids: string[],
+    mailbox?: string,
     callback?: ((err: Error | null) => void) | undefined
   ) => void;
   trashMail: (
     uids: string[],
+    mailbox?: string,
     callback?: ((err: Error | null) => void) | undefined
   ) => void;
   fetchMail: () => void;
-  undoLastOp: () => void;
+  leftovers: {
+    undoLastOp: () => void;
+    deathToll: number;
+  };
 };
 export const useMail = (): MailHookReturnType => {
   const { state, dispatch } = useContext(MailContext);
@@ -105,15 +110,20 @@ export const useMail = (): MailHookReturnType => {
         type: "remove",
         uids,
         preserveCorpse: currStage === "leftovers",
+        causeOfDeath: "read",
       });
     },
     [dispatch, currStage]
   );
 
   const trashMail = useCallback(
-    (uids: string[], callback?: (err: Error | null) => void) => {
+    (
+      uids: string[],
+      mailbox?: string,
+      callback?: (err: Error | null) => void
+    ) => {
       api
-        .post("/trash-mail", { uids })
+        .post("/trash-mail", { uids, mailbox })
         .then(() => {
           callback && callback(null);
         })
@@ -124,15 +134,20 @@ export const useMail = (): MailHookReturnType => {
         type: "remove",
         uids,
         preserveCorpse: currStage === "leftovers",
+        causeOfDeath: "trash",
       });
     },
     [dispatch, currStage]
   );
 
   const spamMail = useCallback(
-    (uids: string[], callback?: (err: Error | null) => void) => {
+    (
+      uids: string[],
+      mailbox?: string,
+      callback?: (err: Error | null) => void
+    ) => {
       api
-        .post("/spam-mail", { uids })
+        .post("/spam-mail", { uids, mailbox })
         .then(() => {
           callback && callback(null);
         })
@@ -143,6 +158,7 @@ export const useMail = (): MailHookReturnType => {
         type: "remove",
         uids,
         preserveCorpse: currStage === "leftovers",
+        causeOfDeath: "spam",
       });
     },
     [dispatch, currStage]
@@ -201,7 +217,10 @@ export const useMail = (): MailHookReturnType => {
     readMail,
     spamMail,
     trashMail,
-    undoLastOp,
+    leftovers: {
+      undoLastOp,
+      deathToll: state.mailMorgue.length,
+    },
   };
 };
 
@@ -222,64 +241,15 @@ type MailAction =
     }
   | { type: "fetch" }
   | { type: "store"; mail: any[] }
-  | { type: "remove"; uids: string[]; preserveCorpse?: boolean }
+  | {
+      type: "remove";
+      uids: string[];
+      preserveCorpse?: boolean;
+      causeOfDeath: "read" | "spam" | "trash";
+    }
   | { type: "userScrewedUp" };
 
 export const MailProvider = ({ children }) => {
-  const unreadUids = useContext(UnreadUidsCtx);
-
-  const reducer = (state: MailState, action: MailAction): MailState => {
-    switch (action.type) {
-      case "setup":
-        return {
-          ...state,
-          userProgress: 0,
-          totalUnread: action.unreadUids.length,
-          unreadUids: action.unreadUids,
-        };
-      case "fetch":
-        return { ...state, isFetching: true };
-      case "store":
-        return {
-          ...state,
-          mail: state?.mail ? state.mail.concat(action.mail) : action.mail,
-          fetchProgress: state.fetchProgress + action.mail.length,
-          isFetching: false,
-        };
-      case "remove":
-        let ohThePoorThings: any[] = [];
-        const filtered = state.mail!.filter((mail) => {
-          const bitesDust = action.uids.includes(mail.uid);
-          if (bitesDust) ohThePoorThings.push(mail);
-          return !bitesDust; // We only want the good crop
-        });
-
-        return {
-          ...state,
-          mail: filtered,
-          userProgress:
-            state.userProgress + (state.mail!.length - filtered.length),
-          mailMorgue: action.preserveCorpse
-            ? [...ohThePoorThings, ...state.mailMorgue]
-            : state.mailMorgue,
-        };
-      case "userScrewedUp":
-        const luckyBastard = state.mailMorgue[0];
-        return {
-          ...state,
-          mail: [luckyBastard, ...state.mail!],
-          mailMorgue: [
-            ...state.mailMorgue.slice(1),
-          ],
-          userProgress: state.userProgress - 1,
-        };
-      default:
-        throw Error(
-          "Something bad has happend, I have no idea why...Good luck!"
-        );
-    }
-  };
-
   const [mailState, dispatch] = useReducer(reducer, {
     userProgress: 0,
     fetchProgress: 0,
@@ -292,4 +262,55 @@ export const MailProvider = ({ children }) => {
       {children}
     </MailContext.Provider>
   );
+};
+
+const reducer = (state: MailState, action: MailAction): MailState => {
+  switch (action.type) {
+    case "setup":
+      return {
+        ...state,
+        userProgress: 0,
+        totalUnread: action.unreadUids.length,
+        unreadUids: action.unreadUids,
+      };
+    case "fetch":
+      return { ...state, isFetching: true };
+    case "store":
+      return {
+        ...state,
+        mail: state?.mail ? state.mail.concat(action.mail) : action.mail,
+        fetchProgress: state.fetchProgress + action.mail.length,
+        isFetching: false,
+      };
+    case "remove":
+      let ohThePoorThings: any[] = [];
+      const filtered = state.mail!.filter((mail) => {
+        const bitesDust = action.uids.includes(mail.uid);
+        if (bitesDust) {
+          mail.causeOfDeath = action.causeOfDeath;
+          ohThePoorThings.push(mail);
+        }
+        return !bitesDust; // We only want the good crop
+      });
+
+      return {
+        ...state,
+        mail: filtered,
+        userProgress:
+          state.userProgress + (state.mail!.length - filtered.length),
+        mailMorgue: action.preserveCorpse
+          ? [...ohThePoorThings, ...state.mailMorgue]
+          : state.mailMorgue,
+      };
+    case "userScrewedUp":
+      const luckyBastard = state.mailMorgue[0];
+      return {
+        ...state,
+        mail: [luckyBastard, ...state.mail!],
+        mailMorgue: [...state.mailMorgue.slice(1)],
+        userProgress: state.userProgress - 1,
+      };
+    default:
+      throw Error("Something bad has happend, I have no idea why...Good luck!");
+  }
 };

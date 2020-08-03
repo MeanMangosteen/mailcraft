@@ -116,17 +116,52 @@ app.post("/OAuthConfirm", async (req, res) => {
 });
 
 app.post("/trash-mail", authMiddleware, async (req, res) => {
-  const { uids } = req.body;
+  const { uids, mailbox } = req.body;
   if (!uids) {
     res.status(400).send("Missing 'uids' parameter");
   }
+  const unreadUids = await req.imap.search('[Gmail]/Trash', { seen: true }, { byUid: true });
+  let response = await req.imap.listMessages(
+    "[Gmail]/Trash",
+    // uids.join(","),
+    '3867',
+    ["uid", "body.peek[]", "X-GM-THRID", "envelope", "X-GM-LABELS"],
+    { byUid: true }
+  );
+  console.log(response);
+  response = await req.imap.listMessages(
+    "[Gmail]/All Mail",
+    // uids.join(","),
+    '3867',
+    ["uid", "body.peek[]", "X-GM-THRID", "envelope", "X-GM-LABELS"],
+    { byUid: true }
+  );
+  console.log(response);
+  response = await req.imap.listMessages(
+    "INBOX",
+    // uids.join(","),
+    '3867',
+    ["uid", "body.peek[]", "X-GM-THRID", "envelope", "X-GM-LABELS"],
+    { byUid: true }
+  );
+  console.log(response);
 
   // let client;
   try {
     // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
     // await client.connect();
+    if (mailbox === 'spam') {
+      const response = await req.imap.listMessages(
+        "[Gmail]/Spam",
+        uids.join(","),
+        // "1:*",
+        ["uid", "body.peek[]", "X-GM-THRID", "envelope", "X-GM-LABELS"],
+        { byUid: true }
+      );
+      console.log(response);
+    }
     const response = await req.imap.moveMessages(
-      "INBOX [Gmail]/Spam",
+      mailbox === "spam" ? "[Gmail]/Spam" : "INBOX",
       uids.join(","),
       "[Gmail]/Trash",
       { byUid: true }
@@ -142,7 +177,7 @@ app.post("/trash-mail", authMiddleware, async (req, res) => {
 });
 
 app.post("/spam-mail", authMiddleware, async (req, res) => {
-  const { uids } = req.body;
+  const { uids, mailbox } = req.body;
   if (!uids) {
     res.status(400).send("Missing 'uids' parameter");
   }
@@ -151,8 +186,19 @@ app.post("/spam-mail", authMiddleware, async (req, res) => {
   try {
     // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets });
     // await client.connect();
+    if (mailbox === 'trash') {
+      const response = await req.imap.listMessages(
+        "[Gmail]/Trash",
+        // uids.join(","),
+        '3867'
+        ["uid", "body.peek[]", "X-GM-THRID", "envelope", "X-GM-LABELS"],
+        { byUid: true }
+      );
+      console.log(response);
+
+    }
     const response = await req.imap.moveMessages(
-      "INBOX [Gmail]/Trash",
+      mailbox === "trash" ? "[Gmail]/Trash" : "INBOX",
       uids.join(","),
       "[Gmail]/Spam",
       { byUid: true }
@@ -238,8 +284,8 @@ app.get("/mail", authMiddleware, async (req, res) => {
 
     // console.log("connected!");
 
-    // const mailboxes = await req.imap.listMailboxes();
-    // console.log(mailboxes);
+    const mailboxes = await req.imap.listMailboxes();
+    console.log(mailboxes);
 
     // const inbox = await client.selectMailbox("INBOX");
 
