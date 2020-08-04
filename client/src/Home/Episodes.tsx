@@ -3,9 +3,6 @@ import styled from "styled-components";
 import { ShowTextWithStyle, StylishItem } from "../ShowTextWithStyle";
 import { SwitchTransition, Transition } from "react-transition-group";
 import { HomePageButton } from "./HomePageButton";
-import { BaseNavLink } from "../NavBar/NavBar";
-import { NavLink } from "react-router-dom";
-// import { ReactComponent as FailedDreamsSVG } from "../images/failed-dreams.svg";
 import FailedDreamsSVG from "../images/failed-dreams.svg";
 import GymSurpriseSVG from "../images/gym-surprise.svg";
 import DeclutterSVG from "../images/declutter-badge.svg";
@@ -48,7 +45,7 @@ export const Episode1 = ({ state, onFinish }: EpisodeProps) => {
       </TextContainer>
       <PictureContainer>
         <SwitchTransition>
-          <Transition key={currImage} timeout={200}>
+          <Transition key={currImage} timeout={1000}>
             {(state) => <Image src={currImage} state={state} />}
           </Transition>
         </SwitchTransition>
@@ -167,7 +164,8 @@ const SmallText = styled.div`
 `;
 
 const Image = styled.img`
-  transition: 0.5s;
+  transition: 1s;
+  transition-delay: 0.5s;
   opacity: ${(props: { state: any }) => (props.state === "entered" ? 1 : 0)};
   will-change: opacity;
 
