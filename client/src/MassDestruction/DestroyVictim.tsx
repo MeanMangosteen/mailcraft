@@ -21,7 +21,7 @@ export const DestroyVictim = () => {
   const [victimEmails, setVictimEmails] = useState<any[]>([]);
   const [selected, setSelected] = useState<Object>({});
   const [missionSuccessful, setMissionSuccessful] = useState<boolean>(false);
-  const [view, setView] = useState<"grid" | "list">("list");
+  const [view, setView] = useState<"grid" | "list">("grid");
 
   useEffect(() => {
     /**
