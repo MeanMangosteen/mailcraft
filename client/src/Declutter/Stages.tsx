@@ -10,9 +10,7 @@ import { LoadingFeatJohnty } from "../LoadingFeatJohnty";
 import { Loading } from "../Loading";
 
 export const Stage1 = () => {
-  const [introComplete, setIntroComplete] = useState<boolean>(
-    sessionStorage.getItem("stage1IntroComplete") === "true"
-  );
+  const [introComplete, setIntroComplete] = useState<boolean>(false);
   const compToDisplay = introComplete ? (
     <ChooseVictim />
   ) : (
@@ -20,7 +18,6 @@ export const Stage1 = () => {
       <ShowTextWithStyle
         onFinish={() => {
           setIntroComplete(true);
-          sessionStorage.setItem("stage1IntroComplete", "true");
         }}
       >
         <StylishItem>
@@ -37,9 +34,7 @@ export const Stage1 = () => {
 };
 
 export const Stage2 = () => {
-  const [introComplete, setIntroComplete] = useState<boolean>(
-    sessionStorage.getItem("stage2IntroComplete") === "true"
-  );
+  const [introComplete, setIntroComplete] = useState<boolean>(false);
   const compToDisplay = introComplete ? (
     <Leftovers />
   ) : (
@@ -47,7 +42,6 @@ export const Stage2 = () => {
       <ShowTextWithStyle
         onFinish={() => {
           setIntroComplete(true);
-          sessionStorage.setItem("stage2IntroComplete", "true");
         }}
       >
         <StylishItem>

@@ -5,10 +5,9 @@ import Emoji from "react-emoji-render";
 import { UserContext } from "../App";
 import { cb } from "../utils";
 import { useCookies } from "react-cookie";
+import MailcraftLogo from "../images/mailcraft-logo.svg";
 
 interface NavBarProps {}
-const logoSrc =
-  "https://raw.githubusercontent.com/gist/MeanMangosteen/8881a789f33ec7cd1681920e86db1dca/raw/89ded47674850103c22aea8c14cec4a8a551334e/mailcraft.svg";
 
 const grow = keyframes`
   0% {
@@ -175,7 +174,7 @@ const NavBar = styled(({}: NavBarProps) => {
       <ContentWrapper>
         <BaseNavLink to="/" exact activeStyle={{ color: "red" }}>
           <IconWrapper>
-            <HomeIcon src={logoSrc} />
+            <HomeIcon src={MailcraftLogo} />
             <NavLinkText>Home</NavLinkText>
           </IconWrapper>
         </BaseNavLink>
@@ -185,7 +184,7 @@ const NavBar = styled(({}: NavBarProps) => {
             <NavLinkText>Declutter</NavLinkText>
           </IconWrapper>
         </BaseNavLink>
-        <BaseNavLink to="/insights" activeStyle={{}}>
+        <BaseNavLink to="/insights" activeStyle={{ color: "red" }}>
           <IconWrapper>
             <AnalyseIcon text=":microscope:" />
             <NavLinkText>Insights</NavLinkText>

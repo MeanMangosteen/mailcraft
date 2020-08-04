@@ -47,7 +47,7 @@ export const Episode1 = ({ state, onFinish }: EpisodeProps) => {
         </ShowTextWithStyle>
       </TextContainer>
       <PictureContainer>
-        <SwitchTransition mode={"out-in"}>
+        <SwitchTransition>
           <Transition key={currImage} timeout={200}>
             {(state) => <Image src={currImage} state={state} />}
           </Transition>
