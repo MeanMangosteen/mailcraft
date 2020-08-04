@@ -4,12 +4,10 @@ import { centerContent } from "./utils";
 import { Catwalk, WalkingCat } from "./Catwalk";
 import { useMail } from "./reducers/mail";
 
-export const LoadingFeatFrank = ({ onGameTime }) => {
+export const LoadingFeatFrank = () => {
   const [encore, setEncore] = useState<boolean>(true);
-  const [letsJustStart, setLetsJustStart] = useState<boolean>(
-    sessionStorage.getItem("gameInProgress") === "true"
-  );
-  const { mail, totalUnread } = useMail();
+  const [letsJustStart, setLetsJustStart] = useState<boolean>(false);
+  const { mail, totalUnread, triggerGameTime } = useMail();
 
   const handleMainSetFinished = useCallback(
     () => mail?.length !== totalUnread && setEncore(true),
@@ -25,10 +23,9 @@ export const LoadingFeatFrank = ({ onGameTime }) => {
       (mail && totalUnread && mail?.length === totalUnread) ||
       letsJustStart
     ) {
-      onGameTime();
-      sessionStorage.setItem("gameInProgress", "true");
+      triggerGameTime();
     }
-  }, [letsJustStart, mail, onGameTime, totalUnread]);
+  }, [letsJustStart, mail, totalUnread]);
 
   return (
     <SpinnerContainer>

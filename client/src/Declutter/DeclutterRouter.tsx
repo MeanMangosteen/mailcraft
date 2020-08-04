@@ -13,11 +13,9 @@ import { useMail } from "../reducers/mail";
 import { Stage1, Stage2, Success } from "./Stages";
 
 export const DeclutterRouter = () => {
-  const [gameTime, setGameTime] = useState<boolean>(false);
   const location = useLocation();
   const userCtx = useContext(UserContext);
-  const { mail, fetchMail, stage, commitOps } = useMail();
-  const handleGameTime = useCallback(() => setGameTime(true), []);
+  const { fetchMail, stage, commitOps, isGameTime } = useMail();
 
   useEffect(() => {
     fetchMail();
@@ -38,7 +36,7 @@ export const DeclutterRouter = () => {
           to={{ pathname: "/login", state: { referrer: location.pathname } }}
         />
       );
-    if (!gameTime) return <LoadingFeatFrank onGameTime={handleGameTime} />;
+    if (!isGameTime) return <LoadingFeatFrank />;
 
     switch (stage) {
       case "mass destruction":
@@ -57,7 +55,7 @@ export const DeclutterRouter = () => {
       case "success!":
         return <Redirect key={location.pathname} to="/declutter/success" />;
     }
-  }, [userCtx.loggedIn, location, gameTime, handleGameTime, stage]);
+  }, [userCtx.loggedIn, location, isGameTime, stage]);
 
   const routes = useMemo(
     () => (
@@ -83,7 +81,7 @@ export const DeclutterRouter = () => {
   return (
     <>
       {stageToDisplay}
-      {mail && routes}
+      {isGameTime && routes}
     </>
   );
 };

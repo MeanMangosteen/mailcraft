@@ -15,24 +15,6 @@ const StyledAppRouter = styled(AppRouter)`
   grid-area: content;
 `;
 
-interface UidsCtxProps {
-  uids: number[] | null;
-  setUids: React.Dispatch<React.SetStateAction<number[] | null>>;
-  fetchProgress: { fetched: number; isFetching: boolean };
-  setFetchProgress: React.Dispatch<
-    React.SetStateAction<{ fetched: number; isFetching: boolean }>
-  >;
-}
-export const UnreadUidsCtx: React.Context<UidsCtxProps> = React.createContext({
-  uids: null as UidsCtxProps["uids"],
-  setUids: ((value) => {}) as UidsCtxProps["setUids"],
-  fetchProgress: {
-    fetched: 0,
-    isFetching: false,
-  } as UidsCtxProps["fetchProgress"],
-  setFetchProgress: ((value) => {}) as UidsCtxProps["setFetchProgress"],
-});
-
 export const UserContext = React.createContext<{
   loggedIn: boolean;
   setLoggedIn: any;
@@ -45,30 +27,16 @@ const App = styled(({ className }) => {
   const [cookies] = useCookies(["loggedIn"]);
   const [loggedIn, setLoggedIn] = useState<boolean>(!!cookies?.loggedIn);
   const [unreadUids, setUnreadUids] = useState<number[] | null>(null);
-  const [fetchProgress, setFetchProgress] = useState<{
-    fetched: number;
-    isFetching: boolean;
-  }>({ fetched: 0, isFetching: false });
-
   setupInterceptors(setLoggedIn);
 
   return (
     <div className={className}>
       <BrowserRouter>
         <UserContext.Provider value={{ loggedIn, setLoggedIn }}>
-          <UnreadUidsCtx.Provider
-            value={{
-              uids: unreadUids,
-              setUids: setUnreadUids,
-              fetchProgress: fetchProgress,
-              setFetchProgress: setFetchProgress,
-            }}
-          >
-            <MailProvider>
-              <StyledNavBar />
-              <StyledAppRouter />
-            </MailProvider>
-          </UnreadUidsCtx.Provider>
+          <MailProvider>
+            <StyledNavBar />
+            <StyledAppRouter />
+          </MailProvider>
         </UserContext.Provider>
       </BrowserRouter>
     </div>

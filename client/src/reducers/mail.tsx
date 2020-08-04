@@ -26,6 +26,8 @@ type MailHookReturnType = {
   totalUnread?: number;
   userProgress: number;
   stage: "mass destruction" | "leftovers" | "success!";
+  isGameTime: boolean;
+  triggerGameTime: () => void;
   readMail: (
     uids: string[],
     stageOp?: boolean,
@@ -174,6 +176,10 @@ export const useMail = (): MailHookReturnType => {
     });
   }, [state.stagedOps]);
 
+  const triggerGameTime = useCallback(() => {
+    dispatch({ type: "gameTime" });
+  }, [dispatch]);
+
   useEffect(() => {
     if (!startFetch) return;
     if (!userCtx.loggedIn) return;
@@ -223,6 +229,8 @@ export const useMail = (): MailHookReturnType => {
     totalUnread: state.totalUnread,
     userProgress: state.userProgress,
     stage: currStage,
+    isGameTime: state.isGameTime,
+    triggerGameTime,
     fetchMail,
     readMail,
     spamMail,
@@ -238,6 +246,7 @@ type MailState = {
   userProgress: number;
   fetchProgress: number;
   isFetching: boolean;
+  isGameTime: boolean;
   unreadUids?: number[];
 };
 
@@ -252,13 +261,15 @@ type MailAction =
       type: "remove";
       uids: string[];
       stageOp?: MailOperation;
-    };
+    }
+  | { type: "gameTime" };
 
 export const MailProvider = ({ children }) => {
   const [mailState, dispatch] = useReducer(reducer, {
     userProgress: 0,
     fetchProgress: 0,
     isFetching: false,
+    isGameTime: false,
     stagedOps: {},
   });
 
@@ -301,6 +312,8 @@ const reducer = (state: MailState, action: MailAction): MailState => {
           ? { ...state.stagedOps, [action.uids[0]]: action.stageOp }
           : state.stagedOps,
       };
+    case "gameTime":
+      return { ...state, isGameTime: true };
     default:
       throw Error("Something bad has happend, I have no idea why...Good luck!");
   }
