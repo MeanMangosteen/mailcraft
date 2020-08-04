@@ -28,9 +28,6 @@ const OpenIcon = styled(MdOpenInNew)`
   font-size: 3.5rem;
 `;
 const WebUILinkContainer = styled.div`
-  /* position: fixed;
-  top: 15%;
-  right: 10%; */
   display: flex;
   flex-direction: column;
   align-items: center;

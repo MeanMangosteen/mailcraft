@@ -27,14 +27,15 @@ export const ListItem = ({ mail, selected, index, onClick }: ListItemProps) => {
   return (
     <>
       <ListItemCotainer selected={selected} onClick={onClick(index)}>
-        <CheckBox selected={selected} />
-        <StyledSubjectText>{mail["envelope"].subject}</StyledSubjectText>
+        <SubjectText>{mail["envelope"].subject}</SubjectText>
         <ExpandIcon
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             setExpandIframe(true);
             console.log("clicked");
           }}
         />
+        <CheckBox selected={selected} />
       </ListItemCotainer>
       <ExpandedIframe
         show={expandIframe}
@@ -59,6 +60,7 @@ const SubjectText = styled.div`
   text-overflow: ellipsis;
   word-break: break-word;
   white-space: nowrap;
+  margin-left: 1rem;
 `;
 const CheckBox = ({ selected }) => {
   return (
@@ -67,10 +69,10 @@ const CheckBox = ({ selected }) => {
     </CheckBoxContainer>
   );
 };
-const StyledSubjectText = styled(SubjectText)``;
 const CheckBoxContainer = styled.div`
   ${centerContent}
   margin-right: 1rem;
+  font-size: 2.5rem;
 `;
 
 const ExpandIconContainer = styled.div`
@@ -78,9 +80,9 @@ const ExpandIconContainer = styled.div`
   position: relative;
   z-index: 2;
 `;
-const ExpandIcon = styled(({ className = "expand-icon" }) => (
+const ExpandIcon = styled(({ onClick, className = "expand-icon" }) => (
   <ExpandIconContainer className={className}>
-    <ZoomIcon />
+    <ZoomIcon onClick={onClick} />
   </ExpandIconContainer>
 ))``;
 const ListItemCotainer = styled.div`
@@ -97,7 +99,7 @@ const ListItemCotainer = styled.div`
   margin: 1rem 0.5rem;
   padding: 0.5rem;
 
-  ${StyledSubjectText} {
+  ${SubjectText} {
     flex-basis: 80%;
   }
 

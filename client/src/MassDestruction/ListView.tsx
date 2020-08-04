@@ -74,9 +74,9 @@ const ListViewContainer = styled.div`
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin: 0 4rem;
 `;
 
 const ScrollWatcher = styled.div`
   height: 1px;
 `;
-

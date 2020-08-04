@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { centerContent } from "../utils";
-export const ToggleViewIcon = () => {
+export const ToggleViewIcon = ({ onClick }) => {
   return (
-    <ToggleViewIconContainer>
+    <ToggleViewIconContainer onClick={onClick}>
       <SVGWrapper>
         <svg
           width="1em"

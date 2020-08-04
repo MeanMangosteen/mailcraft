@@ -28,12 +28,19 @@ export const ExpandedIframe = ({ onClose, show, mail }) => {
               iframeHeight={iframeHeight}
             />
           </ExpandedIframeContainer>
-          <WebUILink threadId={mail["x-gm-thrid"]} />
+          <StyledWebUILink threadId={mail["x-gm-thrid"]} />
         </Background>
       )}
     </Transition>
   );
 };
+
+const StyledWebUILink = styled(WebUILink)`
+  position: fixed;
+  top: 3%;
+  right: 4%;
+  color: white;
+`;
 
 const Iframe = styled.iframe<{ iframeHeight?: number }>`
   position: absolute;

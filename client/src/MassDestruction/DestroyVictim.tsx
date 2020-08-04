@@ -158,7 +158,9 @@ export const DestroyVictim = () => {
               Object.values(selected).filter((selected) => !!selected).length
             }
           />
-          <ToggleViewIcon />
+          <ToggleViewIcon
+            onClick={() => setView(view === "list" ? "grid" : "list")}
+          />
         </Peripherals>
       </ControlsContainer>
 
