@@ -5,23 +5,25 @@ import { SwitchTransition, Transition } from "react-transition-group";
 import { HomePageButton } from "./HomePageButton";
 import { BaseNavLink } from "../NavBar/NavBar";
 import { NavLink } from "react-router-dom";
+// import { ReactComponent as FailedDreamsSVG } from "../images/failed-dreams.svg";
+import FailedDreamsSVG from "../images/failed-dreams.svg";
+import GymSurpriseSVG from "../images/gym-surprise.svg";
+import DeclutterSVG from "../images/declutter-badge.svg";
+import InsightsSVG from "../images/insights-badge.svg";
 
 type EpisodeProps = {
   state: any;
   onFinish: () => void;
 };
 
-enum Images {
-  Empty = "data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
-  FailedDreams = "https://raw.githubusercontent.com/gist/MeanMangosteen/5b31951331a62392fe55dd0368205712/raw/f6f26b68b8c64abb11e6588c99993590580a057e/failed-dreams.svg",
-  GymSurprise = "https://raw.githubusercontent.com/gist/MeanMangosteen/3254e0bec1848bf69ef737b166aa5b5d/raw/d878dc109449ae8f833a10ec16a6024397ac66fc/gym-surprise.svg",
-  Declutter = "https://raw.githubusercontent.com/gist/MeanMangosteen/435d3a2d0ffdbb23aabd080892ab6160/raw/7d43d44ac00343f43b953549e4c14214ed1158c0/declutter.svg",
-  Insights = "https://raw.githubusercontent.com/gist/MeanMangosteen/ad413b60bc3b4e1963a18adfa8c310cb/raw/779dc0bf90abae428c2a753c8ac717155386349d/insights.svg",
-  Insomnia = "https://i.imgur.com/wQlhbfX.jpg",
-  Shredded = "https://i.imgur.com/Y4Wfd4p.jpg",
-  CleanRoom = "https://i.imgur.com/G8jSfk0.jpg",
-  Buddha = "https://i.imgur.com/pkrBtZX.jpg",
-}
+const Images = {
+  Empty:
+    "data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
+  FailedDreams: FailedDreamsSVG,
+  GymSurprise: GymSurpriseSVG,
+  Declutter: DeclutterSVG,
+  Insights: InsightsSVG,
+} as const;
 
 export const Episode1 = ({ state, onFinish }: EpisodeProps) => {
   const [currImage, setCurrImage] = useState<any>(Images.Empty);
