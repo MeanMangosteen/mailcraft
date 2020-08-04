@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, Redirect } from "react-router-dom";
 import queryString from "query-string";
 import { useMail } from "../reducers/mail";
 import styled, { css } from "styled-components";
-import { MailCard } from "./MailCard";
 import { RiSpam2Line } from "react-icons/ri";
 import { AiOutlineRead } from "react-icons/ai";
 import { FiTrash2 } from "react-icons/fi";
 import { centerContent } from "../utils";
-import { useInView } from "react-intersection-observer";
 import { ToggleViewIcon } from "./ToggleViewIcon";
 import { GridView } from "./GridView";
 import { ListView } from "./ListView";
 
-// OMGTODO: clean this file
 export const DestroyVictim = () => {
   const location = useLocation();
   const qParams = queryString.parse(location.search);
@@ -38,6 +35,7 @@ export const DestroyVictim = () => {
      * mission successful and move on to our next victim.
      */
     if (!filteredMail.length) setMissionSuccessful(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mail]);
 
   useEffect(() => {
@@ -49,13 +47,16 @@ export const DestroyVictim = () => {
     setSelected({ ...newSelected });
   }, [victimEmails]);
 
-  const handleCardClick = (index) => () => {
-    // Toggle card selected state
-    selected[index] = !selected[index];
-    setSelected({ ...selected });
-  };
+  const handleCardClick = useCallback(
+    (index) => () => {
+      // Toggle card selected state
+      selected[index] = !selected[index];
+      setSelected({ ...selected });
+    },
+    [selected]
+  );
 
-  const handleRead = () => {
+  const handleRead = useCallback(() => {
     /** All selected emails will be marked as 'read' */
     const uids = Object.keys(selected)
       .filter((cardIdx) => selected[cardIdx])
@@ -69,9 +70,9 @@ export const DestroyVictim = () => {
         return;
       }
     });
-  };
+  }, [readMail, selected, victimEmails]);
 
-  const handleSpam = () => {
+  const handleSpam = useCallback(() => {
     /** All selected emails will be marked as 'spam' */
     const uids = Object.keys(selected)
       .filter((cardIdx) => selected[cardIdx])
@@ -85,9 +86,9 @@ export const DestroyVictim = () => {
         return;
       }
     });
-  };
+  }, [selected, spamMail, victimEmails]);
 
-  const handleTrash = () => {
+  const handleTrash = useCallback(() => {
     /** All selected emails will be marked as 'trash' */
     const uids = Object.keys(selected)
       .filter((cardIdx) => selected[cardIdx])
@@ -101,14 +102,10 @@ export const DestroyVictim = () => {
         return;
       }
     });
-  };
+  }, [selected, trashMail, victimEmails]);
 
   return (
     <MassDestructionContainer>
-      {/* <CardsContainer>
-        {mailPages.slice(0, lastPage)}
-        <ScrollWatcher ref={ref} />
-      </CardsContainer> */}
       {view === "list" ? (
         <ListView
           victimEmails={victimEmails}
@@ -173,9 +170,6 @@ const Peripherals = styled.div`
   position: relative;
 `;
 
-const ScrollWatcher = styled.div`
-  height: 1px;
-`;
 const SelectedInfo = ({ selected, total }) => {
   return (
     <SelectedInfoContainer>{`${selected}/${total} selected`}</SelectedInfoContainer>
@@ -203,27 +197,10 @@ const TrashIcon = styled(FiTrash2)`
   font-size: 2.5rem;
 `;
 
-const PageContainer = styled.div`
-  display: grid;
-  grid-gap: 2rem 6rem;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  height: 100%;
-  padding: 2rem;
-  box-sizing: border-box;
-`;
-
 const MassDestructionContainer = styled.div`
   height: 100vh;
   display: grid;
   grid-template-rows: 90% 10%;
-`;
-
-const CardsContainer = styled.div`
-  overflow-y: scroll;
-  > * {
-    flex: 0 0 32%;
-  }
 `;
 
 const ControlsContainer = styled.div`

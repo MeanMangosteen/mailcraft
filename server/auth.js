@@ -21,10 +21,7 @@
 const { google } = require("googleapis");
 const http = require("http");
 const url = require("url");
-const opn = require("open");
 const destroyer = require("server-destroy");
-const fs = require("fs");
-const path = require("path");
 
 const invalidRedirectUri = `The provided keyfile does not define a valid
 redirect URI. There must be at least one redirect URI defined, and this sample
@@ -61,7 +58,7 @@ class SampleClient {
   async authenticate(scopes) {
     return new Promise((resolve, reject) => {
       // grab the url that will be used for authorization
-      const test = this.oAuth2Client.generateAuthUrl({
+      this.oAuth2Client.generateAuthUrl({
         access_type: "offline",
         scope: scopes.join(" "),
       });
@@ -87,7 +84,6 @@ class SampleClient {
         })
         .listen(3000, () => {
           // open the browser to the authorize url to start the workflow
-          console.log(test);
         });
       destroyer(server);
     });

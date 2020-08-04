@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { ShowTextWithStyle, StylishItem } from "../ShowTextWithStyle";
 import { SwitchTransition, Transition } from "react-transition-group";
@@ -67,7 +67,7 @@ export const Episode2 = ({ state, onFinish }: EpisodeProps) => {
             <Text>It's not time and effort that will get you there!</Text>
           </StylishItem>
           <StylishItem>
-            <Text>But a hygenic mailbox will...</Text>
+            <Text>But a hygenic mailbox will.</Text>
           </StylishItem>
         </ShowTextWithStyle>
       </TextContainer>
@@ -120,7 +120,6 @@ const EpisodeContainer = styled.div`
   display: grid;
   grid-template-columns: 50% 50%;
   grid-template-rows: 100vh;
-  /* height: 100%; */
 
   transition: 0.5s;
   opacity: ${(props: { state: any }) => (props.state === "entered" ? 1 : 0)};
@@ -129,7 +128,6 @@ const EpisodeContainer = styled.div`
 
 const ButtonContainer = styled.div`
   display: flex;
-  /* flex-grow: 1; */
   justify-content: space-evenly;
   align-items: center;
   flex-direction: column;

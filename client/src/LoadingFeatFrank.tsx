@@ -1,27 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styled, { keyframes } from "styled-components";
-import { centerContent, useEffectDebugger, cb } from "./utils";
+import { centerContent } from "./utils";
 import { Catwalk, WalkingCat } from "./Catwalk";
 import { useMail } from "./reducers/mail";
 
-export const LoadingFeatJohnty = ({ onGameTime }) => {
+export const LoadingFeatFrank = ({ onGameTime }) => {
   const [encore, setEncore] = useState<boolean>(true);
-  const [letsJustStart, setLetsJustStart] = useState<boolean>(false);
+  const [letsJustStart, setLetsJustStart] = useState<boolean>(
+    sessionStorage.getItem("gameInProgress") === "true"
+  );
   const { mail, totalUnread } = useMail();
 
-  // OMGTODO
-  useEffectDebugger(
-    () => {
-      if (
-        (mail && totalUnread && mail?.length === totalUnread) ||
-        letsJustStart
-      ) {
-        onGameTime();
-      }
-    },
-    [letsJustStart, mail, onGameTime],
-    ["letsjuststart", "mail", "ongametime"] as any
+  const handleMainSetFinished = useCallback(
+    () => mail?.length !== totalUnread && setEncore(true),
+    [mail, totalUnread]
   );
+
+  const handlePrematureStart = useCallback(() => {
+    setLetsJustStart(true);
+  }, []);
+
+  useEffect(() => {
+    if (
+      (mail && totalUnread && mail?.length === totalUnread) ||
+      letsJustStart
+    ) {
+      onGameTime();
+      sessionStorage.setItem("gameInProgress", "true");
+    }
+  }, [letsJustStart, mail, onGameTime, totalUnread]);
 
   return (
     <SpinnerContainer>
@@ -55,13 +62,13 @@ export const LoadingFeatJohnty = ({ onGameTime }) => {
             <StyledCat duration={5000}>
               Every. Single. Day. How's that for a life?
             </StyledCat>
-            <StyledCat>*Sigh*</StyledCat>
+            <StyledCat>*sigh*</StyledCat>
             <StyledCat>
               They run this thing 24/7 can you believe that?
             </StyledCat>
             <StyledCat duration={8000}>
-              Ooooh, because nobody cares about Virtual Johnty. We'll just ship
-              him off to where ever the client is. Because Virtual Johnty can
+              Ooooh, because nobody cares about Virtual Frank. We'll just ship
+              him off to where ever the client is. Because Virtual Frank can
               handle it.
             </StyledCat>
             <StyledCat duration={4000}>
@@ -72,12 +79,7 @@ export const LoadingFeatJohnty = ({ onGameTime }) => {
               called IE.
             </StyledCat>
             <StyledCat>I prefer not to talk about it.</StyledCat>
-            <StyledCat
-              onShow={cb(
-                () => mail?.length !== totalUnread && setEncore(true),
-                []
-              )}
-            >
+            <StyledCat onShow={handleMainSetFinished}>
               Virtual Lives Matter, you know.
             </StyledCat>
             {encore && (
@@ -94,7 +96,7 @@ export const LoadingFeatJohnty = ({ onGameTime }) => {
             )}
             {encore && (
               <StyledCat duration={4000}>
-                {`I mean seriously, what where you thinking? ${totalUnread} unread emails?!`}
+                {`I mean seriously, what were you thinking? ${totalUnread} unread emails?!`}
               </StyledCat>
             )}
             {encore && <StyledCat>Get help.</StyledCat>}
@@ -105,9 +107,7 @@ export const LoadingFeatJohnty = ({ onGameTime }) => {
             )}
             {/* Dummy empty cat, to signal end of show */}
             {encore && (
-              <StyledCat onShow={cb(() => setLetsJustStart(true), [])}>
-                {""}
-              </StyledCat>
+              <StyledCat onShow={handlePrematureStart}>{""}</StyledCat>
             )}
             {/* 56 seconds total */}
           </StyledCatwalk>
@@ -133,7 +133,6 @@ const LoadingTextContainer = styled.div`
   text-align: center;
   width: 50vw;
 `;
-const Text = styled.div``;
 
 const SpinnerWrapper = styled.div`
   /* ${centerContent}

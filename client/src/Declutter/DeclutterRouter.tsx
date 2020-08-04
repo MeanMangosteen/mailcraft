@@ -1,9 +1,14 @@
-import React, { useState, useContext, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { Redirect, Route, useLocation, Switch } from "react-router-dom";
 import { DestroyVictim } from "../MassDestruction/DestroyVictim";
 import { UserContext } from "../App";
-import { cb, useEffectDebugger } from "../utils";
-import { LoadingFeatJohnty } from "../LoadingFeatJohnty";
+import { LoadingFeatFrank } from "../LoadingFeatFrank";
 import { useMail } from "../reducers/mail";
 import { Stage1, Stage2, Success } from "./Stages";
 
@@ -12,16 +17,18 @@ export const DeclutterRouter = () => {
   const location = useLocation();
   const userCtx = useContext(UserContext);
   const { mail, fetchMail, stage, commitOps } = useMail();
-  const handleGameTime = cb(() => setGameTime(true), []);
+  const handleGameTime = useCallback(() => setGameTime(true), []);
 
   useEffect(() => {
     fetchMail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userCtx.loggedIn]);
 
   useEffect(() => {
     if (stage !== "success!") return;
 
     commitOps();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
 
   const stageToDisplay = useMemo(() => {
@@ -31,7 +38,7 @@ export const DeclutterRouter = () => {
           to={{ pathname: "/login", state: { referrer: location.pathname } }}
         />
       );
-    if (!gameTime) return <LoadingFeatJohnty onGameTime={handleGameTime} />;
+    if (!gameTime) return <LoadingFeatFrank onGameTime={handleGameTime} />;
 
     switch (stage) {
       case "mass destruction":
@@ -50,7 +57,7 @@ export const DeclutterRouter = () => {
       case "success!":
         return <Redirect key={location.pathname} to="/declutter/success" />;
     }
-  }, [gameTime, location, userCtx.loggedIn, stage]);
+  }, [userCtx.loggedIn, location, gameTime, handleGameTime, stage]);
 
   const routes = useMemo(
     () => (

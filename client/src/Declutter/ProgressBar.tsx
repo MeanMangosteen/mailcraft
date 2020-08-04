@@ -1,15 +1,16 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
+import { useMail } from "../reducers/mail";
 
-// OMGTODO: lazy boi can get progress and total itself using hook
-export const ProgressBar = ({ progress, total, className = "" }) => {
+export const ProgressBar = ({ className = "" }) => {
+  const { userProgress: progress, totalUnread: total } = useMail();
   return (
     <ProgressBarContainer className={className}>
       <ProgressPowa />
       <ProgressRemaining progress={progress} total={total} />
       <ProgressBarMask />
-      <ProgressTextWrapper progress={progress} total={total}>
-        <ProgressText>{`${total - progress} to go!`}</ProgressText>
+      <ProgressTextWrapper progress={progress} total={total!}>
+        <ProgressText>{`${total! - progress} to go!`}</ProgressText>
       </ProgressTextWrapper>
       <TotalText>{total}</TotalText>
     </ProgressBarContainer>

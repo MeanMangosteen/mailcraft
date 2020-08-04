@@ -14,15 +14,8 @@ import { CSSDividerTop, centerContent, CSSDividerBottom } from "../utils";
 import { ProgressBar } from "../Declutter/ProgressBar";
 import { WebUILink } from "../WebUILink";
 
-export const Leftovers = ({}) => {
-  const {
-    mail,
-    readMail,
-    spamMail,
-    trashMail,
-    userProgress,
-    totalUnread,
-  } = useMail();
+export const Leftovers = () => {
+  const { mail, readMail, spamMail, trashMail } = useMail();
   const containerRef = useRef<any>();
   const [activeButton, setActiveButton] = useState<
     "spam" | "read" | "trash" | "back" | null
@@ -84,7 +77,6 @@ export const Leftovers = ({}) => {
     (event) => {
       if (activeButton) return; // You gotta let go of key before we deal with the next email
       const [left, down, right, z] = [37, 40, 39, 90]; // Keycodes
-      console.log(event.keyCode);
       if (event.keyCode === down) {
         readMail(
           [mailCopy[offset].uid],
@@ -115,7 +107,7 @@ export const Leftovers = ({}) => {
         setOffset(offset - 1);
       }
     },
-    [activeButton, offset, mailCopy]
+    [activeButton, readMail, mailCopy, offset, spamMail, trashMail]
   );
 
   const handleKeyLift = useCallback(
@@ -169,11 +161,7 @@ export const Leftovers = ({}) => {
         </ControlsContainer>
       </UsefulThings>
       <ProgressContainer>
-        <StyledProgressBar
-          progress={userProgress}
-          total={totalUnread}
-          className="progress-bar"
-        />
+        <StyledProgressBar className="progress-bar" />
       </ProgressContainer>
     </LeftoversContainer>
   );

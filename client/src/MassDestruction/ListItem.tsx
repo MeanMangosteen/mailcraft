@@ -16,14 +16,6 @@ type ListItemProps = {
 export const ListItem = ({ mail, selected, index, onClick }: ListItemProps) => {
   const [expandIframe, setExpandIframe] = useState<boolean>(false);
 
-  const headerLines = mail["body[]"]["headerLines"];
-  let useText: boolean;
-  for (let i = 0; i < headerLines.length; i++) {
-    const header = headerLines[i];
-    if (header.key === "content-type") {
-      useText = header.line.match(/Content-Type: text\/plain/g);
-    }
-  }
   return (
     <>
       <ListItemCotainer selected={selected} onClick={onClick(index)}>
@@ -32,7 +24,6 @@ export const ListItem = ({ mail, selected, index, onClick }: ListItemProps) => {
           onClick={(e) => {
             e.stopPropagation();
             setExpandIframe(true);
-            console.log("clicked");
           }}
         />
         <CheckBox selected={selected} />

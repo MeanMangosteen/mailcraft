@@ -8,7 +8,7 @@ import { ProgressBar } from "./ProgressBar";
 export const ChooseVictim = () => {
   const [chartData, setChartData] = useState<any>(undefined);
   const [selectedVictim, setVictim] = useState<string | null>(null);
-  const { mail, totalUnread, userProgress } = useMail();
+  const { mail } = useMail();
 
   useEffect(() => {
     if (!mail) return; // wait for mail fetch
@@ -16,7 +16,7 @@ export const ChooseVictim = () => {
     const senders = mail.map((m) => m.envelope.from[0].address.split("@")[1]);
     // Tally the no. emails sent by each sender
     const count = {};
-    senders.map((m) => {
+    senders.forEach((m) => {
       if (count[m]) {
         count[m]++;
       } else {
@@ -36,7 +36,6 @@ export const ChooseVictim = () => {
   }, [mail]);
 
   const handlePieClick = (name, leMagic) => {
-    console.log(leMagic);
     setVictim(leMagic.id);
   };
 
@@ -50,7 +49,7 @@ export const ChooseVictim = () => {
         </VictimText>
         <PieChart
           data={chartData}
-          signalListeners={{ click: handlePieClick, hover: handlePieClick }}
+          signalListeners={{ click: handlePieClick }}
           style={{
             display: "flex",
             justifyContent: "center",
@@ -59,7 +58,7 @@ export const ChooseVictim = () => {
           }}
         />
       </PieChartWrapper>
-      <ProgressBar progress={userProgress} total={totalUnread} />
+      <ProgressBar />
       {selectedVictim ? (
         <Redirect
           to={`/declutter/mass-destruction/destroy?victim=${selectedVictim}`}

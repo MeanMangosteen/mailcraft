@@ -1,10 +1,9 @@
 import React, { useState, useEffect, Fragment, useCallback as cb } from "react";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
-import { centerContent } from "./utils";
 
 type ShowTextWithStyleProps = {
-  children: (React.ReactElement<StylishItemProps> | undefined)[];
+  children: React.ReactElement<StylishItemProps>[];
   onFinish?: () => void;
 };
 
@@ -13,7 +12,6 @@ export const ShowTextWithStyle = ({
   onFinish,
 }: ShowTextWithStyleProps) => {
   const [childCount, setChildCount] = useState<number>(0);
-  const [tickingClock, setTickingClock] = useState<any>();
   const [visibleChildren, setVisibleChildren] = useState(
     Array(children.length).fill(false) // the indexes represent each child, the value: whether it's visible.
   );
@@ -26,15 +24,16 @@ export const ShowTextWithStyle = ({
       setIsFinished(true);
       return;
     }
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       visibleChildren[childCount] = true;
       setVisibleChildren([...visibleChildren]);
       setChildCount(childCount + 1);
     }, 2000);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [childCount, children]);
 
   const childs = children.map((C, idx) => {
-    if (!C) return;
     return (
       <Transition
         in={visibleChildren[idx]}

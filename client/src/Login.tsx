@@ -11,7 +11,7 @@ export const Login = () => {
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
   const userCtx = useContext(UserContext);
-  const [cookies, setCookie] = useCookies();
+  const setCookie = useCookies()[1];
 
   const location = useLocation<{ referrer: any }>();
   useEffect(() => {
@@ -23,7 +23,7 @@ export const Login = () => {
           setOAuthUrl(res.data);
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
         });
     } else {
     }
@@ -50,7 +50,7 @@ export const Login = () => {
         });
       })
       .catch((err) => {
-        console.log("error", err);
+        console.error(err);
       });
   };
 

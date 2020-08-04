@@ -1,4 +1,3 @@
-import React from "react";
 import { createClassFromSpec } from "react-vega";
 
 // export default

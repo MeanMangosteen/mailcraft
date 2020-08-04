@@ -4,13 +4,14 @@ import { ShowTextWithStyle, StylishItem } from "../ShowTextWithStyle";
 import { Leftovers } from "../Leftovers/Leftovers";
 import styled, { keyframes } from "styled-components";
 import { FiSend } from "react-icons/fi";
-import { centerContent, api, cb } from "../utils";
+import { centerContent, api } from "../utils";
 import { SwitchTransition, Transition } from "react-transition-group";
-import { LoadingFeatJohnty } from "../LoadingFeatJohnty";
 import { Loading } from "../Loading";
 
 export const Stage1 = () => {
-  const [introComplete, setIntroComplete] = useState<boolean>(false);
+  const [introComplete, setIntroComplete] = useState<boolean>(
+    sessionStorage.getItem("stage1IntroComplete") === "true"
+  );
   const compToDisplay = introComplete ? (
     <ChooseVictim />
   ) : (
@@ -18,6 +19,7 @@ export const Stage1 = () => {
       <ShowTextWithStyle
         onFinish={() => {
           setIntroComplete(true);
+          sessionStorage.setItem("stage1IntroComplete", "true");
         }}
       >
         <StylishItem>
@@ -34,7 +36,9 @@ export const Stage1 = () => {
 };
 
 export const Stage2 = () => {
-  const [introComplete, setIntroComplete] = useState<boolean>(false);
+  const [introComplete, setIntroComplete] = useState<boolean>(
+    sessionStorage.getItem("stage2IntroComplete") === "true"
+  );
   const compToDisplay = introComplete ? (
     <Leftovers />
   ) : (
@@ -42,6 +46,7 @@ export const Stage2 = () => {
       <ShowTextWithStyle
         onFinish={() => {
           setIntroComplete(true);
+          sessionStorage.setItem("stage2IntroComplete", "true");
         }}
       >
         <StylishItem>
@@ -61,20 +66,18 @@ export const Success = () => {
   const [stage, setStage] = useState<"waiting" | "sending" | "thanking">(
     "waiting"
   );
-  const handleSend = (message) => {
+  const handleSend = useCallback((message) => {
     setStage("sending");
     api
       .post("/sendMessage", { message })
-      .then((res) => {
-        console.log(res);
-      })
+      .then((res) => {})
       .catch((err) => {
         console.error(err);
       })
       .finally(() => {
         setStage("thanking");
       });
-  };
+  }, []);
 
   return (
     <StageIntroContainer style={{ color: "white" }}>
@@ -126,13 +129,12 @@ const MessageBox = ({ onSend }) => {
 
   const handleChange = (e) => {
     setInput(e.target.value);
-    console.log("here", e.target.value);
   };
 
   const handleClick = useCallback(() => {
     if (input === "") return;
     onSend(input);
-  }, [input]);
+  }, [input, onSend]);
 
   return (
     <MessageBoxContainer>

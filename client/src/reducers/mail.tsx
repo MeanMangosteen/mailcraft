@@ -4,10 +4,9 @@ import React, {
   useEffect,
   useCallback,
   useState,
-  useRef,
 } from "react";
 import { api } from "../utils";
-import { UserContext, UnreadUidsCtx } from "../App";
+import { UserContext } from "../App";
 
 export const MailContext: React.Context<{
   state: MailState;
@@ -22,8 +21,6 @@ export const MailContext: React.Context<{
 });
 
 type MailOperation = "read" | "trash" | "spam";
-// TODO: setMail may be redundant
-// TODO: rename folder to utils
 type MailHookReturnType = {
   mail?: any[];
   totalUnread?: number;
@@ -68,7 +65,7 @@ export const useMail = (): MailHookReturnType => {
     const senders = mail.map((m) => m.envelope.from[0].address.split("@")[1]);
     // Tally the no. emails sent by each sender
     const count = {};
-    senders.map((m) => {
+    senders.forEach((m) => {
       if (count[m]) {
         count[m]++;
       } else {
@@ -88,6 +85,7 @@ export const useMail = (): MailHookReturnType => {
     } else if (massDestructionComplete) {
       setCurrStage("leftovers");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.mail]);
 
   const readMail = useCallback(
@@ -112,7 +110,7 @@ export const useMail = (): MailHookReturnType => {
         stageOp: stageOp ? "read" : undefined,
       });
     },
-    [dispatch, currStage]
+    [dispatch]
   );
 
   const trashMail = useCallback(
@@ -136,7 +134,7 @@ export const useMail = (): MailHookReturnType => {
         stageOp: stageOp ? "trash" : undefined,
       });
     },
-    [dispatch, currStage]
+    [dispatch]
   );
 
   const spamMail = useCallback(
@@ -160,7 +158,7 @@ export const useMail = (): MailHookReturnType => {
         stageOp: stageOp ? "spam" : undefined,
       });
     },
-    [dispatch, currStage]
+    [dispatch]
   );
 
   const commitOps = useCallback(() => {
@@ -189,9 +187,9 @@ export const useMail = (): MailHookReturnType => {
         dispatch({ type: "setup", unreadUids: res.data });
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
-  }, [userCtx.loggedIn, startFetch, state.unreadUids]);
+  }, [userCtx.loggedIn, startFetch, state.unreadUids, dispatch]);
 
   useEffect(() => {
     if (!startFetch) return;
@@ -216,9 +214,9 @@ export const useMail = (): MailHookReturnType => {
         dispatch({ type: "store", mail: res.data });
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
-  }, [state, startFetch]);
+  }, [state, startFetch, dispatch]);
 
   return {
     mail: state?.mail,

@@ -94,7 +94,6 @@ export const centerContent = css`
 export const api = Axios.create({
   baseURL: process.env.REACT_APP_API_SERVER,
 });
-console.log(process.env.REACT_APP_API_SERVER);
 
 export const setupInterceptors = (setLoggedIn) => {
   api.interceptors.response.use(
@@ -109,15 +108,15 @@ export const setupInterceptors = (setLoggedIn) => {
     }
   );
 
-  api.interceptors.request.use((request) => {
+  /*   api.interceptors.request.use((request) => {
     console.log("Starting Request", request);
     return request;
   });
 
-  // api.interceptors.response.use((response) => {
-  //   console.log("Recieved Response: ", response);
-  //   return response;
-  // });
+  api.interceptors.response.use((response) => {
+    console.log("Recieved Response: ", response);
+    return response;
+  }); */
 };
 
 // Kindly provided by:

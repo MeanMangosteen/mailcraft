@@ -70,7 +70,6 @@ app.post("/OAuthConfirm", async (req, res) => {
 
   const { tokens } = await auth.oAuth2Client.getToken(code);
   auth.oAuth2Client.credentials = tokens;
-  console.log(tokens);
 
   try {
     const gmail = google.gmail({
@@ -122,7 +121,6 @@ app.post("/trash-mail", authMiddleware, async (req, res) => {
       "[Gmail]/Trash",
       { byUid: true }
     );
-    console.log(response);
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
@@ -153,7 +151,6 @@ app.post("/spam-mail", authMiddleware, async (req, res) => {
       "[Gmail]/Spam",
       { byUid: true }
     );
-    console.log(response);
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
@@ -178,11 +175,10 @@ app.post("/read-mail", authMiddleware, async (req, res) => {
       "INBOX",
       uids.join(","),
       {
-        set: ["\\Seen"], // OMGTODO: change to add.
+        set: ["\\Seen"],
       },
       { byUid: true }
     );
-    console.log(response);
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
@@ -225,17 +221,13 @@ app.get("/mail", authMiddleware, async (req, res) => {
 
   try {
 
-    const mailboxes = await req.imap.listMailboxes();
-    console.log(mailboxes);
 
-    console.time('fetch');
     const messages = await req.imap.listMessages(
       "INBOX",
       JSON.parse(uids).join(),
       ["uid", "body.peek[]", "X-GM-THRID", "envelope"],
       { byUid: true }
     );
-    console.timeEnd('fetch');
 
     const parsePromises = messages.map((m) => {
       return new Promise((resolve, reject) => {
@@ -252,9 +244,6 @@ app.get("/mail", authMiddleware, async (req, res) => {
 
     await Promise.all(parsePromises);
 
-    // const data = JSON.stringify(messages);
-    // fs.writeFileSync('demo.json', data);
-    // console.log('file written')
     res.status(200).send(messages);
   } catch (err) {
     console.error(err);
@@ -303,5 +292,5 @@ app.get('*', (req, res) => {
 });
 
 app.listen(port, () =>
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`App listening at http://localhost:${port}`)
 );

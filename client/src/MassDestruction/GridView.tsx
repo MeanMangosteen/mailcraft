@@ -15,15 +15,15 @@ export const GridView = ({
 }: GridViewProps) => {
   const [mailPages, setMailPages] = useState<any[]>([]);
   const [lastPage, setLastPage] = useState<number>(3);
-  const [ref, inView, entry] = useInView({
+  const [ref, inView] = useInView({
     threshold: 0,
   });
 
   useEffect(() => {
     if (inView) {
-      console.log(lastPage, lastPage * 9);
       setTimeout(() => setLastPage(lastPage + 1), 500);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
   useEffect(() => {
     /**
@@ -56,7 +56,7 @@ export const GridView = ({
     }
 
     setMailPages([...newMailPages]);
-  }, [victimEmails, selected]);
+  }, [victimEmails, selected, onCardClick]);
   return (
     <GridViewContainer>
       {mailPages.slice(0, lastPage)}

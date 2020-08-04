@@ -7,7 +7,6 @@ import { centerContent } from "../utils";
 export const ExpandedIframe = ({ onClose, show, mail }) => {
   const [iframeHeight, setIframeHeight] = useState<number>();
   const handleIframeLoad = useCallback((event) => {
-    console.log(event.target.contentWindow.document.body.scrollHeight);
     setIframeHeight(event.target.contentWindow.document.body.scrollHeight);
   }, []);
   return (

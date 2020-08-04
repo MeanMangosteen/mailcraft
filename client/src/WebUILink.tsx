@@ -6,13 +6,14 @@ import { MdOpenInNew } from "react-icons/md";
 export const WebUILink = styled(({ threadId, className = "web-ui-link" }) => {
   const [cookies] = useCookies(["profile"]);
   const [link, setLink] = useState<string>();
+
   useEffect(() => {
     if (!threadId) return;
     const threadIDHex = BigInt(threadId.toString()).toString(16);
     const webUILink = `https://mail.google.com/mail?authuser=${cookies?.profile}#all/${threadIDHex}`;
     setLink(webUILink);
-    console.log(webUILink);
-  }, [threadId]);
+  }, [cookies, threadId]);
+
   return (
     <WebUILinkContainer
       className={className}

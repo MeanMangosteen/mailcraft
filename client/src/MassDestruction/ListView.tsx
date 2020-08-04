@@ -16,7 +16,7 @@ export const ListView = ({
 }: ListViewProps) => {
   const [mailPages, setMailPages] = useState<any[]>([]);
   const [lastPage, setLastPage] = useState<number>(3);
-  const [ref, inView, entry] = useInView({
+  const [ref, inView] = useInView({
     threshold: 0,
   });
 
@@ -24,6 +24,7 @@ export const ListView = ({
     if (inView) {
       setTimeout(() => setLastPage(lastPage + 1), 500);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export const ListView = ({
     }
 
     setMailPages([...newMailPages]);
-  }, [victimEmails, selected]);
+  }, [victimEmails, selected, onItemClick]);
 
   return (
     <ListViewContainer>

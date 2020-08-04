@@ -9,7 +9,8 @@
   "editor.formatOnSave": true,
   "eslint.format.enable": true,
   "debug.node.autoAttach": "on",
-  "eslint.alwaysShowStatus": true
+  "eslint.alwaysShowStatus": true,
+  "eslint.workingDirectories": ["./client"]
   // "editor.codeActionsOnSave": {
   //       "source.fixAll": true
   //   }

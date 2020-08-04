@@ -12,11 +12,9 @@ type ShowTextWithStyleProps = {
 export const Catwalk = ({
   children,
   onFinish,
-  timings = undefined,
   className = "catwalk",
 }: ShowTextWithStyleProps) => {
   const [childCount, setChildCount] = useState<number>(0);
-  const [tickingClock, setTickingClock] = useState<any>();
   const [visibleChildren, setVisibleChildren] = useState(
     Array(children.length).fill(false) // the indexes represent each child, the value: whether it's visible.
   );
@@ -29,17 +27,14 @@ export const Catwalk = ({
       setIsFinished(true);
       return;
     }
-    const timer = setTimeout(
-      () => {
-        visibleChildren[childCount] = true;
-        setVisibleChildren([...visibleChildren]);
-        childCount < children.length - 1 && setChildCount(childCount + 1);
-      },
-      // timings ? timings[childCount] || 2000 : 2000
-      children[childCount].props?.duration || 3000
-    );
+    const timer = setTimeout(() => {
+      visibleChildren[childCount] = true;
+      setVisibleChildren([...visibleChildren]);
+      childCount < children.length - 1 && setChildCount(childCount + 1);
+    }, children[childCount].props?.duration || 3000);
 
     return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [childCount]);
 
   return (

@@ -1,9 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import styled, { keyframes, css } from "styled-components";
 import { NavLink, Link } from "react-router-dom";
 import Emoji from "react-emoji-render";
 import { UserContext } from "../App";
-import { cb } from "../utils";
 import { useCookies } from "react-cookie";
 import MailcraftLogo from "../images/mailcraft-logo.svg";
 
@@ -166,9 +165,9 @@ const HomeIcon = styled.img`
   filter: saturate(1.5) drop-shadow(#7d7d7d 2px 4px 3px);
 `;
 
-const NavBar = styled(({}: NavBarProps) => {
+const NavBar = styled(() => {
   const userCtx = useContext(UserContext);
-  const [_, __, removeCookie] = useCookies([]);
+  const removeCookie = useCookies([])[2];
   return (
     <NavBarContainer>
       <ContentWrapper>

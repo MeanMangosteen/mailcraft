@@ -1,29 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import styled, { keyframes, css } from "styled-components";
-import { BaseNavLink, BaseLink } from "../NavBar/NavBar";
+import { BaseLink } from "../NavBar/NavBar";
 
 export const HomePageButton = ({ imgSrc, title, path, levitate = false }) => {
-  const [mousePos, setMousePos] = useState<any>();
-
-  const handleMouse = (event) => {
-    const insideBox =
-      event.pageX > event.currentTarget.offsetLeft &&
-      event.pageY > event.currentTarget.offsetTop;
-
-    if (insideBox) {
-      const mouseX =
-        ((event.pageX - event.currentTarget.offsetLeft) /
-          event.currentTarget.offsetWidth) *
-        100;
-      const mouseY =
-        ((event.pageY - event.currentTarget.offsetTop) /
-          event.currentTarget.offsetHeight) *
-        100;
-      setMousePos({ x: mouseX, y: mouseY });
-    }
-  };
-
-  // onMouseMove={handleMouse} onMouseLeave={() => setMousePos(undefined)}
   return (
     <ButtonContainer levitate={levitate}>
       <Button style={{ backgroundImage: `url(${imgSrc})` }} to={path}>

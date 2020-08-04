@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { RiZoomInLine } from "react-icons/ri";
-import { GiFalloutShelter } from "react-icons/gi";
 
 export const MailThumbnail = ({
   parentH,
@@ -14,12 +13,11 @@ export const MailThumbnail = ({
   const [iframeStyles, setIframeStyles] = useState<any>(null);
   const [containerStyles, setContainerStyles] = useState<any>(null);
   const [contentDim, setContentDim] = useState<any>(null);
-  const [shouldDisplay, setShouldDisplay] = useState<any>(false);
+  const [shouldDisplay, setShouldDisplay] = useState<boolean>(false);
 
   useEffect(() => {
     if (!contentDim) return; // iframe hasn't loaded yet
 
-    const contentW = contentDim.width;
     const contentH = contentDim.height;
     const scaleFactor = Math.min(parentH / contentH, 1); // We don't ever want to be scaling up the content
     setIframeStyles({
@@ -103,7 +101,7 @@ export const MailThumbnail = ({
   return (
     <MailThumbnailContainer
       style={containerStyles && { ...containerStyles }}
-      display={shouldDisplay}
+      show={shouldDisplay}
       className={className}
     >
       <ThumbnailIframe
@@ -119,13 +117,13 @@ export const MailThumbnail = ({
   );
 };
 
-export const MailThumbnailContainer = styled.div<{ display: boolean }>`
+export const MailThumbnailContainer = styled.div<{ show: boolean }>`
   position: absolute;
   transform-origin: top left;
   top: 50%;
   left: 25%;
 
-  opacity: ${({ display }) => (display ? 1 : 0)};
+  opacity: ${({ show: display }) => (display ? 1 : 0)};
   transition: opacity 1s;
 `;
 

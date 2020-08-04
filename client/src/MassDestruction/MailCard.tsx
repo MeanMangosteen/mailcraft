@@ -1,21 +1,11 @@
 import React, { useState } from "react";
 import { SizeMe } from "react-sizeme";
-import { MailThumbnail, MailThumbnailContainer } from "./MailThumbnail";
+import { MailThumbnail } from "./MailThumbnail";
 import styled from "styled-components";
-import { centerContent } from "../utils";
 import { ExpandedIframe } from "./ExpandedIframe";
 
 export const MailCard = ({ mail, selected, index, onClick }) => {
   const [expandIframe, setExpandIframe] = useState<boolean>(false);
-
-  const headerLines = mail["body[]"]["headerLines"];
-  let useText: boolean;
-  for (let i = 0; i < headerLines.length; i++) {
-    const header = headerLines[i];
-    if (header.key === "content-type") {
-      useText = header.line.match(/Content-Type: text\/plain/g);
-    }
-  }
 
   return (
     <>
@@ -46,7 +36,6 @@ export const MailCard = ({ mail, selected, index, onClick }) => {
     </>
   );
 };
-
 
 export const MailCardContainer = styled.div`
   display: flex;
