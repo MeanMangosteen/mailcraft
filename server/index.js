@@ -50,7 +50,7 @@ const authMiddleware = async (req, res, next) => {
 
 const scopes = ["https://mail.google.com/"];
 
-const demo = false;
+const demo = true;
 
 app.get("/OAuthUrl", (req, res) => {
   const loginUrl = auth.oAuth2Client.generateAuthUrl({
@@ -103,10 +103,10 @@ app.post("/OAuthConfirm", async (req, res) => {
 
 app.post("/trash-mail", authMiddleware, async (req, res) => {
   const { uids } = req.body;
-  if (!uids) {
-    res.status(400).send("Missing 'uids' parameter");
-  }
   try {
+    if (!uids) {
+      return res.status(400).send("Missing 'uids' parameter");
+    }
     await req.imap.setFlags(
       "INBOX",
       uids.join(","),
@@ -131,12 +131,12 @@ app.post("/trash-mail", authMiddleware, async (req, res) => {
 });
 
 app.post("/spam-mail", authMiddleware, async (req, res) => {
-  const { uids, mailbox } = req.body;
-  if (!uids) {
-    res.status(400).send("Missing 'uids' parameter");
-  }
+  const { uids } = req.body;
 
   try {
+    if (!uids) {
+      return res.status(400).send("Missing 'uids' parameter");
+    }
     await req.imap.setFlags(
       "INBOX",
       uids.join(","),
@@ -166,11 +166,11 @@ app.post("/read-mail", authMiddleware, async (req, res) => {
   }
 
   const { uids } = req.body;
-  if (!uids) {
-    res.status(400).send("Missing 'uids' parameter");
-  }
 
   try {
+    if (!uids) {
+      return res.status(400).send("Missing 'uids' parameter");
+    }
     const response = await req.imap.setFlags(
       "INBOX",
       uids.join(","),
@@ -188,17 +188,13 @@ app.post("/read-mail", authMiddleware, async (req, res) => {
 });
 
 app.get("/unreadUids", authMiddleware, async (req, res) => {
-  // let client;
-  if (demo) {
-    const dummyUids = new Array(1000);
-    return res.status(200).send(dummyUids.fill(1));
-  }
 
   try {
-    // client = new ImapClient("imap.gmail.com", 993, { auth: req.authDeets, });
-    // await client.connect();
+    if (demo) {
+      const dummyUids = new Array(1000);
+      return res.status(200).send(dummyUids.fill(1));
+    }
     const unreadUids = await req.imap.search('INBOX', { unseen: true }, { byUid: true });
-    const unreadMailCount = unreadUids.length;
     res.status(200).send(unreadUids);
   } catch (err) {
     console.error(err);
@@ -210,22 +206,22 @@ app.get("/unreadUids", authMiddleware, async (req, res) => {
 });
 
 app.get("/mail", authMiddleware, async (req, res) => {
-  if (demo) {
-    const messages = fs.readFileSync('server/demo.json');
-    return res.status(200).send(messages);
-  }
-
-  const { uids } = req.query;
 
 
 
   try {
+    if (demo) {
+      const messages = fs.readFileSync('server/demo.json');
+      return res.status(200).send(messages);
+    }
+
+    const { uids } = req.query;
 
 
     const messages = await req.imap.listMessages(
       "INBOX",
       JSON.parse(uids).join(),
-      ["uid", "body.peek[]", "X-GM-THRID", "envelope"],
+      ["uid", "body.peek[]", "X-GM-THRID"],
       { byUid: true }
     );
 

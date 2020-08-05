@@ -6,7 +6,7 @@ import styled, { css } from "styled-components";
 import { RiSpam2Line } from "react-icons/ri";
 import { AiOutlineRead } from "react-icons/ai";
 import { FiTrash2 } from "react-icons/fi";
-import { centerContent } from "../utils";
+import { centerContent, CSSDividerBottom } from "../utils";
 import { ToggleViewIcon } from "./ToggleViewIcon";
 import { GridView } from "./GridView";
 import { ListView } from "./ListView";
@@ -27,7 +27,7 @@ export const DestroyVictim = () => {
     if (!qParams.victim) throw Error("Victim needed to destroy!");
     if (!mail) return;
     const filteredMail = mail.filter(
-      (m) => m.envelope.from[0].address.split("@")[1] === qParams["victim"]
+      (m) => m["body[]"].from.value[0].address.split("@")[1] === qParams["victim"]
     );
     setVictimEmails(filteredMail);
     /**
@@ -106,6 +106,9 @@ export const DestroyVictim = () => {
 
   return (
     <MassDestructionContainer>
+      <SenderContainer>
+        <SenderText>{qParams["victim"]}</SenderText>
+      </SenderContainer>
       {view === "list" ? (
         <ListView
           victimEmails={victimEmails}
@@ -165,6 +168,33 @@ export const DestroyVictim = () => {
     </MassDestructionContainer>
   );
 };
+
+const SenderContainer = styled.div`
+  ${centerContent}
+  font-size: 2rem;
+  position: absolute;
+  ${CSSDividerBottom({ width: "30%", IHaveSetRelativePosition: true })}
+  left: 50%;
+  top: 0;
+
+  box-shadow: 0px 0 10px 0px #888;
+  border-radius: 0% 0% 100% 100%;
+  width: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+  border-radius: 0px 0px 100px 100px;
+  background: white;
+  border: 1px solid #adadad;
+`;
+
+const SenderText = styled.div`
+  max-width: 80vw;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+  font-weight: bold;
+`;
 
 const Peripherals = styled.div`
   position: relative;

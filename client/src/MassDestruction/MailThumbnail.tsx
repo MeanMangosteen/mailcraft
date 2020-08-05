@@ -111,6 +111,7 @@ export const MailThumbnail = ({
         height="100%"
         style={iframeStyles && { ...iframeStyles }}
         onLoad={handleLoad}
+        sandbox="allow-same-origin"
       />
       {expandable && <ThumbnailZoomOverlay onClick={handleExpandClick} />}
     </MailThumbnailContainer>

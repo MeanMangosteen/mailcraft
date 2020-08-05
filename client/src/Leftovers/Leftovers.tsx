@@ -42,10 +42,10 @@ export const Leftovers = () => {
       mailCopy.slice(offset, offset + 5).map((mail) => (
         <EmailContainer key={mail.uid}>
           <SubjectContainer>
-            <SubjectText>{mail.envelope.subject}</SubjectText>
+            <SubjectText>{mail["body[]"].subject}</SubjectText>
           </SubjectContainer>
           <SenderContainer>
-            {mail.envelope.from[0].address.split("@")[1]}
+            {mail["body[]"].from.value[0].address.split("@")[1]}
           </SenderContainer>
           <SizeMe monitorHeight>
             {({ size }) => (

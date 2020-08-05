@@ -35,7 +35,7 @@ export const MailCard = styled(
                     expandable
                   />
                 )}
-                <SubjectText>{mail["envelope"].subject}</SubjectText>
+                <SubjectText>{mail["body[]"].subject}</SubjectText>
               </ContentWrapper>
             )}
           </SizeMe>

@@ -19,7 +19,7 @@ export const ListItem = ({ mail, selected, index, onClick }: ListItemProps) => {
   return (
     <>
       <ListItemCotainer selected={selected} onClick={onClick(index)}>
-        <SubjectText>{mail["envelope"].subject}</SubjectText>
+        <SubjectText>{mail["body[]"].subject}</SubjectText>
         <ExpandIcon
           onClick={(e) => {
             e.stopPropagation();

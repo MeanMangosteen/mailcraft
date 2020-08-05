@@ -78,6 +78,7 @@ export const Email = ({
           width="100%"
           height="100%"
           onLoad={handleLoad}
+          sandbox="allow-same-origin"
         />
         {expandable && <ThumbnailZoomOverlay onClick={handleExpandClick} />}
       </EmailContainer>

@@ -108,15 +108,15 @@ export const setupInterceptors = (setLoggedIn) => {
     }
   );
 
-  /*   api.interceptors.request.use((request) => {
+  api.interceptors.request.use((request) => {
     console.log("Starting Request", request);
     return request;
   });
 
   api.interceptors.response.use((response) => {
-    console.log("Recieved Response: ", response);
+    console.log("Recieved Response: ", response.config.url);
     return response;
-  }); */
+  });
 };
 
 // Kindly provided by:

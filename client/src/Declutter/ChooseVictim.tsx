@@ -13,7 +13,9 @@ export const ChooseVictim = () => {
   useEffect(() => {
     if (!mail) return; // wait for mail fetch
     // get all the email senders
-    const senders = mail.map((m) => m.envelope.from[0].address.split("@")[1]);
+    const senders = mail.map(
+      (m) => m["body[]"].from.value[0].address.split("@")[1]
+    );
     // Tally the no. emails sent by each sender
     const count = {};
     senders.forEach((m) => {

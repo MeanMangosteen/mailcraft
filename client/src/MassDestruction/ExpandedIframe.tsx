@@ -25,6 +25,7 @@ export const ExpandedIframe = ({ onClose, show, mail }) => {
               srcDoc={mail["body[]"].html || mail["body[]"].textAsHtml}
               onLoad={handleIframeLoad}
               iframeHeight={iframeHeight}
+              sandbox="allow-same-origin"
             />
           </ExpandedIframeContainer>
           <StyledWebUILink threadId={mail["x-gm-thrid"]} />

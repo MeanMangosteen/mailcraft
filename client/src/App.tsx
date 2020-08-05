@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { NavBar } from "./NavBar/NavBar";
 import { BrowserRouter } from "react-router-dom";
@@ -26,7 +26,10 @@ export const UserContext = React.createContext<{
 const App = styled(({ className }) => {
   const [cookies] = useCookies(["loggedIn"]);
   const [loggedIn, setLoggedIn] = useState<boolean>(!!cookies?.loggedIn);
-  setupInterceptors(setLoggedIn);
+
+  useEffect(() => {
+    setupInterceptors(setLoggedIn);
+  }, []);
 
   return (
     <div className={className}>

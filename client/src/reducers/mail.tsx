@@ -64,7 +64,7 @@ export const useMail = (): MailHookReturnType => {
 
     const mail = state.mail!;
     // Get all the email senders
-    const senders = mail.map((m) => m.envelope.from[0].address.split("@")[1]);
+    const senders = mail.map((m) => m['body[]'].from.text.split("@")[1]);
     // Tally the no. emails sent by each sender
     const count = {};
     senders.forEach((m) => {

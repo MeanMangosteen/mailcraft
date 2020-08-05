@@ -40,14 +40,14 @@ export const DeclutterRouter = () => {
          */
         const urlPieces = location.pathname.split("/");
         return urlPieces.length > 3 && urlPieces[2] === "mass-destruction" ? ( // Pre-existing path in the address bar. Use it.
-          <Redirect to={location} />
+          <Redirect push to={location} />
         ) : (
-          <Redirect key={location.pathname} to="/declutter/mass-destruction" />
+          <Redirect push key={location.pathname} to="/declutter/mass-destruction" />
         );
       case "leftovers":
-        return <Redirect key={location.pathname} to="/declutter/leftovers" />;
+        return <Redirect push key={location.pathname} to="/declutter/leftovers" />;
       case "success!":
-        return <Redirect key={location.pathname} to="/declutter/success" />;
+        return <Redirect push key={location.pathname} to="/declutter/success" />;
     }
   }, [userCtx.loggedIn, location, isGameTime, stage]);
 

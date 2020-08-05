@@ -4,6 +4,8 @@ import { centerContent } from "./utils";
 import { Catwalk, WalkingCat } from "./Catwalk";
 import { useMail } from "./reducers/mail";
 
+//OMGTODO;
+const demo = true;
 export const LoadingFeatFrank = () => {
   const [encore, setEncore] = useState<boolean>(true);
   const [letsJustStart, setLetsJustStart] = useState<boolean>(false);
@@ -19,7 +21,10 @@ export const LoadingFeatFrank = () => {
   }, []);
 
   useEffect(() => {
-    if (
+    //OMGTODO;
+    if (mail && demo) {
+      triggerGameTime();
+    } else if (
       (mail && totalUnread && mail?.length === totalUnread) ||
       letsJustStart
     ) {

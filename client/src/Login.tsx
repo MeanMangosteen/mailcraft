@@ -57,7 +57,9 @@ export const Login = () => {
   return (
     <>
       {/* Redirect the user to where they came from, else redirect home */}
-      {userCtx.loggedIn && <Redirect to={location?.state?.referrer || "/"} />}
+      {userCtx.loggedIn && (
+        <Redirect push to={location?.state?.referrer || "/"} />
+      )}
 
       <LoginContainer>
         <GlobalStyle hovered={hovered} clicked={clicked} />
