@@ -26,7 +26,6 @@ export const UserContext = React.createContext<{
 const App = styled(({ className }) => {
   const [cookies] = useCookies(["loggedIn"]);
   const [loggedIn, setLoggedIn] = useState<boolean>(!!cookies?.loggedIn);
-  const [unreadUids, setUnreadUids] = useState<number[] | null>(null);
   setupInterceptors(setLoggedIn);
 
   return (

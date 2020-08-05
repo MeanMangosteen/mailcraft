@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useContext,
-  useEffect,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { Redirect, Route, useLocation, Switch } from "react-router-dom";
 import { DestroyVictim } from "../MassDestruction/DestroyVictim";
 import { UserContext } from "../App";

@@ -25,7 +25,7 @@ export const LoadingFeatFrank = () => {
     ) {
       triggerGameTime();
     }
-  }, [letsJustStart, mail, totalUnread]);
+  }, [letsJustStart, mail, totalUnread, triggerGameTime]);
 
   return (
     <SpinnerContainer>

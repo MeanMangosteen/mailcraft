@@ -15,16 +15,18 @@ export const GridView = ({
 }: GridViewProps) => {
   const [mailPages, setMailPages] = useState<any[]>([]);
   const [lastPage, setLastPage] = useState<number>(3);
+  const [currPage, setCurrPage] = useState<number>(0);
   const [ref, inView] = useInView({
     threshold: 0,
   });
 
   useEffect(() => {
     if (inView) {
-      setTimeout(() => setLastPage(lastPage + 1), 500);
+      setTimeout(() => setLastPage(lastPage + 1), 250);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
+
   useEffect(() => {
     /**
      * Go from victim's emails' html to actual components.
@@ -33,34 +35,49 @@ export const GridView = ({
      * once upon a time. The assorting of mailcard into pages
      * is a artefact of that.
      */
+    if (!victimEmails?.length) return;
     const newMailPages: any[] = [];
     const numMailPerPage = 9;
-    for (let i = 0; i <= (victimEmails?.length || -1); i += numMailPerPage) {
+    const numPages = Math.ceil(victimEmails.length / numMailPerPage);
+    for (let i = 0; i < numPages; i++) {
+      const startIdx = i * numMailPerPage;
+      const endIdx = startIdx + numMailPerPage;
       const mailCards = victimEmails
-        ?.slice(i, i + numMailPerPage)
+        ?.slice(startIdx, endIdx)
         .map((mail, idx) => {
           return (
             <MailCard
-              selected={selected[i + idx]}
-              index={i + idx}
-              key={idx}
+              selected={selected[startIdx + idx]}
+              index={startIdx + idx}
+              key={startIdx + idx}
               mail={mail}
               onClick={onCardClick}
+              page={i}
+              currPage={currPage}
             />
           );
         });
       const page = (
-        <PageContainer key={i / numMailPerPage}>{mailCards}</PageContainer>
+        <PageContainer key={i}>
+          {mailCards}
+          <ScrollWatcher pageNumber={i} onShowTime={handleShowTime} />
+        </PageContainer>
       );
       newMailPages.push(page);
     }
 
     setMailPages([...newMailPages]);
-  }, [victimEmails, selected, onCardClick]);
+  }, [victimEmails, selected, onCardClick, currPage]);
+
+  const handleShowTime = (pageNumber) => {
+    console.log(pageNumber);
+    setCurrPage(pageNumber);
+  };
+
   return (
     <GridViewContainer>
       {mailPages.slice(0, lastPage)}
-      <ScrollWatcher ref={ref} />
+      <EndWatcher ref={ref} />
     </GridViewContainer>
   );
 };
@@ -80,8 +97,31 @@ const PageContainer = styled.div`
   height: 100%;
   padding: 2rem;
   box-sizing: border-box;
+  position: relative;
 `;
 
-const ScrollWatcher = styled.div`
+const EndWatcher = styled.div`
   height: 1px;
+`;
+
+const ScrollWatcher = styled(
+  ({ pageNumber, something, onShowTime, className = "scroll-watcher" }) => {
+    const [ref, inView] = useInView({
+      threshold: 0,
+    });
+
+    useEffect(() => {
+      if (inView) {
+        console.log("inView");
+        onShowTime(pageNumber, something);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [inView]);
+    return <div ref={ref} className={className} />;
+  }
+)`
+  height: 1px;
+  width: 100%;
+  position: absolute;
+  top: 50%;
 `;

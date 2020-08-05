@@ -4,38 +4,54 @@ import { MailThumbnail } from "./MailThumbnail";
 import styled from "styled-components";
 import { ExpandedIframe } from "./ExpandedIframe";
 
-export const MailCard = ({ mail, selected, index, onClick }) => {
-  const [expandIframe, setExpandIframe] = useState<boolean>(false);
+export const MailCard = styled(
+  ({
+    mail,
+    selected,
+    index,
+    onClick,
+    page,
+    currPage,
+    className = "mailcard",
+  }) => {
+    const [expandIframe, setExpandIframe] = useState<boolean>(false);
 
-  return (
-    <>
-      <MailCardContainer selected={selected} onClick={onClick(index)}>
-        <SizeMe monitorHeight>
-          {({ size }) => (
-            <ContentWrapper>
-              <StyledMailThumbnail
-                parentH={size?.height && size.height}
-                parentW={size.width && size.width / 2}
-                html={mail["body[]"].html || mail["body[]"].textAsHtml}
-                onClick={() => setExpandIframe(true)}
-                expandable
-              />
-              <SubjectText>{mail["envelope"].subject}</SubjectText>
-            </ContentWrapper>
-          )}
-        </SizeMe>
-      </MailCardContainer>
-      <ExpandedIframe
-        show={expandIframe}
-        mail={mail}
-        onClose={(e) => {
-          // e.stopPropagation();
-          setExpandIframe(false);
-        }}
-      />
-    </>
-  );
-};
+    return (
+      <>
+        <MailCardContainer
+          selected={selected}
+          onClick={onClick(index)}
+          className={className}
+        >
+          <SizeMe monitorHeight>
+            {({ size }) => (
+              <ContentWrapper>
+                {Math.abs(currPage - page) < 2 && (
+                  <StyledMailThumbnail
+                    parentH={size?.height && size.height}
+                    parentW={size.width && size.width / 2}
+                    html={mail["body[]"].html || mail["body[]"].textAsHtml}
+                    onClick={() => setExpandIframe(true)}
+                    expandable
+                  />
+                )}
+                <SubjectText>{mail["envelope"].subject}</SubjectText>
+              </ContentWrapper>
+            )}
+          </SizeMe>
+        </MailCardContainer>
+        <ExpandedIframe
+          show={expandIframe}
+          mail={mail}
+          onClose={(e) => {
+            // e.stopPropagation();
+            setExpandIframe(false);
+          }}
+        />
+      </>
+    );
+  }
+)``;
 
 export const MailCardContainer = styled.div`
   display: flex;
