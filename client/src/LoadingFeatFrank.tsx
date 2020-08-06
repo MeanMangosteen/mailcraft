@@ -26,6 +26,7 @@ export const LoadingFeatFrank = () => {
       triggerGameTime();
     } else if (
       (mail && totalUnread && mail ?.length === totalUnread) ||
+      totalUnread === 0 ||
       letsJustStart
     ) {
       triggerGameTime();

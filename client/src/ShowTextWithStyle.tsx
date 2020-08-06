@@ -4,12 +4,14 @@ import styled from "styled-components";
 
 type ShowTextWithStyleProps = {
   children: React.ReactElement<StylishItemProps>[];
+  skipWaitingGame?: boolean
   onFinish?: () => void;
 };
 
 export const ShowTextWithStyle = ({
   children,
   onFinish,
+  skipWaitingGame = false
 }: ShowTextWithStyleProps) => {
   const [childCount, setChildCount] = useState<number>(0);
   const [visibleChildren, setVisibleChildren] = useState(
@@ -36,7 +38,7 @@ export const ShowTextWithStyle = ({
   const childs = children.map((C, idx) => {
     return (
       <Transition
-        in={visibleChildren[idx]}
+        in={skipWaitingGame ? true : visibleChildren[idx]}
         timeout={0}
         key={idx}
         onEnter={cb(() => C.props.onShow && C.props.onShow(), [])}

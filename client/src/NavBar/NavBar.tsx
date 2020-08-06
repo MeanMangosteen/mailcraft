@@ -196,6 +196,7 @@ const NavBar = styled(() => {
             onClick={() => {
               userCtx.setLoggedIn(false);
               removeCookie("loggedIn");
+              sessionStorage.clear();
             }}
           >
             <LogoutIcon text=":door:" />

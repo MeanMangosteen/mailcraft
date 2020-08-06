@@ -64,7 +64,66 @@ export const Stage2 = () => {
 
 export const Success = () => {
   const [stage, setStage] = useState<"waiting" | "sending" | "thanking">(
-    "waiting"
+    sessionStorage.getItem("gameOver") === "true" ? "thanking" : "waiting"
+  );
+  const handleSend = useCallback((message) => {
+    setStage("sending");
+    api
+      .post("/sendMessage", { message })
+      .then((res) => {})
+      .catch((err) => {
+        console.error(err);
+        sessionStorage.setItem("gameOver", "true");
+      })
+      .finally(() => {
+        setStage("thanking");
+      });
+  }, []);
+
+  return (
+    <StageIntroContainer style={{ color: "white" }}>
+      <ShowTextWithStyle
+        skipWaitingGame={sessionStorage.getItem("gameOver") === "true"}
+      >
+        <StylishItem>
+          <Smiley>: )</Smiley>
+        </StylishItem>
+        <StylishItem>
+          <Text>Congratulations!</Text>
+        </StylishItem>
+        <StylishItem>
+          <Text>Your life just got a little cleaner.</Text>
+        </StylishItem>
+        <StylishItem>
+          <Text>The author wants to hear from you. Leave a message.</Text>
+        </StylishItem>
+        {/* <MessageBox onSend={handleSend} /> */}
+        <SwitchTransition>
+          <Transition key={stage} timeout={200}>
+            {(state) =>
+              stage === "thanking" ? (
+                <Fade state={state}>
+                  <Text>Thank you.</Text>
+                </Fade>
+              ) : stage === "sending" ? (
+                <Loading color="white" />
+              ) : (
+                <Fade state={state}>
+                  <MessageBox onSend={handleSend} />
+                </Fade>
+              )
+            }
+          </Transition>
+        </SwitchTransition>
+      </ShowTextWithStyle>
+      <Background />
+    </StageIntroContainer>
+  );
+};
+
+export const SuccessSortOf = () => {
+  const [stage, setStage] = useState<"waiting" | "sending" | "thanking">(
+    sessionStorage.getItem("gameOver") === "true" ? "thanking" : "waiting"
   );
   const handleSend = useCallback((message) => {
     setStage("sending");
@@ -76,12 +135,15 @@ export const Success = () => {
       })
       .finally(() => {
         setStage("thanking");
+        sessionStorage.setItem("gameOver", "true");
       });
   }, []);
 
   return (
     <StageIntroContainer style={{ color: "white" }}>
-      <ShowTextWithStyle>
+      <ShowTextWithStyle
+        skipWaitingGame={sessionStorage.getItem("gameOver") === "true"}
+      >
         <StylishItem>
           <Smiley>: )</Smiley>
         </StylishItem>
@@ -89,7 +151,18 @@ export const Success = () => {
           <Text>Congratulations!</Text>
         </StylishItem>
         <StylishItem>
-          <Text>Your life just got a little cleaner.</Text>
+          <Text>Your inbox is already clean and shiney.</Text>
+        </StylishItem>
+        <StylishItem>
+          <Text>Came to show off did you?</Text>
+        </StylishItem>
+        <StylishItem>
+          <Text>
+            Don't get too cocky. You'll be back one day...in a time of need.
+          </Text>
+        </StylishItem>
+        <StylishItem>
+          <Text>And you'll be glad you didn't piss off Virtual Frank.</Text>
         </StylishItem>
         <StylishItem>
           <Text>The author wants to hear from you. Leave a message.</Text>

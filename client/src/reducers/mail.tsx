@@ -25,7 +25,7 @@ type MailHookReturnType = {
   mail?: any[];
   totalUnread?: number;
   userProgress: number;
-  stage: "mass destruction" | "leftovers" | "success!";
+  stage: "mass destruction" | "leftovers" | "success!" | "nothing to do";
   isGameTime: boolean;
   triggerGameTime: () => void;
   readMail: (
@@ -59,12 +59,18 @@ export const useMail = (): MailHookReturnType => {
   }, []);
 
   useEffect(() => {
-    if (!state.totalUnread) return; // We need this. We shall be patient.
-    if (state.fetchProgress < state?.totalUnread) return; // Wait for all mail to fetch. We shall be patient
+    if (state.totalUnread === undefined) return; // We need this. We shall be patient.
+    if (state.totalUnread !== 0 && state.fetchProgress < state.totalUnread)
+      return; // Wait for all mail to fetch. We shall be patient
+
+    if (state.totalUnread === 0) {
+      setCurrStage("nothing to do");
+      return;
+    }
 
     const mail = state.mail!;
     // Get all the email senders
-    const senders = mail.map((m) => m['body[]'].from.text.split("@")[1]);
+    const senders = mail.map((m) => m["body[]"].from.text.split("@")[1]);
     // Tally the no. emails sent by each sender
     const count = {};
     senders.forEach((m) => {
@@ -88,7 +94,7 @@ export const useMail = (): MailHookReturnType => {
       setCurrStage("leftovers");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.mail]);
+  }, [state.mail, state.totalUnread]);
 
   const readMail = useCallback(
     (
@@ -283,6 +289,7 @@ export const MailProvider = ({ children }) => {
 const reducer = (state: MailState, action: MailAction): MailState => {
   switch (action.type) {
     case "setup":
+      sessionStorage.clear();
       return {
         ...state,
         userProgress: 0,

@@ -4,7 +4,7 @@ import { DestroyVictim } from "../MassDestruction/DestroyVictim";
 import { UserContext } from "../App";
 import { LoadingFeatFrank } from "../LoadingFeatFrank";
 import { useMail } from "../reducers/mail";
-import { Stage1, Stage2, Success } from "./Stages";
+import { Stage1, Stage2, Success, SuccessSortOf } from "./Stages";
 
 export const DeclutterRouter = () => {
   const location = useLocation();
@@ -42,12 +42,28 @@ export const DeclutterRouter = () => {
         return urlPieces.length > 3 && urlPieces[2] === "mass-destruction" ? ( // Pre-existing path in the address bar. Use it.
           <Redirect push to={location} />
         ) : (
-          <Redirect push key={location.pathname} to="/declutter/mass-destruction" />
+          <Redirect
+            push
+            key={location.pathname}
+            to="/declutter/mass-destruction"
+          />
         );
       case "leftovers":
-        return <Redirect push key={location.pathname} to="/declutter/leftovers" />;
+        return (
+          <Redirect push key={location.pathname} to="/declutter/leftovers" />
+        );
       case "success!":
-        return <Redirect push key={location.pathname} to="/declutter/success" />;
+        return (
+          <Redirect push key={location.pathname} to="/declutter/success" />
+        );
+      case "nothing to do":
+        return (
+          <Redirect
+            push
+            key={location.pathname}
+            to="/declutter/whatareyouevendoingherewithyourorganisedlife"
+          />
+        );
     }
   }, [userCtx.loggedIn, location, isGameTime, stage]);
 
@@ -66,6 +82,9 @@ export const DeclutterRouter = () => {
         </Route>
         <Route path="/declutter/success">
           <Success />
+        </Route>
+        <Route path="/declutter/whatareyouevendoingherewithyourorganisedlife">
+          <SuccessSortOf />
         </Route>
       </Switch>
     ),
