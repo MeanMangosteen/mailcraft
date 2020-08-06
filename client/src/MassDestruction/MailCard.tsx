@@ -26,9 +26,11 @@ export const MailCard = styled(
           <SizeMe monitorHeight>
             {({ size }) => (
               <ContentWrapper>
-                {Math.abs(currPage - page) < 2 && (
+                {/* Render iframes 1 page behind and 2 in front of current page.
+                 Neccessarily comprise otherwise ain't nobody got enough RAM fo dat */}
+                {(page - currPage >= -1 && page - currPage <= 2) && (
                   <StyledMailThumbnail
-                    parentH={size?.height && size.height}
+                    parentH={size ?.height && size.height}
                     parentW={size.width && size.width / 2}
                     html={mail["body[]"].html || mail["body[]"].textAsHtml}
                     onClick={() => setExpandIframe(true)}
@@ -67,9 +69,9 @@ export const MailCardContainer = styled.div`
 
   &:hover {
     box-shadow: ${({ selected }: { selected: boolean }) =>
-      selected
-        ? "10px 9px 14px 3px hsla(216, 44%, 35%, 1)"
-        : "10px 9px 14px 3px rgba(0,0,0,0.75)"};
+    selected
+      ? "10px 9px 14px 3px hsla(216, 44%, 35%, 1)"
+      : "10px 9px 14px 3px rgba(0,0,0,0.75)"};
   }
 
   &:active {

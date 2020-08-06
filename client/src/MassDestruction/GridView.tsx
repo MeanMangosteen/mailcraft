@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import { MailCard } from "./MailCard";
 import { useInView } from "react-intersection-observer";
@@ -20,9 +20,22 @@ export const GridView = ({
     threshold: 0,
   });
 
+  const handleShowTime = useCallback((pageNumber) => {
+    console.log(pageNumber);
+    // Always have a buffer of at least two pages ahead of current page
+    setCurrPage(pageNumber);
+    if (pageNumber + 3 > lastPage) {
+      setLastPage(pageNumber + 3)
+    }
+  }, [lastPage]);
+
   useEffect(() => {
     if (inView) {
-      setTimeout(() => setLastPage(lastPage + 1), 250);
+      setTimeout(() => {
+        if (currPage + 2 > lastPage) {
+          setLastPage(currPage + 2)
+        }
+      }, 250);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
@@ -35,7 +48,7 @@ export const GridView = ({
      * once upon a time. The assorting of mailcard into pages
      * is a artefact of that.
      */
-    if (!victimEmails?.length) return;
+    if (!victimEmails ?.length) return;
     const newMailPages: any[] = [];
     const numMailPerPage = 9;
     const numPages = Math.ceil(victimEmails.length / numMailPerPage);
@@ -44,19 +57,19 @@ export const GridView = ({
       const endIdx = startIdx + numMailPerPage;
       const mailCards = victimEmails
         ?.slice(startIdx, endIdx)
-        .map((mail, idx) => {
-          return (
-            <MailCard
-              selected={selected[startIdx + idx]}
-              index={startIdx + idx}
-              key={startIdx + idx}
-              mail={mail}
-              onClick={onCardClick}
-              page={i}
-              currPage={currPage}
-            />
-          );
-        });
+          .map((mail, idx) => {
+            return (
+              <MailCard
+                selected={selected[startIdx + idx]}
+                index={startIdx + idx}
+                key={startIdx + idx}
+                mail={mail}
+                onClick={onCardClick}
+                page={i}
+                currPage={currPage}
+              />
+            );
+          });
       const page = (
         <PageContainer key={i}>
           {mailCards}
@@ -67,17 +80,14 @@ export const GridView = ({
     }
 
     setMailPages([...newMailPages]);
-  }, [victimEmails, selected, onCardClick, currPage]);
+  }, [victimEmails, selected, onCardClick, currPage, handleShowTime]);
 
-  const handleShowTime = (pageNumber) => {
-    console.log(pageNumber);
-    setCurrPage(pageNumber);
-  };
+  console.log('last page', lastPage)
 
   return (
     <GridViewContainer>
       {mailPages.slice(0, lastPage)}
-      <EndWatcher ref={ref} />
+      {/* <EndWatcher ref={ref} /> */}
     </GridViewContainer>
   );
 };
@@ -105,7 +115,7 @@ const EndWatcher = styled.div`
 `;
 
 const ScrollWatcher = styled(
-  ({ pageNumber, something, onShowTime, className = "scroll-watcher" }) => {
+  ({ pageNumber, onShowTime, className = "scroll-watcher" }) => {
     const [ref, inView] = useInView({
       threshold: 0,
     });
@@ -113,7 +123,7 @@ const ScrollWatcher = styled(
     useEffect(() => {
       if (inView) {
         console.log("inView");
-        onShowTime(pageNumber, something);
+        onShowTime(pageNumber);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inView]);
