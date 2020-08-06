@@ -5,14 +5,14 @@ import { Catwalk, WalkingCat } from "./Catwalk";
 import { useMail } from "./reducers/mail";
 
 //OMGTODO;
-const demo = true;
+const demo = false;
 export const LoadingFeatFrank = () => {
   const [encore, setEncore] = useState<boolean>(true);
   const [letsJustStart, setLetsJustStart] = useState<boolean>(false);
   const { mail, totalUnread, triggerGameTime } = useMail();
 
   const handleMainSetFinished = useCallback(
-    () => mail?.length !== totalUnread && setEncore(true),
+    () => mail ?.length !== totalUnread && setEncore(true),
     [mail, totalUnread]
   );
 
@@ -25,7 +25,7 @@ export const LoadingFeatFrank = () => {
     if (mail && demo) {
       triggerGameTime();
     } else if (
-      (mail && totalUnread && mail?.length === totalUnread) ||
+      (mail && totalUnread && mail ?.length === totalUnread) ||
       letsJustStart
     ) {
       triggerGameTime();
