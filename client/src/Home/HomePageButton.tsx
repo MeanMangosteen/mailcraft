@@ -5,9 +5,8 @@ import { BaseLink } from "../NavBar/NavBar";
 export const HomePageButton = ({ imgSrc, title, path, levitate = false }) => {
   return (
     <ButtonContainer levitate={levitate}>
-      <Button style={{ backgroundImage: `url(${imgSrc})` }} to={path}>
-        <ButtonText>{title}</ButtonText>
-      </Button>
+      <Button style={{ backgroundImage: `url(${imgSrc})` }} to={path}></Button>
+      <ButtonText>{title}</ButtonText>
     </ButtonContainer>
   );
 };
@@ -27,6 +26,7 @@ const Levitate = keyframes`
 `;
 
 const ButtonContainer = styled.div<{ levitate?: boolean }>`
+  position: relative;
   background-blend-mode: hard-light;
   width: 70%;
   display: flex;
@@ -45,7 +45,6 @@ const ButtonContainer = styled.div<{ levitate?: boolean }>`
 
 const Button = styled(BaseLink)`
   border-radius: 2rem;
-  color: white;
   background-position: center;
   height: 35rem;
   width: 30%;
@@ -59,7 +58,8 @@ const Button = styled(BaseLink)`
   &:hover {
     transform: scale(1.125);
   }
-  transition: transform 250ms ease-in-out;
+  transition: transform 250ms ease-out;
+  transition-delay: 50ms;
 
   /* Remove 'a' tag styling */
   /* color: inherit; */
@@ -67,10 +67,26 @@ const Button = styled(BaseLink)`
 `;
 
 const ButtonText = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* filter: drop-shadow(0px 2px 2px hsl(0, 89%, 59%));
+  color: hsl(0, 97%, 43%);
+  color: white;
+  -webkit-text-stroke: 1.5px #ff6060; */
+
   margin: 1rem;
   font-size: 2.5rem;
-  backdrop-filter: blur(8px);
   padding: 0 1rem;
   border-radius: 20%;
-  /* text-decoration: none !important; */
+
+  color: #6800d8;
+  font-weight: bold;
+  font-size: 3rem;
+
+  transition: transform 200ms ease-in;
+  ${ButtonContainer}:hover & {
+    transform: translate(-50%, -50%) scale(0.75);
+  }
 `;

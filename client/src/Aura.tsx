@@ -23,8 +23,8 @@ export const Aura = ({ children }) => {
   return (
     <AuraContainer>
       <LuckyDuckyAura
-        onMouseMove={handleMouse}
-        onMouseLeave={() => setMousePos(undefined)}
+        // onMouseMove={handleMouse}
+        // onMouseLeave={() => setMousePos(undefined)}
       >
         <MegaWrapper mouse={mousePos}>{children}</MegaWrapper>
       </LuckyDuckyAura>
